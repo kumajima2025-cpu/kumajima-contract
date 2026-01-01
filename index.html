@@ -364,52 +364,35 @@ ______________________________________________
     <input type="checkbox" id="agree" style="width:auto; margin-right:6px;">
     我已完整閱讀並同意上述契約內容
   </label>
+<div class="card">
+  <h1>甲方資料填寫</h1>
+  <p class="hint">請填寫以下資料以完成契約簽署</p>
+
+  <label>甲方姓名（消費者）</label>
+  <input type="text" id="customerName" placeholder="請輸入姓名" />
+
+  <label>聯絡電話</label>
+  <input type="tel" id="phone" placeholder="請輸入聯絡電話" />
+
+  <label>身分證字號</label>
+  <input type="text" id="idNumber" placeholder="請輸入身分證字號" />
+
+  <label>通訊地址</label>
+  <input type="text" id="address" placeholder="請輸入通訊地址" />
+
+  <label>寵物名字</label>
+  <input type="text" id="petName" placeholder="請輸入寵物名字" />
+
+  <label>品種</label>
+  <input type="text" id="breed" placeholder="例：比熊犬" />
+
+  <label>體重（公斤）</label>
+  <input type="number" id="weight" placeholder="例：6.5" step="0.1" />
+
+  <label>審閱／簽署日期</label>
+  <input type="date" id="signDate" />
 </div>
 
-<div class="card">
-  <div class="row">
-    <div>
-      <label>甲方姓名</label>
-      <input id="name">
-    </div>
-    <div>
-      <label>聯絡電話</label>
-      <input id="phone">
-    </div>
-  </div>
-
-  <div class="row">
-    <div>
-      <label>寵物名字</label>
-      <input id="petName">
-    </div>
-    <div>
-      <label>品種</label>
-      <input id="breed">
-    </div>
-  </div>
-
-  <div class="row">
-    <div>
-      <label>體重（公斤）</label>
-      <input id="weight">
-    </div>
-    <div>
-      <label>服務項目</label>
-      <input id="service">
-    </div>
-  </div>
-
-  <div class="row">
-    <div>
-      <label>審閱日期</label>
-      <input id="reviewDate" placeholder="YYYY-MM-DD">
-    </div>
-    <div>
-      <label>簽署日期</label>
-      <input id="signDate" placeholder="YYYY-MM-DD">
-    </div>
-  </div>
 
   <label>甲方簽名</label>
   <canvas id="sig"></canvas>
