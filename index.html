@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>熊嶼｜犬貓美容服務契約簽署</title>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f6f6f6;
+    }
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    h1 {
+      font-size: 20px;
+      margin: 0 0 6px;
+    }
+    .hint {
+      font-size: 13px;
+      color: #666;
+    }
+    .contract {
+      margin-top: 12px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+      height: 45vh;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      font-size: 14px;
+      background: #fafafa;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 12px 0 6px;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row > div {
+      flex: 1;
+    }
+    canvas {
+      width: 100%;
+      height: 180px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background: #fff;
+      touch-action: none;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-main {
+      background: #111;
+      color: #fff;
+      margin-top: 12px;
+    }
+    .btn-sub {
+      background: #eee;
+      margin-top: 8px;
+    }
+    .msg {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #d00;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>熊嶼｜犬、貓美容服務定型化契約</h1>
+  <div class="hint">
+    公司名稱：熊嶼寵物有限公司<br>
+    地址：新北市板橋區合宜一路11號
+  </div>
+</div>
+
+<div class="card">
+  <label>契約內容（請完整閱讀）</label>
+  <div class="contract">
+犬、貓美容服務定型化契約範本
+（以下略，請保留你目前完整契約文字）
+  </div>
+
+  <label>
+    <input type="checkbox" id="agree" style="width:auto; margin-right:6px;">
+    我已完整閱讀並同意上述契約內容
+  </label>
+</div>
+
+<div class="card">
+  <div class="row">
+    <div>
+      <label>甲方姓名</label>
+      <input id="name">
+    </div>
+    <div>
+      <label>聯絡電話</label>
+      <input id="phone">
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>寵物名字</label>
+      <input id="petName">
+    </div>
+    <div>
+      <label>品種</label>
+      <input id="breed">
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>體重（公斤）</label>
+      <input id="weight">
+    </div>
+    <div>
+      <label>服務項目</label>
+      <input id="service">
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>審閱日期</label>
+      <input id="reviewDate" placeholder="YYYY-MM-DD">
+    </div>
+    <div>
+      <label>簽署日期</label>
+      <input id="signDate" placeholder="YYYY-MM-DD">
+    </div>
+  </div>
+
+  <label>甲方簽名</label>
+  <canvas id="sig"></canvas>
+  <button class="btn-sub" id="clear">清除簽名</button>
+</div>
+
+<div class="card">
+  <button class="btn-main" id="submit">送出簽署</button>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+const LIFF_ID = "2008805180-dNJmIam4";
+const SUBMIT_ENDPOINT = "請之後貼上你的 Google Apps Script WebApp URL";
+
+liff.init({ liffId: LIFF_ID });
+
+const canvas = document.getElementById("sig");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * ratio;
+  canvas.height = rect.height * ratio;
+  ctx.scale(ratio, ratio);
+  ctx.lineWidth = 3;
+  ctx.lineCap = "round";
+}
+resizeCanvas();
+
+let drawing = false;
+let last = null;
+
+function pos(e) {
+  const r = canvas.getBoundingClientRect();
+  const t = e.touches ? e.touches[0] : e;
+  return { x: t.clientX - r.left, y: t.clientY - r.top };
+}
+
+canvas.addEventListener("mousedown", e => { drawing = true; last = pos(e); });
+canvas.addEventListener("mousemove", e => {
+  if (!drawing) return;
+  const p = pos(e);
+  ctx.beginPath();
+  ctx.moveTo(last.x, last.y);
+  ctx.lineTo(p.x, p.y);
+  ctx.stroke();
+  last = p;
+});
+window.addEventListener("mouseup", () => drawing = false);
+
+canvas.addEventListener("touchstart", e => { drawing = true; last = pos(e); });
+canvas.addEventListener("touchmove", e => {
+  e.preventDefault();
+  if (!drawing) return;
+  const p = pos(e);
+  ctx.beginPath();
+  ctx.moveTo(last.x, last.y);
+  ctx.lineTo(p.x, p.y);
+  ctx.stroke();
+  last = p;
+},{passive:false});
+canvas.addEventListener("touchend", () => drawing = false);
+
+document.getElementById("clear").onclick = () =>
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+document.getElementById("submit").onclick = async () => {
+  const msg = document.getElementById("msg");
+  msg.textContent = "";
+
+  if (!document.getElementById("agree").checked)
+    return msg.textContent = "請先勾選同意契約";
+
+  const payload = {
+    name: name.value,
+    phone: phone.value,
+    petName: petName.value,
+    breed: breed.value,
+    weight: weight.value,
+    service: service.value,
+    reviewDate: reviewDate.value,
+    signDate: signDate.value,
+    signature: canvas.toDataURL()
+  };
+
+  await fetch(SUBMIT_ENDPOINT, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+
+  msg.style.color = "green";
+  msg.textContent = "✅ 已完成簽署，可關閉視窗";
+};
+</script>
+
+</body>
+</html>
