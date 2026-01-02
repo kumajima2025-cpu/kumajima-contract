@@ -342,7 +342,24 @@
         submitBtn.disabled = false;
       }
     });
-  })();
+
+    const LIFF_ID = "你的LIFF_ID";
+const LIFF_URL = `https://liff.line.me/${LIFF_ID}`;
+
+(async () => {
+  // 只要不是從 LIFF 入口進來，就導回去
+  if (!location.href.startsWith(LIFF_URL)) {
+    const redirect = encodeURIComponent(location.href);
+    location.replace(`${LIFF_URL}?redirect=${redirect}`);
+    return;
+  }
+
+  // 如果是 LIFF 入口進來，且帶了 redirect，就再跳回你的原網址
+  const p = new URLSearchParams(location.search);
+  const target = p.get("redirect");
+  if (target) location.replace(decodeURIComponent(target));
+})();
+
   </script>
 
 </body>
