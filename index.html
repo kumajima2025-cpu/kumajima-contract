@@ -495,10 +495,11 @@ ______________________________________________
         return;
       }
       setStatus("✅ 可開始填寫並簽名", true);
-    } catch (e) {
-      console.error(e);
-      setStatus("初始化失敗（LIFF）");
-    }
+ } catch (e) {
+  console.error(e);
+  setStatus("初始化失敗（LIFF）： " + (e?.message || e), false);
+}
+
   }
   init();
 
