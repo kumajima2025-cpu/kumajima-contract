@@ -398,14 +398,13 @@ ______________________________________________
 <canvas id="sig"></canvas>
 
 <p class="hint" style="margin-top:8px; font-weight:700; color:#d00;">
-  簽名完成後請點「送出簽署」，系統會自動回傳資料與簽名紀錄。
+  簽名完成後，請先截圖保存。再點「送出簽署」回傳資料（可在訊息中貼上簽名截圖）。
 </p>
 
-<button class="btn-main" id="submitAll">
-  送出簽署（回傳資料＋簽名）
-</button>
-
+<button class="btn-main" id="submitAll">送出簽署</button>
 <button class="btn-sub" id="clear">清除簽名</button>
+
+
 
 <p class="hint" id="status" style="margin-top:10px; text-align:center;"></p>
 
@@ -497,19 +496,14 @@ document.getElementById("clear").onclick = () => {
 function v(id) {
   return (document.getElementById(id)?.value || "").trim();
 }
-
+  
 document.getElementById("submitAll").onclick = async () => {
   const status = document.getElementById("status");
   status.style.color = "#d00";
   status.textContent = "";
 
   if (!hasStroke) {
-    status.textContent = "請先在簽名框簽名。";
-    return;
-  }
-
-  if (!liff.isInClient()) {
-    status.textContent = "請在 LINE 官方帳號內開啟此頁面。";
+    status.textContent = "請先在簽名框簽名，並截圖保存。";
     return;
   }
 
@@ -523,41 +517,27 @@ document.getElementById("submitAll").onclick = async () => {
 品種：${v("breed")}
 體重(公斤)：${v("weight")}
 審閱/簽署日期：${v("signDate")}
-（簽名圖檔於下一則訊息）`;
 
-  const img = canvas.toDataURL("image/png");
+（請在此訊息貼上簽名截圖）`;
 
   try {
-    await liff.sendMessages([
-      { type: "text", text },
-      { type: "image", originalContentUrl: img, previewImageUrl: img }
-    ]);
-    status.style.color = "#111";
-    status.textContent = "✅ 已送出簽署資料與簽名，謝謝！";
+    // 在 LINE 內：直接送文字
+    if (liff.isInClient()) {
+      await liff.sendMessages([{ type: "text", text }]);
+      status.style.color = "#111";
+      status.textContent = "✅ 已回傳資料！請到 LINE 對話貼上簽名截圖一起送出。";
+      return;
+    }
+
+    // 不在 LINE 內：用開啟訊息視窗方式（保底）
+    const url = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
+    window.location.href = url;
   } catch (e) {
     console.error(e);
-    status.textContent = "送出失敗，請截圖回傳簽名。";
+    status.textContent = "送出失敗：請將資料手動截圖或複製後回傳給我們。";
   }
 };
-</script>
 
-  
-document.getElementById("sendInfo").addEventListener("click", () => {
-  const data = `
-【犬貓美容契約資料】
-姓名：${customerName.value || ""}
-電話：${phone.value || ""}
-身分證字號：${idNumber.value || ""}
-地址：${address.value || ""}
-寵物名字：${petName.value || ""}
-品種：${breed.value || ""}
-體重：${weight.value || ""}
-簽署日期：${signDate.value || ""}
-  `;
-
-  const url = "https://line.me/R/msg/text/?" + encodeURIComponent(data);
-  window.location.href = url;
-});
 </script>
 
 </body>
