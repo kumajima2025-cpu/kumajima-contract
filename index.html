@@ -419,7 +419,8 @@ ______________________________________________
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-/* ========= 基本設定 ========= */
+
+  /* ========= 基本設定 ========= */
 const LIFF_ID = "2008805180-dNJmIam4";
 
 /* ========= LIFF 初始化 ========= */
@@ -503,40 +504,67 @@ document.getElementById("submitAll").onclick = async () => {
   status.textContent = "";
 
   if (!hasStroke) {
-    status.textContent = "請先在簽名框簽名，並截圖保存。";
+    status.textContent = "請先在簽名框簽名。";
+    return;
+  }
+  if (!liff.isInClient()) {
+    status.textContent = "請在 LINE 官方帳號內開啟此頁面。";
     return;
   }
 
+  const payload = {
+    secret: SECRET,
+    customerName: v("customerName"),
+    phone: v("phone"),
+    idNumber: v("idNumber"),
+    address: v("address"),
+    petName: v("petName"),
+    breed: v("breed"),
+    weight: v("weight"),
+    signDate: v("signDate"),
+    signature: canvas.toDataURL("image/png")
+  };
+
   const text =
 `【犬貓美容契約簽署資料】
-甲方姓名：${v("customerName")}
-聯絡電話：${v("phone")}
-身分證字號：${v("idNumber")}
-通訊地址：${v("address")}
-寵物名字：${v("petName")}
-品種：${v("breed")}
-體重(公斤)：${v("weight")}
-審閱/簽署日期：${v("signDate")}
-
-（請在此訊息貼上簽名截圖）`;
+甲方姓名：${payload.customerName}
+聯絡電話：${payload.phone}
+身分證字號：${payload.idNumber}
+通訊地址：${payload.address}
+寵物名字：${payload.petName}
+品種：${payload.breed}
+體重(公斤)：${payload.weight}
+審閱/簽署日期：${payload.signDate}
+（簽名圖檔見下一則）`;
 
   try {
-    // 在 LINE 內：直接送文字
-    if (liff.isInClient()) {
-      await liff.sendMessages([{ type: "text", text }]);
-      status.style.color = "#111";
-      status.textContent = "✅ 已回傳資料！請到 LINE 對話貼上簽名截圖一起送出。";
-      return;
-    }
+    status.textContent = "上傳簽名中…";
 
-    // 不在 LINE 內：用開啟訊息視窗方式（保底）
-    const url = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
-    window.location.href = url;
+    const res = await fetch(SUBMIT_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || "Upload failed");
+
+    status.textContent = "傳送至 LINE 中…";
+
+    await liff.sendMessages([
+      { type: "text", text },
+      { type: "image", originalContentUrl: out.imageUrl, previewImageUrl: out.imageUrl }
+    ]);
+
+    status.style.color = "#111";
+    status.textContent = "✅ 已完成送出（資料＋簽名）！";
+
   } catch (e) {
     console.error(e);
-    status.textContent = "送出失敗：請將資料手動截圖或複製後回傳給我們。";
+    status.textContent = "送出失敗：請檢查網路或稍後再試。";
   }
 };
+
 
 </script>
 
