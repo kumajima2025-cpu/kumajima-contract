@@ -404,22 +404,33 @@ ______________________________________________
 
 <button class="btn-main" id="submitAll">送出簽署</button>
 <button class="btn-sub" id="clear">清除簽名</button>
-<p id="status" style="text-align:center; color:#d00; font-weight:700;"></p>
+<p id="status" style="text-align:center; color:#d00; font-weight:700; margin-top:10px;"></p>
+<button class="btn-sub" id="closeBtn" style="display:none;">關閉視窗</button>
 
 
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
 <script>
 (function () {
+  /* ========= 你的設定 ========= */
+  const LIFF_ID = "2008805180-dNJmIam4";
+  const SUBMIT_ENDPOINT = "https://script.google.com/macros/s/AKfycbykw5In_C7DIZuLIQiNt4UrKGgSKbAQfKrZMZHlYoH3dqp7kMLvyZKcqmRj1InMPSbcHQ/exec";
+  const SECRET = "KUMAJIMA_SECRET_2026";
+
   const status = document.getElementById("status");
-  const btn = document.getElementById("submitAll");
-  const clear = document.getElementById("clear");
+  const closeBtn = document.getElementById("closeBtn");
+  const submitBtn = document.getElementById("submitAll");
+  const clearBtn = document.getElementById("clear");
+
+  /* ========= 簽名 ========= */
   const canvas = document.getElementById("sig");
   const ctx = canvas.getContext("2d");
   let drawing = false;
   let hasStroke = false;
 
-  // 讓你在手機上直接看到 JS 有沒有跑
-  status.textContent = "✅ JS 已載入（可測試按鈕）";
+  function setStatus(text, ok=false) {
+    status.style.color = ok ? "#111" : "#d00";
+    status.textContent = text;
+  }
 
   function resizeCanvas() {
     const ratio = window.devicePixelRatio || 1;
@@ -464,18 +475,122 @@ ______________________________________________
   canvas.addEventListener("touchmove", move, { passive: false });
   canvas.addEventListener("touchend", end, { passive: false });
 
-  clear.addEventListener("click", () => {
+  clearBtn.addEventListener("click", () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     hasStroke = false;
-    status.textContent = "已清除簽名";
+    setStatus("已清除簽名");
   });
 
-  btn.addEventListener("click", () => {
-    status.textContent = hasStroke ? "✅ 按鈕有反應（已簽名）" : "⚠️ 按鈕有反應，但你還沒簽名";
+  /* ========= LIFF 初始化 ========= */
+  let liffReady = false;
+
+  async function init() {
+    try {
+      setStatus("初始化中…");
+      await liff.init({ liffId: LIFF_ID });
+      liffReady = true;
+
+      if (!liff.isInClient()) {
+        setStatus("⚠️ 請在 LINE 官方帳號內開啟此頁面（LIFF）");
+        return;
+      }
+      setStatus("✅ 可開始填寫並簽名", true);
+    } catch (e) {
+      console.error(e);
+      setStatus("初始化失敗（LIFF）");
+    }
+  }
+  init();
+
+  function v(id) {
+    return (document.getElementById(id)?.value || "").trim();
+  }
+
+  /* ========= 送出：上傳簽名→回傳URL→送到聊天室 ========= */
+  submitBtn.addEventListener("click", async () => {
+    try {
+      if (!liffReady) {
+        setStatus("LIFF 尚未初始化完成，請稍等 1 秒再試");
+        return;
+      }
+      if (!liff.isInClient()) {
+        setStatus("請在 LINE 內開啟此頁面後再送出");
+        return;
+      }
+      if (!hasStroke) {
+        setStatus("請先在簽名框簽名");
+        return;
+      }
+
+      // 基本必填（你可自行調整）
+      const name = v("customerName");
+      const phone = v("phone");
+      const signDate = v("signDate");
+      if (!name || !phone || !signDate) {
+        setStatus("請填寫：姓名 / 聯絡電話 / 審閱(簽署)日期");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      setStatus("上傳簽名中…");
+
+      const payload = {
+        secret: SECRET,
+        customerName: name,
+        phone: phone,
+        idNumber: v("idNumber"),
+        address: v("address"),
+        petName: v("petName"),
+        breed: v("breed"),
+        weight: v("weight"),
+        signDate: signDate,
+        signature: canvas.toDataURL("image/png")
+      };
+
+      const res = await fetch(SUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const out = await res.json();
+      if (!out.ok || !out.imageUrl) throw new Error(out.error || "Upload failed");
+
+      setStatus("傳送到 LINE 中…");
+
+      const text =
+`【犬貓美容契約簽署資料】
+甲方姓名：${payload.customerName}
+聯絡電話：${payload.phone}
+身分證字號：${payload.idNumber}
+通訊地址：${payload.address}
+寵物名字：${payload.petName}
+品種：${payload.breed}
+體重(公斤)：${payload.weight}
+審閱/簽署日期：${payload.signDate}`;
+
+      await liff.sendMessages([
+        { type: "text", text },
+        { type: "image", originalContentUrl: out.imageUrl, previewImageUrl: out.imageUrl }
+      ]);
+
+      setStatus("✅ 已完成回傳（資料＋簽名）！", true);
+
+      // 顯示關閉按鈕
+      closeBtn.style.display = "block";
+      closeBtn.onclick = () => liff.closeWindow();
+
+    } catch (e) {
+      console.error(e);
+      setStatus("送出失敗：請檢查網路或 Apps Script 部署權限");
+      submitBtn.disabled = false;
+    }
   });
 })();
 </script>
 
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 </body>
 </html>
