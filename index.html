@@ -404,155 +404,78 @@ ______________________________________________
 
 <button class="btn-main" id="submitAll">送出簽署</button>
 <button class="btn-sub" id="clear">清除簽名</button>
+<p id="status" style="text-align:center; color:#d00; font-weight:700;"></p>
 
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-
-const LIFF_ID = "2008805180-dNJmIam4";
-const SUBMIT_ENDPOINT = "https://script.google.com/macros/s/AKfycbykw5In_C7DIZuLIQiNt4UrKGgSKbAQfKrZMZHlYoH3dqp7kMLvyZKcqmRj1InMPSbcHQ/exec";
-const SECRET = "KUMAJIMA_SECRET_2026";
-
-
-/* ========= 簽名功能（手機可用） ========= */
-const canvas = document.getElementById("sig");
-const ctx = canvas.getContext("2d");
-let drawing = false;
-let hasStroke = false;
-
-function resizeCanvas() {
-  const ratio = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * ratio;
-  canvas.height = rect.height * ratio;
-  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  ctx.lineWidth = 2;
-  ctx.lineCap = "round";
-  ctx.strokeStyle = "#111";
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-function getPos(e) {
-  const r = canvas.getBoundingClientRect();
-  const t = e.touches ? e.touches[0] : e;
-  return { x: t.clientX - r.left, y: t.clientY - r.top };
-}
-
-function start(e) {
-  e.preventDefault();
-  drawing = true;
-  const p = getPos(e);
-  ctx.beginPath();
-  ctx.moveTo(p.x, p.y);
-}
-
-function move(e) {
-  if (!drawing) return;
-  e.preventDefault();
-  const p = getPos(e);
-  ctx.lineTo(p.x, p.y);
-  ctx.stroke();
-  hasStroke = true;
-}
-
-function end(e) {
-  drawing = false;
-}
-
-canvas.addEventListener("mousedown", start);
-canvas.addEventListener("mousemove", move);
-canvas.addEventListener("mouseup", end);
-canvas.addEventListener("mouseleave", end);
-
-canvas.addEventListener("touchstart", start, { passive: false });
-canvas.addEventListener("touchmove", move, { passive: false });
-canvas.addEventListener("touchend", end, { passive: false });
-
-document.getElementById("clear").onclick = () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  hasStroke = false;
-};
-
-/* ========= 送出「資料＋簽名」到 LINE ========= */
-function v(id) {
-  return (document.getElementById(id)?.value || "").trim();
-}
-  
-document.getElementById("submitAll").onclick = async () => {
+(function () {
   const status = document.getElementById("status");
-  const closeBtn = document.getElementById("closeBtn");
+  const btn = document.getElementById("submitAll");
+  const clear = document.getElementById("clear");
+  const canvas = document.getElementById("sig");
+  const ctx = canvas.getContext("2d");
+  let drawing = false;
+  let hasStroke = false;
 
-  status.style.color = "#d00";
-  status.textContent = "";
+  // 讓你在手機上直接看到 JS 有沒有跑
+  status.textContent = "✅ JS 已載入（可測試按鈕）";
 
-  if (!hasStroke) {
-    status.textContent = "請先在簽名框簽名。";
-    return;
+  function resizeCanvas() {
+    const ratio = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * ratio;
+    canvas.height = rect.height * ratio;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#111";
   }
-  if (!liff.isInClient()) {
-    status.textContent = "請在 LINE 官方帳號內開啟此頁面。";
-    return;
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
   }
-
-  const payload = {
-    secret: SECRET,
-    customerName: v("customerName"),
-    phone: v("phone"),
-    idNumber: v("idNumber"),
-    address: v("address"),
-    petName: v("petName"),
-    breed: v("breed"),
-    weight: v("weight"),
-    signDate: v("signDate"),
-    signature: canvas.toDataURL("image/png")
-  };
-
-  const text =
-`【犬貓美容契約簽署資料】
-甲方姓名：${payload.customerName}
-聯絡電話：${payload.phone}
-身分證字號：${payload.idNumber}
-通訊地址：${payload.address}
-寵物名字：${payload.petName}
-品種：${payload.breed}
-體重(公斤)：${payload.weight}
-審閱/簽署日期：${payload.signDate}`;
-
-  try {
-    status.textContent = "上傳簽名中…";
-
-    const res = await fetch(SUBMIT_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const out = await res.json();
-    if (!out.ok || !out.imageUrl) throw new Error(out.error || "Upload failed");
-
-    status.textContent = "傳送到 LINE 中…";
-
-    await liff.sendMessages([
-      { type: "text", text },
-      { type: "image", originalContentUrl: out.imageUrl, previewImageUrl: out.imageUrl }
-    ]);
-
-    status.style.color = "#111";
-    status.textContent = "✅ 已完成簽署回傳（資料＋簽名）！可按下方關閉。";
-    document.getElementById("submitAll").disabled = true;
-
-    // 顯示關閉按鈕
-    closeBtn.style.display = "block";
-    closeBtn.onclick = () => liff.closeWindow();
-
-  } catch (e) {
-    console.error(e);
-    status.textContent = "送出失敗：請稍後再試（可能是網路或 Apps Script 權限）。";
+  function start(e) {
+    e.preventDefault();
+    drawing = true;
+    const p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
   }
-};
+  function move(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = getPos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    hasStroke = true;
+  }
+  function end() { drawing = false; }
 
+  canvas.addEventListener("mousedown", start);
+  canvas.addEventListener("mousemove", move);
+  canvas.addEventListener("mouseup", end);
+  canvas.addEventListener("mouseleave", end);
+  canvas.addEventListener("touchstart", start, { passive: false });
+  canvas.addEventListener("touchmove", move, { passive: false });
+  canvas.addEventListener("touchend", end, { passive: false });
+
+  clear.addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasStroke = false;
+    status.textContent = "已清除簽名";
+  });
+
+  btn.addEventListener("click", () => {
+    status.textContent = hasStroke ? "✅ 按鈕有反應（已簽名）" : "⚠️ 按鈕有反應，但你還沒簽名";
+  });
+})();
 </script>
+
 
 </body>
 </html>
