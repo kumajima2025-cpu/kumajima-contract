@@ -1,155 +1,111 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>電子契約簽署</title>
-
-  <!-- LIFF SDK -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>犬、貓美容服務契約簽署</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
-    :root{
-      --bg:#fafafa; --card:#fff; --text:#111; --muted:#666;
-      --line:#e6e6e6; --primary:#111; --danger:#d00; --ok:#0a7;
-    }
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Segoe UI",Roboto,Arial,"PingFang TC",sans-serif;
-      background:var(--bg); color:var(--text);
-    }
-    .wrap{ max-width:860px; margin:0 auto; padding:16px; }
-    .card{
-      background:var(--card); border:1px solid var(--line); border-radius:16px;
-      padding:16px; box-shadow:0 2px 14px rgba(0,0,0,.04); margin-bottom:12px;
-    }
-    h1{ font-size:18px; margin:0 0 8px; }
-    h2{ font-size:16px; margin:0 0 8px; }
-    .muted{ color:var(--muted); font-size:13px; line-height:1.5; }
-    label{ display:block; font-weight:700; margin:10px 0 6px; }
-    input, textarea{
-      width:100%; box-sizing:border-box; border:1px solid var(--line); border-radius:12px;
-      padding:12px; font-size:15px; background:#fff; outline:none;
-    }
-    textarea{ min-height:84px; resize:vertical; }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; }
-    .row > div{ flex:1 1 220px; }
-
-    .contract{
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:12px;
-      background:#fff;
-      max-height:320px;
-      overflow:auto;
-      white-space:pre-wrap;
-      line-height:1.7;
-      font-size:14px;
-    }
-
-    #sig{
-      width:100%;
-      height:220px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:#fff;
-      touch-action:none;
-      display:block;
-    }
-    .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-    button{
-      border:0; border-radius:12px; padding:12px 14px;
-      font-size:15px; font-weight:700; cursor:pointer;
-    }
-    .btn-primary{ background:var(--primary); color:#fff; }
-    .btn-ghost{ background:#f2f2f2; color:#111; }
-    .hint{ margin-top:8px; font-weight:700; color:var(--danger); font-size:13px; line-height:1.5; }
-    .ok{ color:var(--ok); font-weight:700; margin-top:8px; }
-
-    #debug{
-      margin-top:10px;
-      white-space:pre-wrap;
-      font-size:12px;
-      background:#0b0b0b;
-      color:#d6d6d6;
-      padding:10px;
-      border-radius:12px;
-      display:none;
-    }
-
-    /* 非 LIFF 引導遮罩 */
-    #gate{
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.72);
-      z-index:99999;
-      padding:16px;
-      box-sizing:border-box;
-    }
-    #gate .panel{
-      max-width:560px;
-      margin:10vh auto 0;
-      background:#fff;
-      border-radius:16px;
-      padding:16px;
-      border:1px solid var(--line);
-    }
-    #gate .panel h2{ margin:0 0 8px; }
-    #gate .panel p{ margin:0 0 10px; color:#333; line-height:1.6; }
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;background:#f5f5f7;color:#111}
+    .wrap{max-width:920px;margin:0 auto;padding:16px}
+    .card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 1px 8px rgba(0,0,0,.04)}
+    h1{font-size:18px;margin:0 0 6px}
+    h2{font-size:16px;margin:0 0 10px}
+    .sub{font-size:13px;color:#444;line-height:1.6}
+    label{display:block;font-weight:700;margin:10px 0 6px}
+    input,select,textarea{width:100%;box-sizing:border-box;padding:10px 12px;font-size:15px;border:1px solid #d3d3d7;border-radius:12px;background:#fff}
+    textarea{min-height:90px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .row>div{flex:1 1 240px}
+    .contractBox{border:1px solid #d3d3d7;border-radius:12px;background:#fff;max-height:420px;overflow:auto}
+    pre{margin:0;padding:12px;white-space:pre-wrap;line-height:1.7;font-size:14px}
+    #sig{width:100%;height:230px;border:1px solid #bdbdc4;border-radius:12px;background:#fff;touch-action:none}
+    .btns{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    button{flex:1 1 180px;padding:12px 14px;font-size:16px;font-weight:800;border:none;border-radius:14px;cursor:pointer}
+    .btn-clear{background:#eee}
+    .btn-submit{background:#111;color:#fff}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .error{margin-top:10px;color:#c00;font-weight:800;white-space:pre-wrap}
+    .ok{margin-top:10px;color:#0a7a2f;font-weight:800;white-space:pre-wrap}
   </style>
 </head>
 
 <body>
-  <!-- 非 LIFF 引導 -->
-  <div id="gate">
-    <div class="panel">
-      <h2>請用 LINE 內開啟以完成簽署</h2>
-      <p>你目前是用一般網頁方式開啟，無法回傳簽名與自動關閉視窗。</p>
-      <p class="muted">請點下面按鈕，改用 LIFF 方式在 LINE 內開啟。</p>
-      <div class="btns">
-        <button id="btnOpenLiff" class="btn-primary" type="button">改用 LINE 內開啟</button>
-      </div>
-      <p class="muted" style="margin-top:10px;">
-        如果你是從 LINE 裡點到「在外部瀏覽器開啟」，請回到 LINE 對話重新點一次連結。
-      </p>
+<div class="wrap">
+
+ <div class="card">
+  <h2>基本資料填寫</h2>
+
+  <div class="gridForm">
+    <div class="field">
+      <div class="fieldLabel">甲方姓名（飼主）</div>
+      <input id="ownerName" />
+    </div>
+
+    <div class="field">
+      <div class="fieldLabel">身分證字號</div>
+      <input id="ownerIdNo" />
+    </div>
+
+    <div class="field">
+      <div class="fieldLabel">聯絡電話</div>
+      <input id="ownerPhone" inputmode="tel" />
+    </div>
+
+    <div class="field">
+      <div class="fieldLabel">通訊地址</div>
+      <input id="ownerAddress" />
+    </div>
+
+    <div class="field">
+      <div class="fieldLabel">寵物姓名</div>
+      <input id="petName" />
+    </div>
+
+    <div class="field">
+      <div class="fieldLabel">寵物品種</div>
+      <input id="petBreed" />
+    </div>
+
+    <div class="field">
+      <div class="fieldLabel">體重（公斤）</div>
+      <input id="petWeight" inputmode="decimal" placeholder="例如：6.8" />
     </div>
   </div>
+</div>
 
-  <div class="wrap">
-    <div class="card">
-      <h1>電子契約簽署</h1>
-      <div class="muted">
-        請確認資料無誤後簽名送出。送出成功後，系統將回傳簽署結果至 LINE 對話（需在 LINE 內開啟）。
-      </div>
-    </div>
+  .gridForm{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:12px;
+}
+.field{
+  border:1px solid #d3d3d7;
+  border-radius:12px;
+  background:#fff;
+  padding:10px 12px;
+}
+.fieldLabel{
+  font-weight:800;
+  margin-bottom:8px;
+}
+.field input{
+  width:100%;
+  box-sizing:border-box;
+  padding:10px 12px;
+  font-size:15px;
+  border:1px solid #e1e1e6;
+  border-radius:10px;
+}
+@media (max-width:640px){
+  .gridForm{ grid-template-columns:1fr; }
+}
 
-    <div class="card">
-      <h2>基本資料</h2>
-      <div class="row">
-        <div>
-          <label>姓名</label>
-          <input id="name" placeholder="請輸入姓名" />
-        </div>
-        <div>
-          <label>電話</label>
-          <input id="phone" placeholder="請輸入電話" />
-        </div>
-        <div>
-          <label>日期</label>
-          <input id="date" />
-        </div>
-      </div>
-
-      <label>備註（選填）</label>
-      <textarea id="note" placeholder="例如：犬隻狀況、特殊注意事項"></textarea>
-    </div>
-
-    <div class="card">
-      <h2>契約內容（請完整閱讀）</h2>
-      <div class="muted" style="margin-bottom:8px;">請向下滑動閱讀完整內容。</div>
-
-      <div class="contract" id="contractText">為了保障毛孩的安全與您的權益，本店採用犬、貓美容服務定型化契約。
+  <div class="card">
+    <h2>契約內容（請完整閱讀）</h2>
+    <div class="contractBox">
+      <pre id="contractText">為了保障毛孩的安全與您的權益，本店採用犬、貓美容服務定型化契約。
 請您在簽署前，花一點時間完整閱讀以下內容。
 本契約主要說明雙方的權利與義務，以及服務過程中可能涉及的重要事項。
 另有一份「犬、貓美容服務簽約前詢問事項及基本資料表」，將於服務前或到店時填寫，
@@ -181,15 +137,15 @@
 
 甲乙雙方同意就本契約所載條款及附件內容辦理：
 
-　　第 一 條 (契約目的與範圍)
+第 一 條 (契約目的與範圍)
 犬、貓美容服務，指提供犬、貓外表部位清洗或清潔、吹乾梳毛、
 毛髮修剪及造型設計等美容服務之行為。但不得涉及動物醫療行為及宣稱醫療效能。
 
-　　第 二 條 (資訊揭露義務)
+第 二 條 (資訊揭露義務)
 乙方應至少以半開大小以上紙張或以電子方式，將犬、貓美容服務定型化契約公告於營業櫃台或場所明顯處；
 有設置網站或經營社群媒體者，並應於網頁明顯處公告。
 
-　　第 三 條 (寵物、甲方及乙方相關資料)
+第 三 條 (寵物、甲方及乙方相關資料)
 本契約應記載寵物、甲方及乙方之下列基本資料（如附件）：
 (一)寵物：犬、貓之寵物登記晶片號碼。但貓未辦理寵物登記者，得提供其他足以辨識個體身分之資訊。
 (二)甲方：
@@ -208,14 +164,14 @@
 5. 聯絡電話：
 6. 犬、貓需緊急就醫時如無指定，送交之獸醫診療場所。
 
-　　第 四 條 (服務內容之說明及確認)
+第 四 條 (服務內容之說明及確認)
 乙方應將甲方所選擇之美容服務項目、期間、次數、有無約定指定服務人員、
 費用及其支付方式，於訂約前向甲方充分說明。
 乙方應將實施之犬、貓美容服務內容製作紀錄，經甲方簽名確認後，提供正本予甲方留存。
 前項紀錄之提供及甲方確認之方式，乙方得以書面、電子或其他適當之方式為之。
 乙方收取犬、貓美容服務費用，應開立憑證予甲方。
 
-　　第 五 條 (乙方詢問及照護義務)
+第 五 條 (乙方詢問及照護義務)
 乙方於實施犬、貓美容服務前，應向甲方詢問犬、貓個性、
 是否具攻擊性、有無疾病、病史等生理狀況或其他特殊須注意事項，
 並檢查犬、貓現況，以判斷是否合適接受犬、貓美容服務；
@@ -233,7 +189,7 @@
 環境及安全，並避免犬、貓遭受驚嚇、痛苦或傷害。
 (六)提供犬、貓其他妥善之照顧。
 
-　　第 六 條 (犬、貓於美容服務期間有異常狀況或死亡情形之處理)
+第 六 條 (犬、貓於美容服務期間有異常狀況或死亡情形之處理)
 於美容服務期間，乙方發現犬、貓實施美容部位或生理健康有異常狀況時，
 應立即妥善處理，嗣後並通知甲方或其指定之緊急聯絡人。
 犬、貓有緊急就醫必要時，除立即通知甲方或其指定之緊急聯絡人外，
@@ -247,7 +203,7 @@
 發生第一項或前項之情形，為可歸責於乙方之事由所致者，
 乙方應負損害賠償及動物保護法相關責任。
 
-　　第 七 條（甲方繳款方式及預付儲值金約定）
+第 七 條（甲方繳款方式及預付儲值金約定）
 甲方應負擔契約總金額之繳交方式如下：
 □現金。 □銀行轉帳。 □信用卡。 □其他方式：________________。
 前項繳款方式，得依實際服務內容及雙方約定方式辦理。
@@ -263,13 +219,13 @@
 如本契約依法解除或終止，尚未使用之儲值金，乙方應依本契約及相關法令規定辦理退還。
 甲方確認已於儲值前充分了解儲值方案內容，並同意依其約定方式使用。
 
-　　第 八 條 (犬、貓美容服務實施前，甲方任意解除契約之退費規定)
+第 八 條 (犬、貓美容服務實施前，甲方任意解除契約之退費規定)
 犬、貓美容服務實施前，甲方得隨時解除契約。
 犬、貓美容服務實施前，因甲方任意解除本契約者，
 乙方應於解約日後三日內，將已收取之費用全額退還予甲方，
 不另收取任何解約手續費。
 
-　　第 九 條 (犬、貓美容服務實施後，甲方任意終止契約之退費規定)
+第 九 條 (犬、貓美容服務實施後，甲方任意終止契約之退費規定)
 犬、貓美容服務實施後，甲方得隨時終止契約。但單次服務，不適用之。
 犬、貓美容服務實施後，因甲方任意終止本契約者，
 乙方應於終止日後三日內將已收取之費用扣除已接受美容服務費用及依前條第三項之手續費後退還於甲方。
@@ -285,108 +241,80 @@
 三、前項儲值服務之退費，僅就甲方實際支付之未使用金額部分辦理；
 乙方基於促銷、回饋或優惠所附贈之金額、次數或服務內容，不列入退費計算範圍。
 
-　　第 十 條 (可歸責於乙方，甲方解除或終止契約之退費規定)
-乙方有下列事由之一者，未經甲方之同意，甲方得解除或
-終止本契約：
+第 十 條 (可歸責於乙方，甲方解除或終止契約之退費規定)
+乙方有下列事由之一者，未經甲方之同意，甲方得解除或終止本契約：
 (一)將本契約之全部或部分委由其分支機構或其他犬、貓美容服務業者代為履行。
 (二)變更服務地點。
 (三)變更甲方指定之犬、貓美容服務人員。
-前項情形，乙方應於解除或終止後三日內退還相關費用予甲方；
-甲方另受有損害時，並應賠償。
+前項情形，乙方應於解除或終止後三日內退還相關費用予甲方；甲方另受有損害時，並應賠償。
 前項相關費用之計算，應以已收取之費用扣除前條第三項勾選計算之費用。
 
-　　第 十一 條 (不可歸責於雙方，解除或終止契約之退費規定)
-有下列事由之一者，契約雙方得於犬、貓美容服務實施前
-解除或實施後終止契約：
-(一)因天災、事變、政府法令等不可抗力
-或不可歸責於雙方當事人之事由，致不能履約。
-(二)犬、貓因死亡、疾病、健康情形不佳或抗拒接受美容服務，
-致難以繼續接受本契約之服務。
+第 十一 條 (不可歸責於雙方，解除或終止契約之退費規定)
+有下列事由之一者，契約雙方得於犬、貓美容服務實施前解除或實施後終止契約：
+(一)因天災、事變、政府法令等不可抗力或不可歸責於雙方當事人之事由，致不能履約。
+(二)犬、貓因死亡、疾病、健康情形不佳或抗拒接受美容服務，致難以繼續接受本契約之服務。
 前項情形，乙方應依第八條或第九條規定退還費用予甲方。但不得扣除手續費。
 
-　　第 十二 條 (甲方逾時接回犬、貓之處理方式)
+第 十二 條 (甲方逾時接回犬、貓之處理方式)
 乙方完成犬、貓美容服務後，甲方應依雙方約定時間接回犬、貓。
 甲方接回犬、貓之時間已逾約定時間者，乙方之處理方式如下：
 已同意收取逾時費，每小時新臺幣壹佰元。
 逾時未滿三十分鐘不收取逾時費，逾時三十分鐘起開始計算逾時費，
-其超過部分，未滿三十分鐘者，以半小時計算；
-超過三十分鐘以上未滿一小時者，以一小時計算。
-甲方未於當日營業時間內，依雙方約定時間接回犬、貓者，
-乙方應通知甲方或其緊急聯絡人。
-經通知仍未接回，或無法聯繫時，乙方得於善盡照護義務之前提下，
-持續代為照護犬、貓，並得向甲方收取逾時照護費。
+其超過部分，未滿三十分鐘者，以半小時計算；超過三十分鐘以上未滿一小時者，以一小時計算。
+甲方未於當日營業時間內，依雙方約定時間接回犬、貓者，乙方應通知甲方或其緊急聯絡人。
+經通知仍未接回，或無法聯繫時，乙方得於善盡照護義務之前提下，持續代為照護犬、貓，並得向甲方收取逾時照護費。
 前項逾時照護費之計算方式如下：
 每小時新臺幣壹佰元；未滿三十分鐘不計費，逾三十分鐘起以一小時計算。
 前述逾時照護費，每日最高不逾該次美容服務費用之三倍。
 甲方逾三日未接回犬、貓者，乙方應通知動物保護主管機關依動物保護法相關規定處理。
 
-　　第 十三 條 (不可歸責於甲方，未接回犬、貓之處理方式)
-因天災、事變、政府法令等不可抗力或不可歸責於甲方之事由，
-致甲方無法於約定時間內接回犬、貓者，乙方應安置犬、貓。
-乙方提出履行前項安置犬、貓已支付之必要費用並經核實者，
-得請求甲方償還。於安置期間，發生就醫需要或死亡之情形，
-依第六條規定辦理。
+第 十三 條 (不可歸責於甲方，未接回犬、貓之處理方式)
+因天災、事變、政府法令等不可抗力或不可歸責於甲方之事由，致甲方無法於約定時間內接回犬、貓者，乙方應安置犬、貓。
+乙方提出履行前項安置犬、貓已支付之必要費用並經核實者，得請求甲方償還。於安置期間，發生就醫需要或死亡之情形，依第六條規定辦理。
 第一項事由發生時，乙方最遲應於可正常通訊之次日通知動物保護主管機關知悉。
 事件原因消滅後，乙方應通知甲方或其緊急聯絡人接回犬、貓，並依前條規定辦理。
 甲方當日未接回犬、貓時，乙方應於次日通知動物保護主管機關依動物保護法相關規定處理。
 
-　　第 十四 條（費用明確性原則）
-本契約之費用，包含犬、貓美容服務所需之商品、
-材料費、服務費及指定服務人員費等項目，其實際金額，
-應依甲方當次選擇之服務內容、
-項目及乙方公告之收費標準或雙方另行約定之金額為準。
-乙方應於服務前，向甲方清楚說明當次服務之項目及費用；
-未經說明或未經甲方同意之費用，乙方不得另行向甲方收取。
-因繳費或儲值而獲得贈送之商品、金額或服務內容，
-屬促銷或優惠性質，於本契約解除或終止時，
-乙方不得向甲方請求返還該贈送內容，
-亦不得主張自返還之費用金額中扣除其價額。
+第 十四 條（費用明確性原則）
+本契約之費用，包含犬、貓美容服務所需之商品、材料費、服務費及指定服務人員費等項目，其實際金額，
+應依甲方當次選擇之服務內容、項目及乙方公告之收費標準或雙方另行約定之金額為準。
+乙方應於服務前，向甲方清楚說明當次服務之項目及費用；未經說明或未經甲方同意之費用，乙方不得另行向甲方收取。
+因繳費或儲值而獲得贈送之商品、金額或服務內容，屬促銷或優惠性質，於本契約解除或終止時，
+乙方不得向甲方請求返還該贈送內容，亦不得主張自返還之費用金額中扣除其價額。
 
-　　第 十五 條（預收犬、貓美容服務費用之履約保障）
-乙方如有預收犬、貓美容服務費用之情形，
-原則上應依相關法令規定提供履約保障。
-但本契約所約定之服務，屬單次或非長期固定期限之
-犬、貓美容服務，且甲方未使用之預收費用金額未達
-新臺幣一萬元者，依相關法令規定，乙方得不另行提供履約保障，前項履約保障方式亦不適用之。
+第 十五 條（預收犬、貓美容服務費用之履約保障）
+乙方如有預收犬、貓美容服務費用之情形，原則上應依相關法令規定提供履約保障。
+但本契約所約定之服務，屬單次或非長期固定期限之犬、貓美容服務，且甲方未使用之預收費用金額未達新臺幣一萬元者，
+依相關法令規定，乙方得不另行提供履約保障，前項履約保障方式亦不適用之。
 
-　　第 十六 條 (個人資料保護)
-乙方因本契約而知悉或持有甲方之個人資料，
-應予保密並依個人資料保護法相關規定辦理，
-非經甲方書面同意，乙方不得對外揭露或為契約目的範圍外之利用；
-契約關係消滅後，亦同。
+第 十六 條 (個人資料保護)
+乙方因本契約而知悉或持有甲方之個人資料，應予保密並依個人資料保護法相關規定辦理，
+非經甲方書面同意，乙方不得對外揭露或為契約目的範圍外之利用；契約關係消滅後，亦同。
 
-　　第 十七 條 (違約賠償)
-因可歸責於當事人一方之事由違反本契約條款，
-致他方遭受損害，應負損害賠償責任。
+第 十七 條 (違約賠償)
+因可歸責於當事人一方之事由違反本契約條款，致他方遭受損害，應負損害賠償責任。
 
-　　第 十八 條 (履行輔助人)
-就本契約之履行，經甲方同意將本契約之全部或部分
-委由其他犬、貓美容服務業者代為履行者，
+第 十八 條 (履行輔助人)
+就本契約之履行，經甲方同意將本契約之全部或部分委由其他犬、貓美容服務業者代為履行者，
 該受託犬、貓美容服務業者，視為乙方之代理人或使用人。
 
-　　第 十九 條 (申訴處理)
-甲方對乙方提供之犬、貓美容服務有不滿意時，
-乙方應指派專人接受申訴。
+第 十九 條 (申訴處理)
+甲方對乙方提供之犬、貓美容服務有不滿意時，乙方應指派專人接受申訴。
 因本契約所生爭議，雙方應儘量以協商方式處理。
-甲方向所在地消費者保護官、消費爭議調解委員會、
-鄉(鎮、市、區)公所調解委員會申請調解時，
-乙方應配合前往辦理。
+甲方向所在地消費者保護官、消費爭議調解委員會、鄉(鎮、市、區)公所調解委員會申請調解時，乙方應配合前往辦理。
 
-　　第 二十 條 (管轄法院)
+第 二十 條 (管轄法院)
 因本契約涉訟者，甲乙雙方同意以新北地方法院為第一審管轄法院。
-但不得排除消費者保護法第四十七條或民事訴訟法第四百三十六條之九
-有關小額訴訟管轄法院之適用。
+但不得排除消費者保護法第四十七條或民事訴訟法第四百三十六條之九有關小額訴訟管轄法院之適用。
 
-　　第 二十一 條 (契約及其相關附件效力)
+第 二十一 條 (契約及其相關附件效力)
 本契約自簽約日起生效，雙方各執一份契約正本。
 本契約廣告及相關附件視為本契約之一部分。
 
-　　第 二十二 條（附件之效力）
+第 二十二 條（附件之效力）
 本契約之附件「犬、貓美容服務簽約前詢問事項及基本資料表」
-（包含但不限於寵物基本資料、健康狀況、個性傾向、病史、
-服務項目及相關告知事項），為本契約之一部分，與本契約具有同一之效力。
-甲方確認已於簽訂本契約前，依乙方之說明完整填寫前述附件，
-並同意其內容作為乙方評估是否提供犬、貓美容服務及服務方式之依據。
+（包含但不限於寵物基本資料、健康狀況、個性傾向、病史、服務項目及相關告知事項），為本契約之一部分，與本契約具有同一之效力。
+甲方確認已於簽訂本契約前，依乙方之說明完整填寫前述附件，並同意其內容作為乙方評估是否提供犬、貓美容服務及服務方式之依據。
 前述附件得以書面、電子文件、拍照、掃描或其他可供日後查證之方式留存，均視為有效。
 
 ______________________________________________
@@ -404,252 +332,241 @@ ______________________________________________
 營業地址：新北市板橋區合宜一路11號
 聯絡電話：
 
-中 華 民 國 年 月 日</div>
-    </div>
-
-    <div class="card">
-      <h2>甲方簽名</h2>
-      <canvas id="sig"></canvas>
-
-      <div class="btns">
-        <button id="btnClear" class="btn-ghost" type="button">清除簽名</button>
-        <button id="btnSubmit" class="btn-primary" type="button">送出簽署</button>
-        <button id="btnToggleDebug" class="btn-ghost" type="button">顯示/隱藏除錯</button>
-      </div>
-
-      <div id="status" class="hint" style="display:none;"></div>
-      <div id="debug"></div>
+中 華 民 國 年 月 日</pre>
     </div>
   </div>
 
-  <script>
-    /**********************
-     * 只要改這兩個
-     **********************/
-    const LIFF_ID = "2008805180-dNJmIam4";
-    const WEBHOOK_URL = "https://kumajima2025-cpu.github.io/kumajima-contract/";
-    /**********************/
+  <div class="card">
+    <h2>甲方簽名</h2>
+    <canvas id="sig"></canvas>
 
-    // 日期預設今天
-    (function initDate(){
-      const d = new Date();
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth()+1).padStart(2,'0');
-      const dd = String(d.getDate()).padStart(2,'0');
-      document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
-    })();
+    <div class="btns">
+      <button class="btn-clear" id="clear" type="button">清除簽名</button>
+      <button class="btn-submit" id="submit" type="button">送出簽署</button>
+    </div>
 
-    const gate = document.getElementById('gate');
-    const statusEl = document.getElementById('status');
-    const debugEl = document.getElementById('debug');
+    <div id="msg" class="error"></div>
+  </div>
 
-    function showStatus(msg, type="err"){
-      statusEl.style.display = "block";
-      statusEl.className = (type === "ok") ? "ok" : "hint";
-      statusEl.textContent = msg;
-    }
-    function clearStatus(){ statusEl.style.display="none"; statusEl.textContent=""; }
+</div>
 
-    function log(msg){
-      console.log(msg);
-      debugEl.textContent += msg + "\n";
-    }
+<script>
+const LIFF_ID = "2008805180-dNJmIam4";
+const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbykw5In_C7DIZuLIQiNt4UrKGgSKbAQfKrZMZHlYoH3dqp7kMLvyZKcqmRj1InMPSbcHQ/exec";
 
-    document.getElementById('btnToggleDebug').addEventListener('click', ()=>{
-      debugEl.style.display = (debugEl.style.display === "block") ? "none" : "block";
-    });
+const msgEl = document.getElementById("msg") || document.getElementById("error");
 
-    document.getElementById('btnOpenLiff').addEventListener('click', ()=>{
-      const redirect = encodeURIComponent(location.href);
-      location.href = `https://liff.line.me/${2008805180-dNJmIam4}?redirect=${redirect}`;
-    });
+function setMsg(t){ if(msgEl) msgEl.textContent = t || ""; }
 
-    // ===== 簽名板（穩定版）=====
-    const canvas = document.getElementById('sig');
-    const ctx = canvas.getContext('2d');
+function must(v){ return (v || "").trim(); }
 
-    function resizeCanvas(){
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width  = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.lineWidth = 2.8;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-    }
-    window.addEventListener('resize', resizeCanvas);
-    setTimeout(resizeCanvas, 0);
+function hasSignature(canvas){
+  const ctx = canvas.getContext("2d");
+  const {width:w, height:h} = canvas;
+  const data = ctx.getImageData(0,0,w,h).data;
+  for(let i=3;i<data.length;i+=4){
+    if(data[i] !== 0) return true;
+  }
+  return false;
+}
 
-    let drawing = false;
+function makeReceiptPng(){
+  const ownerName = must(document.getElementById("ownerName").value);
+  const ownerIdNo = must(document.getElementById("ownerIdNo").value);
+  const ownerPhone = must(document.getElementById("ownerPhone").value);
+  const ownerAddress = must(document.getElementById("ownerAddress").value);
+  const petName = must(document.getElementById("petName").value);
+  const petBreed = must(document.getElementById("petBreed").value);
+  const petWeight = must(document.getElementById("petWeight").value);
 
-    function getPos(e){
-      const rect = canvas.getBoundingClientRect();
-      const p = (e.touches && e.touches[0]) ? e.touches[0] : e;
-      return { x: p.clientX - rect.left, y: p.clientY - rect.top };
-    }
-    function start(e){
-      e.preventDefault();
-      drawing = true;
-      const {x,y} = getPos(e);
-      ctx.beginPath();
-      ctx.moveTo(x,y);
-    }
-    function move(e){
-      if(!drawing) return;
-      e.preventDefault();
-      const {x,y} = getPos(e);
-      ctx.lineTo(x,y);
-      ctx.stroke();
-    }
-    function end(e){
-      if(!drawing) return;
-      e.preventDefault();
-      drawing = false;
-    }
+  const sigCanvas = document.getElementById("sig");
+  const sigDataUrl = sigCanvas.toDataURL("image/png");
 
-    canvas.addEventListener('pointerdown', start);
-    canvas.addEventListener('pointermove', move);
-    canvas.addEventListener('pointerup', end);
-    canvas.addEventListener('pointercancel', end);
+  const W = 1080;
+  const margin = 60;
+  const lineH = 54;
 
-    canvas.addEventListener('touchstart', start, {passive:false});
-    canvas.addEventListener('touchmove', move, {passive:false});
-    canvas.addEventListener('touchend', end, {passive:false});
+ <div class="card">
+  <h2>基本資料填寫</h2>
 
-    document.getElementById('btnClear').addEventListener('click', ()=>{
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      clearStatus();
-      log("清除簽名");
-    });
+  <div class="gridForm">
+    <div class="field">
+      <div class="fieldLabel">甲方姓名（飼主）</div>
+      <input id="ownerName" placeholder="請輸入飼主姓名（例：王小明）" />
+    </div>
 
-    function hasSignature(){
-      const dataUrl = canvas.toDataURL("image/png");
-      return dataUrl && dataUrl.length > 2000;
-    }
+    <div class="field">
+      <div class="fieldLabel">身分證字號</div>
+      <input id="ownerIdNo" placeholder="請輸入身分證字號（例：A123456789）" />
+    </div>
 
-    // ===== LIFF 初始化與判斷 =====
-    async function initLiff(){
-      try{
-        if(typeof liff === "undefined"){
-          showStatus("LIFF SDK 未載入，請確認有引入 liff sdk。", "err");
-          return { ok:false };
-        }
+    <div class="field">
+      <div class="fieldLabel">聯絡電話</div>
+      <input id="ownerPhone" inputmode="tel" placeholder="請輸入聯絡電話（例：0912-345-678）" />
+    </div>
 
-        await liff.init({ liffId: LIFF_ID });
-        log("liff.init OK, isInClient=" + liff.isInClient());
+    <div class="field">
+      <div class="fieldLabel">通訊地址</div>
+      <input id="ownerAddress" placeholder="請輸入通訊地址（例：新北市板橋區合宜一路11號）" />
+    </div>
 
-        if(!liff.isInClient()){
-          gate.style.display = "block";
-          showStatus("請用 LINE 內（LIFF）開啟才能送出簽署。", "err");
-          return { ok:true, inClient:false };
-        }
+    <div class="field">
+      <div class="fieldLabel">寵物姓名</div>
+      <input id="petName" placeholder="請輸入寵物姓名（例：Lisa）" />
+    </div>
 
-        const p = new URLSearchParams(location.search);
-        const redirect = p.get("redirect");
-        if(redirect){
-          const target = decodeURIComponent(redirect);
-          log("redirect -> " + target);
-          location.replace(target);
-          return { ok:true, inClient:true, redirected:true };
-        }
+    <div class="field">
+      <div class="fieldLabel">寵物品種</div>
+      <input id="petBreed" placeholder="請輸入寵物品種（例：比熊犬）" />
+    </div>
 
-        return { ok:true, inClient:true };
-      }catch(e){
-        showStatus("LIFF 初始化失敗：" + (e?.message || e), "err");
-        log("LIFF init FAILED: " + (e?.message || e));
-        return { ok:false, error:e };
+    <div class="field">
+      <div class="fieldLabel">體重（公斤）</div>
+      <input id="petWeight" inputmode="decimal" placeholder="請輸入體重（例：6.8）" />
+    </div>
+  </div>
+  ];
+
+  const sigImg = new Image();
+  return new Promise((resolve, reject) => {
+    sigImg.onload = () => {
+      const sigW = W - margin*2;
+      const sigH = Math.round(sigW * (sigImg.height / sigImg.width));
+      const H = margin + lines.length*lineH + 30 + sigH + margin;
+
+      const c = document.createElement("canvas");
+      c.width = W;
+      c.height = H;
+      const ctx = c.getContext("2d");
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0,0,W,H);
+
+      ctx.fillStyle = "#111";
+      ctx.font = "bold 40px -apple-system,BlinkMacSystemFont,'Noto Sans TC',sans-serif";
+      ctx.fillText(lines[0], margin, margin + 20);
+
+      ctx.font = "28px -apple-system,BlinkMacSystemFont,'Noto Sans TC',sans-serif";
+      let y = margin + 80;
+      for(let i=1;i<lines.length;i++){
+        ctx.fillText(lines[i], margin, y);
+        y += lineH;
       }
+
+      const sigY = y - lineH + 20;
+      ctx.strokeStyle = "#d3d3d7";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(margin, sigY, sigW, sigH);
+      ctx.drawImage(sigImg, margin, sigY, sigW, sigH);
+
+      resolve({
+        pngDataUrl: c.toDataURL("image/png"),
+        fields: { ownerName, ownerIdNo, ownerPhone, ownerAddress, petName, petBreed, petWeight }
+      });
+    };
+    sigImg.onerror = reject;
+    sigImg.src = sigDataUrl;
+  });
+}
+
+async function submitContract(){
+  setMsg("");
+
+  const ownerName = must(document.getElementById("ownerName").value);
+  const ownerIdNo = must(document.getElementById("ownerIdNo").value);
+  const ownerPhone = must(document.getElementById("ownerPhone").value);
+  const ownerAddress = must(document.getElementById("ownerAddress").value);
+  const petName = must(document.getElementById("petName").value);
+  const petBreed = must(document.getElementById("petBreed").value);
+  const petWeight = must(document.getElementById("petWeight").value);
+
+  if(!ownerName || !ownerIdNo || !ownerPhone || !ownerAddress || !petName || !petBreed || !petWeight){
+    setMsg("請完整填寫 7 個欄位後再送出");
+    return;
+  }
+
+  const sigCanvas = document.getElementById("sig");
+  if(!hasSignature(sigCanvas)){
+    setMsg("請先完成簽名");
+    return;
+  }
+
+  const agree = document.getElementById("agree");
+  if(agree && !agree.checked){
+    setMsg("請勾選：我已完整閱讀並同意上述契約內容");
+    return;
+  }
+
+  if(!GAS_WEBAPP_URL || GAS_WEBAPP_URL.includes("貼上")){
+    setMsg("系統尚未設定 Google 上傳網址（GAS Web App）");
+    return;
+  }
+
+  setMsg("送出中…");
+
+  try{
+    await liff.init({ liffId: LIFF_ID });
+
+    if(!liff.isInClient()){
+      setMsg("請在 LINE App 內開啟此頁面再送出");
+      return;
     }
 
-    (async ()=>{ await initLiff(); })();
+    const profile = await liff.getProfile();
 
-    // ===== 送出簽署 =====
-    document.getElementById('btnSubmit').addEventListener('click', async (e)=>{
-      e.preventDefault();
-      e.stopPropagation();
-      clearStatus();
+    const contractText = (document.getElementById("contractText")?.textContent || "").trim();
 
-      try{
-        log("=== 按下送出簽署 ===");
+    const receipt = await makeReceiptPng();
+    const base64 = receipt.pngDataUrl.split(",")[1];
 
-        const name = document.getElementById('name').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const date = document.getElementById('date').value.trim();
-        const note = document.getElementById('note').value.trim();
-        const contractText = document.getElementById('contractText').textContent.trim();
+    const payload = {
+      ownerName, ownerIdNo, ownerPhone, ownerAddress,
+      petName, petBreed, petWeight,
+      contractText,
+      receiptPngBase64: base64,
+      lineUserId: profile.userId,
+      lineDisplayName: profile.displayName,
+      timestamp: new Date().toISOString()
+    };
 
-        if(!name || !phone){
-          showStatus("請先填寫姓名與電話。", "err");
-          return;
-        }
-        if(!hasSignature()){
-          showStatus("你還沒簽名喔～請在簽名框內簽名後再送出。", "err");
-          return;
-        }
-
-        const l = await initLiff();
-        if(!l.ok) return;
-        if(!l.inClient){
-          gate.style.display = "block";
-          showStatus("請改用 LINE 內開啟（LIFF）後再送出。", "err");
-          return;
-        }
-
-        let profile = null;
-        try{
-          profile = await liff.getProfile();
-          log("getProfile OK");
-        }catch(e){
-          log("getProfile FAIL: " + (e?.message || e));
-        }
-
-        const sigDataUrl = canvas.toDataURL("image/png");
-
-        log("POST webhook...");
-        const res = await fetch(WEBHOOK_URL, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({
-            name, phone, date, note,
-            contractText,
-            signatureDataUrl: sigDataUrl,
-            lineUserId: profile?.userId || null,
-            lineDisplayName: profile?.displayName || null,
-            timestamp: new Date().toISOString()
-          })
-        });
-
-        if(!res.ok){
-          const t = await res.text().catch(()=> "");
-          throw new Error("Webhook 回應失敗：" + res.status + " " + t);
-        }
-
-        let data = {};
-        try{ data = await res.json(); }catch(_){}
-        log("webhook OK: " + JSON.stringify(data));
-
-        const msgLines = [
-          "✅ 已完成簽署，謝謝您！",
-          `姓名：${name}`,
-          `電話：${phone}`,
-          `日期：${date}`
-        ];
-        if(data?.id) msgLines.push(`簽署編號：${data.id}`);
-        if(data?.url) msgLines.push(`簽名/檔案：${data.url}`);
-
-        await liff.sendMessages([{ type:"text", text: msgLines.join("\n") }]);
-        log("sendMessages OK");
-
-        showStatus("✅ 送出成功！視窗即將關閉。", "ok");
-        setTimeout(()=>{ liff.closeWindow(); }, 400);
-
-      }catch(err){
-        console.error(err);
-        showStatus("❌ 送出失敗：" + (err?.message || err), "err");
-        log("ERROR: " + (err?.message || err));
-      }
+    const res = await fetch(GAS_WEBAPP_URL, {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
     });
-  </script>
+
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || data.ok !== true) throw new Error(data.error || "upload_failed");
+
+    const textLines = [
+      "✅ 契約已完成簽署",
+      `甲方：${ownerName}`,
+      `電話：${ownerPhone}`,
+      `寵物：${petName}／${petBreed}／${petWeight}kg`,
+      data.fileUrl ? `Google檔案：${data.fileUrl}` : ""
+    ].filter(Boolean);
+
+    const messages = [{ type:"text", text: textLines.join("\n") }];
+
+    if(data.imageUrl){
+      messages.push({
+        type:"image",
+        originalContentUrl: data.imageUrl,
+        previewImageUrl: data.imageUrl
+      });
+    }
+
+    await liff.sendMessages(messages);
+    liff.closeWindow();
+
+  }catch(e){
+    setMsg("送出失敗，請稍後再試");
+  }
+}
+
+document.getElementById("submit")?.addEventListener("click", submitContract);
+</script>
+
+
 </body>
 </html>
