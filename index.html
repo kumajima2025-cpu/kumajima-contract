@@ -398,23 +398,13 @@ ______________________________________________
 <canvas id="sig"></canvas>
 
 <p class="hint" style="margin-top:8px; font-weight:700; color:#d00;">
-  簽名完成後，請先截圖保存。再點「送出簽署」回傳資料（可在訊息中貼上簽名截圖）。
+  簽名完成後請點「送出簽署」，系統將自動回傳資料與簽名紀錄至本 LINE 對話。
 </p>
+
 
 <button class="btn-main" id="submitAll">送出簽署</button>
 <button class="btn-sub" id="clear">清除簽名</button>
 
-
-
-<p class="hint" id="status" style="margin-top:10px; text-align:center;"></p>
-
-
-</div>
-
-<div class="card">
-  <button class="btn-main" id="submit">送出簽名</button>
-  <div class="msg" id="msg"></div>
-</div>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -534,8 +524,7 @@ document.getElementById("submitAll").onclick = async () => {
 寵物名字：${payload.petName}
 品種：${payload.breed}
 體重(公斤)：${payload.weight}
-審閱/簽署日期：${payload.signDate}
-（簽名圖檔見下一則）`;
+審閱/簽署日期：${payload.signDate}`;
 
   try {
     status.textContent = "上傳簽名中…";
@@ -547,9 +536,9 @@ document.getElementById("submitAll").onclick = async () => {
     });
 
     const out = await res.json();
-    if (!out.ok) throw new Error(out.error || "Upload failed");
+    if (!out.ok || !out.imageUrl) throw new Error(out.error || "Upload failed");
 
-    status.textContent = "傳送至 LINE 中…";
+    status.textContent = "傳送到 LINE 中…";
 
     await liff.sendMessages([
       { type: "text", text },
@@ -557,13 +546,20 @@ document.getElementById("submitAll").onclick = async () => {
     ]);
 
     status.style.color = "#111";
-    status.textContent = "✅ 已完成送出（資料＋簽名）！";
+    status.textContent = "✅ 已完成簽署回傳（資料＋簽名）！";
+
+    // 可選：送出後鎖定，避免重複按
+    document.getElementById("submitAll").disabled = true;
 
   } catch (e) {
     console.error(e);
-    status.textContent = "送出失敗：請檢查網路或稍後再試。";
+    status.textContent = "送出失敗：請稍後再試。";
   }
 };
+
+  const SUBMIT_ENDPOINT = "https://script.google.com/macros/s/AKfycbykw5In_C7DIZuLIQiNt4UrKGgSKbAQfKrZMZHlYoH3dqp7kMLvyZKcqmRj1InMPSbcHQ/exec";
+const SECRET = "KUMAJIMA_SECRET_2026";
+
 
 
 </script>
