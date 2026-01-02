@@ -394,12 +394,19 @@ ______________________________________________
 </div>
 
 
-  <label>甲方簽名</label>
-  <canvas id="sig"></canvas>
-<p class="hint" style="margin-top:6px; font-weight:600; color:#d00; text-align:center;">
-  簽名完成後，請截圖回傳給我們，方便我們為您完成契約備存唷！
+<label>甲方簽名</label>
+<canvas id="sig"></canvas>
+
+<p class="hint" style="margin-top:8px; font-weight:700; color:#d00;">
+  簽名完成後請截圖回傳，以利本契約之簽署紀錄留存，謝謝。
 </p>
-  <button class="btn-sub" id="clear">清除簽名</button>
+
+<button class="btn-main" id="sendInfo">
+  送出資料並回傳
+</button>
+
+<button class="btn-sub" id="clear">清除簽名</button>
+
 </div>
 
 <div class="card">
@@ -492,6 +499,23 @@ document.getElementById("submit").onclick = async () => {
   msg.style.color = "green";
   msg.textContent = "✅ 已完成簽署，可關閉視窗";
 };
+<script>
+document.getElementById("sendInfo").addEventListener("click", () => {
+  const data = `
+【犬貓美容契約資料】
+姓名：${customerName.value || ""}
+電話：${phone.value || ""}
+身分證字號：${idNumber.value || ""}
+地址：${address.value || ""}
+寵物名字：${petName.value || ""}
+品種：${breed.value || ""}
+體重：${weight.value || ""}
+簽署日期：${signDate.value || ""}
+  `;
+
+  const url = "https://line.me/R/msg/text/?" + encodeURIComponent(data);
+  window.location.href = url;
+});
 </script>
 
 </body>
