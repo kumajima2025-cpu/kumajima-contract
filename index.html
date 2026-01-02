@@ -407,21 +407,12 @@ ______________________________________________
 
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
 
-  /* ========= 基本設定 ========= */
-const LIFF_ID = "2008805180-dNJmIam4";
+ const LIFF_ID = "2008805180-dNJmIam4";
+const SUBMIT_ENDPOINT = "https://script.google.com/macros/s/AKfycbykw5In_C7DIZuLIQiNt4UrKGgSKbAQfKrZMZHlYoH3dqp7kMLvyZKcqmRj1InMPSbcHQ/exec";
+const SECRET = "KUMAJIMA_SECRET_2026";
 
-/* ========= LIFF 初始化 ========= */
-async function initLiff() {
-  try {
-    await liff.init({ liffId: LIFF_ID });
-  } catch (e) {
-    console.error(e);
-  }
-}
-initLiff();
 
 /* ========= 簽名功能（手機可用） ========= */
 const canvas = document.getElementById("sig");
@@ -490,6 +481,8 @@ function v(id) {
   
 document.getElementById("submitAll").onclick = async () => {
   const status = document.getElementById("status");
+  const closeBtn = document.getElementById("closeBtn");
+
   status.style.color = "#d00";
   status.textContent = "";
 
@@ -546,21 +539,18 @@ document.getElementById("submitAll").onclick = async () => {
     ]);
 
     status.style.color = "#111";
-    status.textContent = "✅ 已完成簽署回傳（資料＋簽名）！";
-
-    // 可選：送出後鎖定，避免重複按
+    status.textContent = "✅ 已完成簽署回傳（資料＋簽名）！可按下方關閉。";
     document.getElementById("submitAll").disabled = true;
+
+    // 顯示關閉按鈕
+    closeBtn.style.display = "block";
+    closeBtn.onclick = () => liff.closeWindow();
 
   } catch (e) {
     console.error(e);
-    status.textContent = "送出失敗：請稍後再試。";
+    status.textContent = "送出失敗：請稍後再試（可能是網路或 Apps Script 權限）。";
   }
 };
-
-  const SUBMIT_ENDPOINT = "https://script.google.com/macros/s/AKfycbykw5In_C7DIZuLIQiNt4UrKGgSKbAQfKrZMZHlYoH3dqp7kMLvyZKcqmRj1InMPSbcHQ/exec";
-const SECRET = "KUMAJIMA_SECRET_2026";
-
-
 
 </script>
 
