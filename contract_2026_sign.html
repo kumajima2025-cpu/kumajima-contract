@@ -189,9 +189,7 @@
 我們很樂意為您說明，並與您一起為毛孩提供最安心的照護。
 
 《犬、貓美容服務定型化契約》
-契約內容（請完整閱讀）</label> <div class="contract"> 
-犬、貓美容服務定型化契約
-《簽約注意事項》
+簽約注意事項
 一、本契約之審閱期間不得少於１日，提供單次犬、貓美容或必要時， 　　
 並應給予即時或合理之審閱期間。但審閱期間經雙方合意另行約定者，不在此限。
 二、乙方應於簽訂本契約前，
@@ -617,7 +615,7 @@ ______________________________________________
       petWeight:   requireValue(petWeight, "體重（公斤）"),
       signDate:    requireValue(signDate, "審閱／簽署日期"),
     };
-    if(!data.ownerName) return; // 上面已 setError + focus
+    if (Object.values(data).some(v => v === null)) return;
 
    
     if(!hasStroke){
@@ -625,12 +623,12 @@ ______________________________________________
       return;
     }
 
-    // 4) 先 init LIFF
-    submitBtn.disabled = true;
-    submitBtn.textContent = "送出中...";
-    try{
-      const ok = await initLIFF();
-      if(!ok) return;
+    const ok = await initLIFF();
+if(!ok){
+  submitBtn.disabled = false;
+  submitBtn.textContent = "送出簽名";
+  return;
+}
 
       // 5) 取 userId（可用於檔名/追蹤）
       let userId = "";
@@ -693,15 +691,13 @@ ______________________________________________
       ]);
 
       // 9) 成功提示 + 關閉
-      setOK("✅ 已回傳聊天室並同步上傳完成，視窗將自動關閉");
-      setTimeout(() => {
-        try{ liff.closeWindow(); }catch(e){ /* ignore */ }
-      }, 900);
-      
-msg.textContent = "✅ 謝謝您！視窗將自動關閉";
+  
+msg.style.color = "#111";
+msg.textContent = "✅ 已回傳聊天室並同步上傳完成，視窗將自動關閉";
 setTimeout(() => {
   if (window.liff && liff.isInClient()) liff.closeWindow();
-}, 800);
+}, 900);
+
 
     }catch(err){
       console.error(err);
