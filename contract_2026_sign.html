@@ -4,6 +4,100 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>熊嶼｜犬、貓美容服務定型化契約</title>
+
+  <style>
+    :root{
+      --bg:#f5f5f5;
+      --card:#ffffff;
+      --border:#dcdcdc;
+      --muted:#7a7a7a;
+      --text:#111;
+      --danger:#d21f1f;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Heiti TC",sans-serif;
+    }
+    .wrap{
+      max-width:720px;
+      margin:0 auto;
+      padding:16px 14px 40px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:22px;
+      padding:18px 16px;
+      box-shadow:0 1px 10px rgba(0,0,0,.06);
+      margin:14px 0;
+    }
+    .title{
+      font-size:28px;
+      font-weight:900;
+      margin-bottom:10px;
+    }
+    .label{
+      font-size:22px;
+      font-weight:900;
+      margin:18px 0 10px;
+    }
+    .input{
+      width:100%;
+      border:2px solid var(--border);
+      border-radius:18px;
+      padding:14px;
+      font-size:20px;
+      font-weight:900;
+    }
+
+    /* ===== 簽名區 ===== */
+    #sigWrap{
+      position:relative;
+      width:100%;
+      height:320px;
+    }
+    #sig{
+      width:100%;
+      height:320px;
+      border:2px solid var(--border);
+      border-radius:18px;
+      background:#fff;
+      display:block;
+    }
+    #sigOverlay{
+      position:absolute;
+      inset:0;
+      background:transparent;
+      touch-action:none;
+      pointer-events:auto;
+    }
+
+    .btn{
+      width:100%;
+      border:none;
+      border-radius:18px;
+      padding:16px;
+      font-size:22px;
+      font-weight:900;
+      cursor:pointer;
+      margin-top:12px;
+    }
+    .btnClear{ background:#eee; }
+    .msg{
+      margin-top:10px;
+      color:var(--danger);
+      font-weight:900;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="card">
+  <title>熊嶼｜犬、貓美容服務定型化契約</title>
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
   <style>
@@ -434,38 +528,18 @@
 
   <script>
   
-    const LIFF_ID = "2008805180-dNJmIam4";
-    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec";
-
-    const el = (id)=>document.getElementById(id);
-    const msgEl = el("msg");
-    const submitBtn = el("submit");
-    const clearBtn = el("clear");
-
-    function setMsg(t){ if(msgEl) msgEl.textContent = t || ""; }
-    function v(id){ return (el(id).value || "").trim(); }
-
-    function must(val, tip){
-      if(!val) throw new Error(tip);
-      return val;
-    }
-
-    
-    async function initLiff(){
-      try{ await liff.init({ liffId: LIFF_ID }); }
-      catch(e){ /* ignore */ }
-    }
-
-    
-    const canvas = el("sig");
-    const overlay = el("sigOverlay");
+  (function(){
+    const canvas = document.getElementById("sig");
+    const overlay = document.getElementById("sigOverlay");
+    const clearBtn = document.getElementById("clear");
+    const msg = document.getElementById("msg");
     const ctx = canvas.getContext("2d");
 
-    function syncCanvasSize(){
+    function syncSize(){
       const r = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      canvas.width  = Math.max(1, Math.round(r.width * dpr));
-      canvas.height = Math.max(1, Math.round(r.height * dpr));
+      canvas.width  = Math.round(r.width * dpr);
+      canvas.height = Math.round(r.height * dpr);
       ctx.setTransform(dpr,0,0,dpr,0,0);
       ctx.lineWidth = 4;
       ctx.lineCap = "round";
@@ -473,12 +547,15 @@
       ctx.strokeStyle = "#111";
     }
 
+    syncSize();
+    window.addEventListener("resize", syncSize);
+
     let drawing = false;
 
     function point(e){
       const r = overlay.getBoundingClientRect();
       const p = e.touches ? e.touches[0] : e;
-      return { x:p.clientX - r.left, y:p.clientY - r.top };
+      return { x:p.clientX-r.left, y:p.clientY-r.top };
     }
 
     function down(e){
@@ -486,92 +563,34 @@
       drawing = true;
       const p = point(e);
       ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      setMsg(""); 
+      ctx.moveTo(p.x,p.y);
+      msg.textContent = "";
     }
-
     function move(e){
       if(!drawing) return;
       e.preventDefault();
       const p = point(e);
-      ctx.lineTo(p.x, p.y);
+      ctx.lineTo(p.x,p.y);
       ctx.stroke();
     }
-
     function up(e){
-      if(!drawing) return;
-      e.preventDefault();
       drawing = false;
     }
 
-    function clearSig(){
+    overlay.addEventListener("touchstart",down,{passive:false});
+    overlay.addEventListener("touchmove",move,{passive:false});
+    window.addEventListener("touchend",up);
+
+    overlay.addEventListener("pointerdown",down,{passive:false});
+    overlay.addEventListener("pointermove",move,{passive:false});
+    window.addEventListener("pointerup",up);
+
+    clearBtn.onclick = () => {
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      setMsg("");
-    }
+      msg.textContent = "已清除，請重新簽名";
+    };
+  })();
+</script>
 
-    function isCanvasBlank(){
-      const tmp = document.createElement("canvas");
-      tmp.width = canvas.width;
-      tmp.height = canvas.height;
-      return canvas.toDataURL() === tmp.toDataURL();
-    }
-
-    
-    async function handleSubmit(){
-      try{
-        setMsg("");
-        submitBtn.disabled = true;
-
-        if(!el("agree").checked) throw new Error("請先勾選「我已完整閱讀並同意上述契約內容」。");
-
-       
-        };
-
-        if(isCanvasBlank()) throw new Error("請先完成簽名。");
-        payload.signaturePngBase64 = canvas.toDataURL("image/png");
-
-        
-        setMsg("✅ 已完成簽署（資料驗證通過）\n（下一步我會幫你接：回傳聊天室＋同步上傳 Google）");
-
-        
-        
-        console.log("payload", payload);
-
-      }catch(err){
-        setMsg("⚠️ " + (err && err.message ? err.message : "送出失敗"));
-      }finally{
-        submitBtn.disabled = false;
-      }
-    }
-
-    
-    (async function boot(){
-      await initLiff();
-
-      
-      const dateInp = el("signDate");
-      if(dateInp){
-        dateInp.removeAttribute("readonly");
-        dateInp.removeAttribute("disabled");
-        try{ dateInp.type = "date"; }catch(e){}
-      }
-
-      syncCanvasSize();
-      window.addEventListener("resize", syncCanvasSize);
-
-      overlay.addEventListener("touchstart", down, {passive:false});
-      overlay.addEventListener("touchmove", move, {passive:false});
-      window.addEventListener("touchend", up, {passive:false});
-
-      overlay.addEventListener("pointerdown", down, {passive:false});
-      overlay.addEventListener("pointermove", move, {passive:false});
-      window.addEventListener("pointerup", up, {passive:false});
-
-      if(clearBtn) clearBtn.addEventListener("click", clearSig);
-      if(submitBtn) submitBtn.addEventListener("click", handleSubmit);
-
-      setMsg("✅ 程式已載入（可簽名）");
-    })();
-  </script>
 </body>
 </html>
