@@ -476,10 +476,9 @@ ______________________________________________
 
   <script>
 (function(){
-  // ====== 你要填的兩個值 ======
+  
   const LIFF_ID = "2008805180-dNJmIam4";
   const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec"; 
-  // 例：https://script.google.com/macros/s/xxxxxxx/exec
 
   // ====== DOM ======
   const canvas = document.getElementById("sig");
@@ -620,7 +619,7 @@ ______________________________________________
     };
     if(!data.ownerName) return; // 上面已 setError + focus
 
-    // 3) 有簽名？
+   
     if(!hasStroke){
       setError("請先完成簽名再送出");
       return;
@@ -698,6 +697,11 @@ ______________________________________________
       setTimeout(() => {
         try{ liff.closeWindow(); }catch(e){ /* ignore */ }
       }, 900);
+      
+msg.textContent = "✅ 謝謝您！視窗將自動關閉";
+setTimeout(() => {
+  if (window.liff && liff.isInClient()) liff.closeWindow();
+}, 800);
 
     }catch(err){
       console.error(err);
