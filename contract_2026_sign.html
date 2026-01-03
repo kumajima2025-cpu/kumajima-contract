@@ -616,22 +616,30 @@ submitBtn.onclick = async () => {
 
 （請在此訊息貼上簽名截圖）`;
 
-    await liff.sendMessages([{ type:"text", text: textMsg }]);
+    await liff.sendMessages([{ type: "text", text: textMsg }]);
 
-    setOK("✅ 已自動產生訊息！請將簽名截圖貼回聊天室送出。");
-    resetSubmit();
+const goBack = confirm(
+  "✅ 已把『簽署資料』送到聊天室了！\n\n下一步：請截圖簽名並回到聊天室貼上送出。\n\n按「確定」返回聊天室"
+);
 
-    // 不自動關閉也可以；若你想自動關閉就打開下面：
-    // setTimeout(() => { if (window.liff && liff.isInClient()) liff.closeWindow(); }, 800);
+resetSubmit();
 
-  }catch(err){
-    console.error(err);
-    setError(`❌ 送出失敗：${err.message || err}`);
-    resetSubmit();
-  }
+if (goBack && window.liff && liff.isInClient()) {
+  liff.closeWindow();
+}
+
+} catch (err) {
+  console.error(err);
+  setError(`❌ 送出失敗：${err.message || err}`);
+  resetSubmit();
+}
+
 };
 
 })();
+
+
+
 
   
 </script>
