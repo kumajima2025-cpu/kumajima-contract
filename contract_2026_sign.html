@@ -26,6 +26,7 @@
       margin:0 auto;
       padding:16px 14px 40px;
     }
+    
     .card{
       background:var(--card);
       border-radius:22px;
@@ -60,7 +61,7 @@
   -webkit-appearance:none;
 }
     
-#sigWrap{
+#sig{
   overscroll-behavior: contain;
   position:relative;
   width:100%;
@@ -123,7 +124,7 @@
 }
 .contractBox pre{
   margin:0;
-  white-space:pre-wrap;
+  white-space:pre-;
   word-break:break-word;
   line-height:1.8;
   font-size:17px;
@@ -164,7 +165,7 @@
   overscroll-behavior: none; 
 }
 
-#sigWrap, #sig{
+#sig, #sig{
   touch-action: none;         
   overscroll-behavior: contain;
 }
@@ -177,7 +178,7 @@
 </head>
 
 <body>
-  <div class="wrap">
+  <div class="">
    <div class="card">
   <div class="title">寵物美容服務定型化契約</div>
   <div class="meta">公司名稱：熊嶼寵物有限公司<br>地址：新北市板橋區合宜一路11號<br>官方LINE：@kumajima2025</div>
@@ -415,8 +416,6 @@ ______________________________________________
 
   const LIFF_ID = "2008805180-dNJmIam4";
 
-
-  // ====== DOM ======
   const canvas = document.getElementById("sig");
   const clearBtn = document.getElementById("clear");
   const submitBtn = document.getElementById("submit");
@@ -433,20 +432,25 @@ ______________________________________________
   const petWeight = document.getElementById("petWeight");
   const signDate = document.getElementById("signDate");
 
+  const afterSendModal = document.getElementById("afterSendModal");
+  const btnBackToScreenshot = document.getElementById("btnBackToScreenshot");
+  const btnCloseToLINE = document.getElementById("btnCloseToLINE");
+  const afterSendBar = document.getElementById("afterSendBar");
+  const btnCloseToLINE2 = document.getElementById("btnCloseToLINE2");
+
   const ctx = canvas.getContext("2d");
   canvas.style.touchAction = "none";
 
-  // ====== 按鈕狀態小工具（避免卡死） ======
   function resetSubmit(){
     submitBtn.disabled = false;
     submitBtn.textContent = "送出簽名";
   }
 
-  // ====== 小工具 ======
   function setError(t){
     msg.textContent = t || "";
     msg.style.color = "#d21f1f";
   }
+
   function setOK(t){
     msg.textContent = t || "";
     msg.style.color = "#111";
@@ -470,16 +474,13 @@ ______________________________________________
     const dd = String(d.getDate()).padStart(2,"0");
     return `${yyyy}-${mm}-${dd}`;
   }
-  if(!signDate.value) signDate.value = todayISO();
+  if(signDate && !signDate.value) signDate.value = todayISO();
 
-  // ====== Canvas sizing ======
   function syncSize(){
     const r = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-
     canvas.width  = Math.round(r.width * dpr);
     canvas.height = Math.round(r.height * dpr);
-
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
@@ -487,20 +488,20 @@ ______________________________________________
     ctx.strokeStyle = "#111";
   }
   syncSize();
-  
 
-  // ====== 簽名繪製 ======
   let drawing = false;
   let hasStroke = false;
 
   function point(e){
-  const r = canvas.getBoundingClientRect();
-  return { x: e.clientX - r.left, y: e.clientY - r.top };
-}
-function lockScroll(lock){
-  document.body.style.overflow = lock ? "hidden" : "";
-  document.body.style.touchAction = lock ? "none" : "";
-}
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function lockScroll(lock){
+    document.body.style.overflow = lock ? "hidden" : "";
+    document.body.style.touchAction = lock ? "none" : "";
+  }
+
   function down(e){
     e.preventDefault();
     lockScroll(true);
@@ -529,82 +530,94 @@ function lockScroll(lock){
   canvas.addEventListener("pointermove", move, { passive:false });
   window.addEventListener("pointerup", up);
   window.addEventListener("pointercancel", up);
-  window.addEventListener("pointerleave", up);
 
   clearBtn.onclick = () => {
     const r = canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, r.width, r.height);
-
     hasStroke = false;
     setError("已清除，請重新簽名");
     resetSubmit();
   };
 
-  // ====== LIFF init ======
+  function showAfterSendUI(){
+    if(afterSendModal) afterSendModal.style.display = "flex";
+    if(afterSendBar) afterSendBar.style.display = "block";
+    if(!afterSendModal && !afterSendBar){
+      alert("已把簽署資料送到聊天室，請截圖簽名後回到 LINE 貼上送出。");
+    }
+  }
+
+  function closeToLINE(){
+    if(window.liff && liff.isInClient()){
+      liff.closeWindow();
+    }else{
+      alert("請從 LINE 聊天室內開啟此頁面");
+    }
+  }
+
+  if(btnBackToScreenshot){
+    btnBackToScreenshot.onclick = () => {
+      afterSendModal.style.display = "none";
+    };
+  }
+  if(btnCloseToLINE) btnCloseToLINE.onclick = closeToLINE;
+  if(btnCloseToLINE2) btnCloseToLINE2.onclick = closeToLINE;
+
   async function initLIFF(){
-  if(!window.liff){
-    throw new Error("找不到 LIFF SDK（請確認已加入 https://static.line-scdn.net/liff/edge/2/sdk.js）");
-  }
-  await liff.init({ liffId: LIFF_ID });
-
-  // ✅ 強制提醒：一定要在 LINE 內才能自動傳訊息
-  if(!liff.isInClient()){
-    throw new Error("⚠️ 請從 LINE 聊天室點開此契約連結");
-  }
-
-  if(!liff.isLoggedIn()){
-    liff.login();
-    return false;
-  }
-  return true;
-}
-
-submitBtn.onclick = async () => {
-  msg.style.color = "";
-  msg.textContent = "";
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "送出中...";
-
-  // 1) 同意勾選
-  if(!agree.checked){
-    setError("請先勾選：我已完整閱讀並同意上述契約內容");
-    resetSubmit();
-    return;
+    if(!window.liff){
+      throw new Error("LIFF SDK 未載入");
+    }
+    await liff.init({ liffId: LIFF_ID });
+    if(!liff.isInClient()){
+      throw new Error("請從 LINE 聊天室開啟此連結");
+    }
+    if(!liff.isLoggedIn()){
+      liff.login();
+      return false;
+    }
+    return true;
   }
 
-  // 2) 必填欄位
-  const data = {
-    ownerName:    requireValue(ownerName, "甲方姓名（飼主）"),
-    ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
-    ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
-    ownerAddress: requireValue(ownerAddress, "通訊地址"),
-    petName:      requireValue(petName, "寵物姓名"),
-    petBreed:     requireValue(petBreed, "寵物品種"),
-    petWeight:    requireValue(petWeight, "體重（公斤）"),
-    signDate:     requireValue(signDate, "審閱／簽署日期"),
-  };
-  if (Object.values(data).some(v => v === null)){
-    resetSubmit();
-    return;
-  }
+  submitBtn.onclick = async () => {
+    msg.textContent = "";
+    submitBtn.disabled = true;
+    submitBtn.textContent = "送出中...";
 
-  // 3) 簽名檢查（保留，確保他真的有簽）
-  if(!hasStroke){
-    setError("請先完成簽名再送出");
-    resetSubmit();
-    return;
-  }
-
-  try{
-    // 4) LIFF init / login
-    const ok = await initLIFF();
-    if(!ok){
+    if(!agree.checked){
+      setError("請先勾選同意契約內容");
       resetSubmit();
       return;
     }
 
-    const textMsg =
+    const data = {
+      ownerName:    requireValue(ownerName, "甲方姓名"),
+      ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
+      ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
+      ownerAddress: requireValue(ownerAddress, "通訊地址"),
+      petName:      requireValue(petName, "寵物姓名"),
+      petBreed:     requireValue(petBreed, "寵物品種"),
+      petWeight:    requireValue(petWeight, "體重"),
+      signDate:     requireValue(signDate, "簽署日期"),
+    };
+    if(Object.values(data).some(v => v === null)){
+      resetSubmit();
+      return;
+    }
+
+    if(!hasStroke){
+      setError("請先完成簽名");
+      resetSubmit();
+      return;
+    }
+
+    try{
+      const ok = await initLIFF();
+      if(!ok){
+        resetSubmit();
+        return;
+      }
+
+      const textMsg =
 `【犬貓美容契約簽署資料】
 甲方姓名：${data.ownerName}
 聯絡電話：${data.ownerPhone}
@@ -617,32 +630,19 @@ submitBtn.onclick = async () => {
 
 （請在此訊息貼上簽名截圖）`;
 
-    await liff.sendMessages([{ type: "text", text: textMsg }]);
+      await liff.sendMessages([{ type:"text", text:textMsg }]);
 
-const goBack = confirm(
-  "✅ 已把『簽署資料』送到聊天室了！\n\n下一步：請截圖簽名並回到聊天室貼上送出。\n\n按「確定」返回聊天室"
-);
+      showAfterSendUI();
+      setOK("簽署資料已送出，請完成簽名截圖並回到聊天室");
+      resetSubmit();
 
-resetSubmit();
-
-if (goBack && window.liff && liff.isInClient()) {
-  liff.closeWindow();
-}
-
-} catch (err) {
-  console.error(err);
-  setError(`❌ 送出失敗：${err.message || err}`);
-  resetSubmit();
-}
-
-};
+    }catch(err){
+      setError(err.message || "送出失敗");
+      resetSubmit();
+    }
+  };
 
 })();
-
-
-
-
-  
 </script>
 
 
