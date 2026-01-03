@@ -163,6 +163,92 @@
       white-space:pre-wrap;
       line-height:1.5;
     }
+(function setupSignature() {
+  const canvas = document.getElementById("sig");
+  const msgEl = document.getElementById("msg");
+  const clearBtn = document.getElementById("clear");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+  function setMsg(t){ if(msgEl) msgEl.textContent = t || ""; }
+
+
+  canvas.style.touchAction = "none";
+
+  function fitCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+  
+    const w = Math.max(1, Math.round(rect.width * dpr));
+    const h = Math.max(1, Math.round(rect.height * dpr));
+    if (canvas.width !== w || canvas.height !== h) {
+     
+      canvas.width = w;
+      canvas.height = h;
+    }
+
+  
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#111";
+  }
+
+  fitCanvas();
+  window.addEventListener("resize", fitCanvas);
+
+  let drawing = false;
+
+  function getPoint(e) {
+    const rect = canvas.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return { x: p.clientX - rect.left, y: p.clientY - rect.top };
+  }
+
+  function start(e) {
+    e.preventDefault();
+    fitCanvas();
+    drawing = true;
+    const p = getPoint(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    setMsg("");
+  }
+
+  function move(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = getPoint(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  }
+
+  function end(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    drawing = false;
+  }
+
+  canvas.addEventListener("pointerdown", start, { passive: false });
+  canvas.addEventListener("pointermove", move, { passive: false });
+  window.addEventListener("pointerup", end, { passive: false });
+
+  canvas.addEventListener("touchstart", start, { passive: false });
+  canvas.addEventListener("touchmove", move, { passive: false });
+  window.addEventListener("touchend", end, { passive: false });
+
+  function clearSig() {
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    setMsg("");
+  }
+  if (clearBtn) clearBtn.addEventListener("click", clearSig);
+})();
+
+    
   </style>
 </head>
 
