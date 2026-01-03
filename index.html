@@ -329,6 +329,18 @@
 
   </div>
 
+(() => {
+  const c = document.getElementById("sig");
+  const m = document.getElementById("msg");
+  if (!c || !m) return;
+
+  function log(t){ m.textContent = t; }
+
+  c.addEventListener("touchstart", () => log("✅ 有碰到簽名框（touchstart）"), { passive:false });
+  c.addEventListener("pointerdown", () => log("✅ 有碰到簽名框（pointerdown）"), { passive:false });
+})();
+
+  
   <script>
     const LIFF_ID = "2008805180-dNJmIam4";
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec";
