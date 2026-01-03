@@ -358,6 +358,26 @@
       white-space:pre-wrap;
       line-height:1.5;
     }
+
+
+.contractBox{
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.contractBox pre{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: hidden;
+}
+
+    
+input[type="date"].input{
+  width: 100%;
+  display: block;
+}
+
+    
   </style>
 </head>
 
@@ -684,6 +704,8 @@
       msg.textContent = "已清除，請重新簽名";
     };
   })();
+
+    
 </script>
 
 </body>
