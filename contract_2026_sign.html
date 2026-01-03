@@ -402,7 +402,16 @@ ______________________________________________
       <div class="dangerNote">簽名完成後將自動回傳至聊天室</div>
 
       <button id="clear" class="btn btnClear" type="button">清除簽名</button>
-      <div id="msg" class="msg"></div>
+
+<button id="stepShot" class="btn btnSubmit" type="button" style="display:none;">
+  📸 我已截圖簽名（下一步）
+</button>
+
+<button id="backToChat" class="btn btnSubmit" type="button" style="display:none;">
+  💬 返回聊天室貼上簽名截圖
+</button>
+
+<div id="msg" class="msg"></div>
     </div>
 
     <button id="submit" class="btn btnSubmit" type="button">送出簽名</button>
@@ -414,12 +423,14 @@ ______________________________________________
 
   const LIFF_ID = "2008805180-dNJmIam4";
 
-
   // ====== DOM ======
   const canvas = document.getElementById("sig");
   const clearBtn = document.getElementById("clear");
   const submitBtn = document.getElementById("submit");
   const msg = document.getElementById("msg");
+
+  const stepShotBtn = document.getElementById("stepShot");
+  const backToChatBtn = document.getElementById("backToChat");
 
   const agree = document.getElementById("agree");
 
@@ -435,13 +446,11 @@ ______________________________________________
   const ctx = canvas.getContext("2d");
   canvas.style.touchAction = "none";
 
-  // ====== 按鈕狀態小工具（避免卡死） ======
+  // ====== 工具 ======
   function resetSubmit(){
     submitBtn.disabled = false;
     submitBtn.textContent = "送出簽名";
   }
-
-  // ====== 小工具 ======
   function setError(t){
     msg.textContent = t || "";
     msg.style.color = "#d21f1f";
@@ -450,7 +459,6 @@ ______________________________________________
     msg.textContent = t || "";
     msg.style.color = "#111";
   }
-
   function requireValue(inputEl, label){
     const v = (inputEl.value || "").trim();
     if(!v){
@@ -461,24 +469,18 @@ ______________________________________________
     }
     return v;
   }
-
   function todayISO(){
     const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,"0");
-    const dd = String(d.getDate()).padStart(2,"0");
-    return `${yyyy}-${mm}-${dd}`;
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
   }
   if(!signDate.value) signDate.value = todayISO();
 
-  // ====== Canvas sizing ======
+  // ====== Canvas ======
   function syncSize(){
     const r = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-
-    canvas.width  = Math.round(r.width * dpr);
+    canvas.width = Math.round(r.width * dpr);
     canvas.height = Math.round(r.height * dpr);
-
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
@@ -486,30 +488,23 @@ ______________________________________________
     ctx.strokeStyle = "#111";
   }
   syncSize();
-  
 
-  // ====== 簽名繪製 ======
   let drawing = false;
   let hasStroke = false;
 
   function point(e){
-  const r = canvas.getBoundingClientRect();
-  return { x: e.clientX - r.left, y: e.clientY - r.top };
-}
-function lockScroll(lock){
-  document.body.style.overflow = lock ? "hidden" : "";
-  document.body.style.touchAction = lock ? "none" : "";
-}
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
   function down(e){
     e.preventDefault();
-    lockScroll(true);
     drawing = true;
     const p = point(e);
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
     msg.textContent = "";
   }
-
   function move(e){
     if(!drawing) return;
     e.preventDefault();
@@ -518,92 +513,60 @@ function lockScroll(lock){
     ctx.stroke();
     hasStroke = true;
   }
-
-  function up(){
-    drawing = false;
-    lockScroll(false);
-  }
+  function up(){ drawing = false; }
 
   canvas.addEventListener("pointerdown", down, { passive:false });
   canvas.addEventListener("pointermove", move, { passive:false });
   window.addEventListener("pointerup", up);
-  window.addEventListener("pointercancel", up);
-  window.addEventListener("pointerleave", up);
 
   clearBtn.onclick = () => {
-    const r = canvas.getBoundingClientRect();
-    ctx.clearRect(0, 0, r.width, r.height);
-
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     hasStroke = false;
     setError("已清除，請重新簽名");
     resetSubmit();
   };
 
-  // ====== LIFF init ======
   async function initLIFF(){
-  if(!window.liff){
-    throw new Error("找不到 LIFF SDK（請確認已加入 https://static.line-scdn.net/liff/edge/2/sdk.js）");
-  }
-  await liff.init({ liffId: LIFF_ID });
-
-  // ✅ 強制提醒：一定要在 LINE 內才能自動傳訊息
-  if(!liff.isInClient()){
-    throw new Error("⚠️ 請從 LINE 聊天室點開此契約連結");
+    await liff.init({ liffId: LIFF_ID });
+    if(!liff.isInClient()) throw new Error("請從 LINE 聊天室點開此頁");
+    if(!liff.isLoggedIn()){ liff.login(); return false; }
+    return true;
   }
 
-  if(!liff.isLoggedIn()){
-    liff.login();
-    return false;
-  }
-  return true;
-}
+  // ====== 送出 ======
+  submitBtn.onclick = async () => {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "送出中...";
 
-submitBtn.onclick = async () => {
-  msg.style.color = "";
-  msg.textContent = "";
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "送出中...";
-
-  // 1) 同意勾選
-  if(!agree.checked){
-    setError("請先勾選：我已完整閱讀並同意上述契約內容");
-    resetSubmit();
-    return;
-  }
-
-  // 2) 必填欄位
-  const data = {
-    ownerName:    requireValue(ownerName, "甲方姓名（飼主）"),
-    ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
-    ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
-    ownerAddress: requireValue(ownerAddress, "通訊地址"),
-    petName:      requireValue(petName, "寵物姓名"),
-    petBreed:     requireValue(petBreed, "寵物品種"),
-    petWeight:    requireValue(petWeight, "體重（公斤）"),
-    signDate:     requireValue(signDate, "審閱／簽署日期"),
-  };
-  if (Object.values(data).some(v => v === null)){
-    resetSubmit();
-    return;
-  }
-
-  // 3) 簽名檢查（保留，確保他真的有簽）
-  if(!hasStroke){
-    setError("請先完成簽名再送出");
-    resetSubmit();
-    return;
-  }
-
-  try{
-    // 4) LIFF init / login
-    const ok = await initLIFF();
-    if(!ok){
+    if(!agree.checked){
+      setError("請先勾選同意契約內容");
       resetSubmit();
       return;
     }
 
-    const textMsg =
+    const data = {
+      ownerName: requireValue(ownerName,"甲方姓名"),
+      ownerPhone: requireValue(ownerPhone,"聯絡電話"),
+      ownerIdNo: requireValue(ownerIdNo,"身分證字號"),
+      ownerAddress: requireValue(ownerAddress,"通訊地址"),
+      petName: requireValue(petName,"寵物姓名"),
+      petBreed: requireValue(petBreed,"寵物品種"),
+      petWeight: requireValue(petWeight,"體重"),
+      signDate: requireValue(signDate,"簽署日期"),
+    };
+    if(Object.values(data).some(v=>v===null)) return;
+
+    if(!hasStroke){
+      setError("請先完成簽名");
+      resetSubmit();
+      return;
+    }
+
+    try{
+      const ok = await initLIFF();
+      if(!ok) return;
+
+      const textMsg =
 `【犬貓美容契約簽署資料】
 甲方姓名：${data.ownerName}
 聯絡電話：${data.ownerPhone}
@@ -616,33 +579,40 @@ submitBtn.onclick = async () => {
 
 （請在此訊息貼上簽名截圖）`;
 
-    await liff.sendMessages([{ type: "text", text: textMsg }]);
+      await liff.sendMessages([{ type:"text", text:textMsg }]);
 
-const goBack = confirm(
-  "✅ 已把『簽署資料』送到聊天室了！\n\n下一步：請截圖簽名並回到聊天室貼上送出。\n\n按「確定」返回聊天室"
-);
+      setOK("✅ 已送出簽署資料，請先截圖簽名");
 
-resetSubmit();
+      alert(
+        "✅ 簽署資料已送到聊天室！\n\n請先截圖本頁簽名。\n\n截圖後按【📸 我已截圖簽名（下一步）】"
+      );
 
-if (goBack && window.liff && liff.isInClient()) {
-  liff.closeWindow();
-}
+      stepShotBtn.style.display = "block";
+      backToChatBtn.style.display = "none";
 
-} catch (err) {
-  console.error(err);
-  setError(`❌ 送出失敗：${err.message || err}`);
-  resetSubmit();
-}
+      resetSubmit();
 
-};
+    }catch(err){
+      console.error(err);
+      setError("送出失敗，請再試一次");
+      resetSubmit();
+    }
+  };
+
+  // ====== 第二步 ======
+  stepShotBtn.onclick = () => {
+    stepShotBtn.style.display = "none";
+    backToChatBtn.style.display = "block";
+    alert("✅ 好的！請按【💬 返回聊天室貼上簽名截圖】");
+  };
+
+  backToChatBtn.onclick = () => {
+    if(window.liff && liff.isInClient()) liff.closeWindow();
+  };
 
 })();
-
-
-
-
-  
 </script>
+
 
 
 
