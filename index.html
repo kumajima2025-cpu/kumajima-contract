@@ -220,7 +220,10 @@
       <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
 
       <div class="label">審閱／簽署日期</div>
-      <input id="signDate" class="input readonly" readonly>
+     const candidates = document.querySelectorAll('input[type="date"], input[name*="date" i], input[id*="date" i], input[placeholder*="日期"]');
+  candidates.forEach(inp => {
+    inp.removeAttribute("readonly");
+    inp.removeAttribute("disabled");
     </div>
 
     <div class="card">
