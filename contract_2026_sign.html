@@ -75,6 +75,9 @@
   background:#fff;
   display:block;
   touch-action:none;   /* 手機可畫的關鍵 */
+  -webkit-user-select: none;
+  user-select: none;
+}
 
     }
 
@@ -474,7 +477,7 @@ ______________________________________________
         <canvas id="sig"></canvas>
       </div>
 
-      <div class="dangerNote">簽名完成後將自動回傳至聊天室並同步上傳至雲端</div>
+      <div class="dangerNote">簽名完成後將自動回傳至聊天室</div>
 
       <button id="clear" class="btn btnClear" type="button">清除簽名</button>
       <div id="msg" class="msg"></div>
@@ -488,7 +491,7 @@ ______________________________________________
 (function(){
 
   const LIFF_ID = "2008805180-dNJmIam4";
-  const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec";
+
 
   // ====== DOM ======
   const canvas = document.getElementById("sig");
@@ -568,12 +571,12 @@ ______________________________________________
   let hasStroke = false;
 
   function point(e){
-    const r = canvas.getBoundingClientRect();
-    const p = e.touches ? e.touches[0] : e;
-    return { x: p.clientX - r.left, y: p.clientY - r.top };
-  }
+  const r = canvas.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
 function lockScroll(lock){
   document.body.style.overflow = lock ? "hidden" : "";
+  document.body.style.touchAction = lock ? "none" : "";
 }
   function down(e){
     e.preventDefault();
@@ -616,128 +619,95 @@ function lockScroll(lock){
 
   // ====== LIFF init ======
   async function initLIFF(){
-    if(!window.liff){
-      throw new Error("找不到 LIFF SDK（請確認已加入 https://static.line-scdn.net/liff/edge/2/sdk.js）");
-    }
-    await liff.init({ liffId: LIFF_ID });
-    if(!liff.isLoggedIn()){
-      liff.login();
-      return false;
-    }
-    return true;
+  if(!window.liff){
+    throw new Error("找不到 LIFF SDK（請確認已加入 https://static.line-scdn.net/liff/edge/2/sdk.js）");
+  }
+  await liff.init({ liffId: LIFF_ID });
+
+  // ✅ 強制提醒：一定要在 LINE 內才能自動傳訊息
+  if(!liff.isInClient()){
+    throw new Error("⚠️ 請從 LINE 聊天室點開此契約連結");
   }
 
-  submitBtn.onclick = async () => {
-    msg.style.color = "";
-    msg.textContent = "";
+  if(!liff.isLoggedIn()){
+    liff.login();
+    return false;
+  }
+  return true;
+}
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = "送出中...";
+submitBtn.onclick = async () => {
+  msg.style.color = "";
+  msg.textContent = "";
 
-    // 1) 同意勾選
-    if(!agree.checked){
-      setError("請先勾選：我已完整閱讀並同意上述契約內容");
-      resetSubmit();
-      return;
-    }
+  submitBtn.disabled = true;
+  submitBtn.textContent = "送出中...";
 
-    // 2) 必填欄位
-    const data = {
-      ownerName:    requireValue(ownerName, "甲方姓名（飼主）"),
-      ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
-      ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
-      ownerAddress: requireValue(ownerAddress, "通訊地址"),
-      petName:      requireValue(petName, "寵物姓名"),
-      petBreed:     requireValue(petBreed, "寵物品種"),
-      petWeight:    requireValue(petWeight, "體重（公斤）"),
-      signDate:     requireValue(signDate, "審閱／簽署日期"),
-    };
-    if (Object.values(data).some(v => v === null)){
-      resetSubmit();
-      return;
-    }
+  // 1) 同意勾選
+  if(!agree.checked){
+    setError("請先勾選：我已完整閱讀並同意上述契約內容");
+    resetSubmit();
+    return;
+  }
 
-    // 3) 簽名檢查
-    if(!hasStroke){
-      setError("請先完成簽名再送出");
-      resetSubmit();
-      return;
-    }
-
-    try{
-      // 4) LIFF init / login
-      const ok = await initLIFF();
-      if(!ok){
-        resetSubmit();
-        return;
-      }
-
-      // 5) 取 userId
-      let userId = "";
-      try{
-        const profile = await liff.getProfile();
-        userId = profile.userId || "";
-      }catch(e){}
-
-      // 6) 產出簽名 PNG（base64）
-      const signatureDataUrl = canvas.toDataURL("image/png");
-
-      // 7) 丟到 GAS
-      const payload = { ...data, userId, signatureDataUrl };
-
-      const res = await fetch(GAS_WEBAPP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if(!res.ok){
-        throw new Error("上傳 Google 失敗（GAS 回應非 200）");
-      }
-
-      const result = await res.json();
-
-      if(!result || !result.ok){
-        throw new Error(result && result.error ? result.error : "上傳失敗（GAS 未回傳 ok:true）");
-      }
-      if(!result.imageUrl){
-        throw new Error("GAS 未回傳 imageUrl（無法用 LIFF 傳圖片）");
-      }
-
-      // 8) 回傳聊天室（文字 + 圖片）
-      const textMsg =
-`✅ 熊嶼契約已簽署
-甲方：${data.ownerName}
-身分證：${data.ownerIdNo}
-電話：${data.ownerPhone}
-地址：${data.ownerAddress}
-寵物：${data.petName}（${data.petBreed} / ${data.petWeight}kg）
-簽署日：${data.signDate}`;
-
-      const imgMsg = {
-        type: "image",
-        originalContentUrl: result.imageUrl,
-        previewImageUrl: result.previewUrl || result.imageUrl
-      };
-
-      await liff.sendMessages([
-        { type:"text", text: textMsg },
-        imgMsg
-      ]);
-
-      // 9) 成功提示 + 關閉
-      setOK("✅ 已回傳聊天室並同步上傳完成，視窗將自動關閉");
-      setTimeout(() => {
-        if (window.liff && liff.isInClient()) liff.closeWindow();
-      }, 900);
-
-    }catch(err){
-      console.error(err);
-      setError(`❌ 送出失敗：${err.message || err}`);
-      resetSubmit();
-    }
+  // 2) 必填欄位
+  const data = {
+    ownerName:    requireValue(ownerName, "甲方姓名（飼主）"),
+    ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
+    ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
+    ownerAddress: requireValue(ownerAddress, "通訊地址"),
+    petName:      requireValue(petName, "寵物姓名"),
+    petBreed:     requireValue(petBreed, "寵物品種"),
+    petWeight:    requireValue(petWeight, "體重（公斤）"),
+    signDate:     requireValue(signDate, "審閱／簽署日期"),
   };
-  
+  if (Object.values(data).some(v => v === null)){
+    resetSubmit();
+    return;
+  }
+
+  // 3) 簽名檢查（保留，確保他真的有簽）
+  if(!hasStroke){
+    setError("請先完成簽名再送出");
+    resetSubmit();
+    return;
+  }
+
+  try{
+    // 4) LIFF init / login
+    const ok = await initLIFF();
+    if(!ok){
+      resetSubmit();
+      return;
+    }
+
+    const textMsg =
+`【犬貓美容契約簽署資料】
+甲方姓名：${data.ownerName}
+聯絡電話：${data.ownerPhone}
+身分證字號：${data.ownerIdNo}
+通訊地址：${data.ownerAddress}
+寵物名字：${data.petName}
+品種：${data.petBreed}
+體重(公斤)：${data.petWeight}
+審閱/簽署日期：${data.signDate}
+
+（請在此訊息貼上簽名截圖）`;
+
+    await liff.sendMessages([{ type:"text", text: textMsg }]);
+
+    setOK("✅ 已自動產生訊息！請將簽名截圖貼回聊天室送出。");
+    resetSubmit();
+
+    // 不自動關閉也可以；若你想自動關閉就打開下面：
+    // setTimeout(() => { if (window.liff && liff.isInClient()) liff.closeWindow(); }, 800);
+
+  }catch(err){
+    console.error(err);
+    setError(`❌ 送出失敗：${err.message || err}`);
+    resetSubmit();
+  }
+};
 
 })();
 
