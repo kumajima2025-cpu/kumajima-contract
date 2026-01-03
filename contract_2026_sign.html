@@ -158,6 +158,9 @@
 
     
   </style>
+
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
 </head>
 
 <body>
@@ -461,7 +464,7 @@ ______________________________________________
         <div id="sigOverlay"></div>
       </div>
 
-      <div class="dangerNote">簽名完成後將自動回傳至聊天室並同步上傳至 Google</div>
+      <div class="dangerNote">簽名完成後將自動回傳至聊天室並同步上傳至雲端</div>
 
       <button id="clear" class="btn btnClear" type="button">清除簽名</button>
       <div id="msg" class="msg"></div>
@@ -472,72 +475,241 @@ ______________________________________________
   </div>
 
   <script>
-  
-  (function(){
-    const canvas = document.getElementById("sig");
-    const overlay = document.getElementById("sigOverlay");
-    const clearBtn = document.getElementById("clear");
-    const msg = document.getElementById("msg");
-    const ctx = canvas.getContext("2d");
+(function(){
+  // ====== 你要填的兩個值 ======
+  const LIFF_ID = "2008805180-dNJmIam4";
+  const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec"; 
+  // 例：https://script.google.com/macros/s/xxxxxxx/exec
 
-    function syncSize(){
-      const r = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width  = Math.round(r.width * dpr);
-      canvas.height = Math.round(r.height * dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-      ctx.lineWidth = 4;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.strokeStyle = "#111";
+  // ====== DOM ======
+  const canvas = document.getElementById("sig");
+  const overlay = document.getElementById("sigOverlay");
+  const clearBtn = document.getElementById("clear");
+  const submitBtn = document.getElementById("submit");
+  const msg = document.getElementById("msg");
+
+  const agree = document.getElementById("agree");
+
+  const ownerName = document.getElementById("ownerName");
+  const ownerIdNo = document.getElementById("ownerIdNo");
+  const ownerPhone = document.getElementById("ownerPhone");
+  const ownerAddress = document.getElementById("ownerAddress");
+  const petName = document.getElementById("petName");
+  const petBreed = document.getElementById("petBreed");
+  const petWeight = document.getElementById("petWeight");
+  const signDate = document.getElementById("signDate");
+
+  const ctx = canvas.getContext("2d");
+
+  // ====== Canvas sizing ======
+  function syncSize(){
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = Math.round(r.width * dpr);
+    canvas.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#111";
+  }
+  syncSize();
+  window.addEventListener("resize", syncSize);
+
+  // ====== 簽名繪製 ======
+  let drawing = false;
+  let hasStroke = false;
+
+  function point(e){
+    const r = overlay.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return { x:p.clientX-r.left, y:p.clientY-r.top };
+  }
+
+  function down(e){
+    e.preventDefault();
+    drawing = true;
+    const p = point(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x,p.y);
+    msg.textContent = "";
+  }
+  function move(e){
+    if(!drawing) return;
+    e.preventDefault();
+    const p = point(e);
+    ctx.lineTo(p.x,p.y);
+    ctx.stroke();
+    hasStroke = true;
+  }
+  function up(){
+    drawing = false;
+  }
+
+  overlay.addEventListener("touchstart", down, {passive:false});
+  overlay.addEventListener("touchmove",  move, {passive:false});
+  window.addEventListener("touchend", up);
+
+  overlay.addEventListener("pointerdown", down, {passive:false});
+  overlay.addEventListener("pointermove",  move, {passive:false});
+  window.addEventListener("pointerup", up);
+
+  clearBtn.onclick = () => {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    hasStroke = false;
+    msg.textContent = "已清除，請重新簽名";
+  };
+
+  // ====== 小工具 ======
+  function setError(t){ msg.textContent = t; }
+  function setOK(t){ msg.textContent = t; msg.style.color = "#111"; }
+
+  function requireValue(inputEl, label){
+    const v = (inputEl.value || "").trim();
+    if(!v){
+      setError(`請填寫：${label}`);
+      inputEl.focus();
+      return null;
+    }
+    return v;
+  }
+
+  function todayISO(){
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    return `${yyyy}-${mm}-${dd}`;
+  }
+  if(!signDate.value) signDate.value = todayISO();
+
+  // ====== LIFF init ======
+  async function initLIFF(){
+    if(!window.liff){
+      throw new Error("找不到 LIFF SDK（請確認已加入 https://static.line-scdn.net/liff/edge/2/sdk.js）");
+    }
+    await liff.init({ liffId: LIFF_ID });
+    if(!liff.isLoggedIn()){
+      liff.login(); // 會跳走登入，回來後才會繼續
+      return false;
+    }
+    return true;
+  }
+
+  // ====== 送出 ======
+  submitBtn.onclick = async () => {
+    msg.style.color = ""; // reset
+    setError("");
+
+    // 1) 同意勾選
+    if(!agree.checked){
+      setError("請先勾選：我已完整閱讀並同意上述契約內容");
+      return;
     }
 
-    syncSize();
-    window.addEventListener("resize", syncSize);
-
-    let drawing = false;
-
-    function point(e){
-      const r = overlay.getBoundingClientRect();
-      const p = e.touches ? e.touches[0] : e;
-      return { x:p.clientX-r.left, y:p.clientY-r.top };
-    }
-
-    function down(e){
-      e.preventDefault();
-      drawing = true;
-      const p = point(e);
-      ctx.beginPath();
-      ctx.moveTo(p.x,p.y);
-      msg.textContent = "";
-    }
-    function move(e){
-      if(!drawing) return;
-      e.preventDefault();
-      const p = point(e);
-      ctx.lineTo(p.x,p.y);
-      ctx.stroke();
-    }
-    function up(e){
-      drawing = false;
-    }
-
-    overlay.addEventListener("touchstart",down,{passive:false});
-    overlay.addEventListener("touchmove",move,{passive:false});
-    window.addEventListener("touchend",up);
-
-    overlay.addEventListener("pointerdown",down,{passive:false});
-    overlay.addEventListener("pointermove",move,{passive:false});
-    window.addEventListener("pointerup",up);
-
-    clearBtn.onclick = () => {
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      msg.textContent = "已清除，請重新簽名";
+    // 2) 必填欄位
+    const data = {
+      ownerName:   requireValue(ownerName, "甲方姓名（飼主）"),
+      ownerIdNo:   requireValue(ownerIdNo, "身分證字號"),
+      ownerPhone:  requireValue(ownerPhone, "聯絡電話"),
+      ownerAddress:requireValue(ownerAddress, "通訊地址"),
+      petName:     requireValue(petName, "寵物姓名"),
+      petBreed:    requireValue(petBreed, "寵物品種"),
+      petWeight:   requireValue(petWeight, "體重（公斤）"),
+      signDate:    requireValue(signDate, "審閱／簽署日期"),
     };
-  })();
+    if(!data.ownerName) return; // 上面已 setError + focus
 
+    // 3) 有簽名？
+    if(!hasStroke){
+      setError("請先完成簽名再送出");
+      return;
+    }
+
+    // 4) 先 init LIFF
+    submitBtn.disabled = true;
+    submitBtn.textContent = "送出中...";
+    try{
+      const ok = await initLIFF();
+      if(!ok) return;
+
+      // 5) 取 userId（可用於檔名/追蹤）
+      let userId = "";
+      try{
+        const profile = await liff.getProfile();
+        userId = profile.userId || "";
+      }catch(e){ /* 有些情況抓不到就跳過 */ }
+
+      // 6) 產出簽名 PNG（base64）
+      const signatureDataUrl = canvas.toDataURL("image/png");
+
+      // 7) 丟到 GAS 存 Google Drive，並拿回可公開圖片 URL
+      const payload = {
+        ...data,
+        userId,
+        signatureDataUrl,
+                // contractText: document.getElementById("contractText").innerText
+      };
+
+      const res = await fetch(GAS_WEBAPP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if(!res.ok){
+        throw new Error("上傳 Google 失敗（GAS 回應非 200）");
+      }
+
+      const result = await res.json();
     
+
+      if(!result || !result.ok){
+        throw new Error(result && result.error ? result.error : "上傳失敗（GAS 未回傳 ok:true）");
+      }
+      if(!result.imageUrl){
+        throw new Error("GAS 未回傳 imageUrl（無法用 LIFF 傳圖片）");
+      }
+
+      // 8) 回傳聊天室（文字 + 圖片）
+      const textMsg =
+`✅ 熊嶼契約已簽署
+甲方：${data.ownerName}
+身分證：${data.ownerIdNo}
+電話：${data.ownerPhone}
+地址：${data.ownerAddress}
+寵物：${data.petName}（${data.petBreed} / ${data.petWeight}kg）
+簽署日：${data.signDate}`;
+
+      
+      const imgMsg = {
+        type: "image",
+        originalContentUrl: result.imageUrl,
+        previewImageUrl: result.previewUrl || result.imageUrl
+      };
+
+      await liff.sendMessages([
+        { type:"text", text: textMsg },
+        imgMsg
+      ]);
+
+      // 9) 成功提示 + 關閉
+      setOK("✅ 已回傳聊天室並同步上傳完成，視窗將自動關閉");
+      setTimeout(() => {
+        try{ liff.closeWindow(); }catch(e){ /* ignore */ }
+      }, 900);
+
+    }catch(err){
+      console.error(err);
+      setError(`❌ 送出失敗：${err.message || err}`);
+      submitBtn.disabled = false;
+      submitBtn.textContent = "送出簽名";
+    }
+  };
+
+})();
 </script>
+
 
 </body>
 </html>
