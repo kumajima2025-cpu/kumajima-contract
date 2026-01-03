@@ -51,6 +51,15 @@
       font-size:20px;
       font-weight:900;
     }
+#signDate{
+  height:58px;
+  padding:14px;
+  font-size:20px;
+  font-weight:900;
+  appearance:none;
+  -webkit-appearance:none;
+}
+    
     /* ===== 簽名區（只留這份）===== */
 #sigWrap{
   position:relative;
@@ -444,18 +453,9 @@ ______________________________________________
       <div class="label">體重（公斤）</div>
       <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
 
-      <label>審閱 / 簽署日期</label>
-<input
-  type="date"
-  class="input"
-  id="signDate"
-  height: 52px;
-  font-size: 16px;
-  padding: 0 14px;
-  border-radius: 12px;
-  border: 1.5px solid #ccc;
-  box-sizing: border-box;
-  />
+      <div class="label">審閱 / 簽署日期</div>
+<input type="date" class="input" id="signDate">
+
   
 }
 
