@@ -487,7 +487,6 @@ ______________________________________________
 
   // ====== DOM ======
   const canvas = document.getElementById("sig");
-  const overlay = document.getElementById("sigOverlay");
   const clearBtn = document.getElementById("clear");
   const submitBtn = document.getElementById("submit");
   const msg = document.getElementById("msg");
@@ -504,6 +503,8 @@ ______________________________________________
   const signDate = document.getElementById("signDate");
 
   const ctx = canvas.getContext("2d");
+  canvas.style.touchAction = "none";
+
 
   // ====== Canvas sizing ======
   function syncSize(){
