@@ -336,61 +336,35 @@
 
   
   <script>
-  // 版本提示：你看到這行代表 JS 正常載入
-  document.addEventListener("DOMContentLoaded", () => {
-    const m = document.getElementById("msg");
-    if (m) m.textContent = "✅ 程式已載入（可簽名）";
-  });
 
-  const LIFF_ID = "2008805180-dNJmIam4";
-  const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec";
-
-  const el = (id) => document.getElementById(id);
-  const msgEl = el("msg");
-  const clearBtn = el("clear");
-
-  function setMsg(t){ if(msgEl) msgEl.textContent = t || ""; }
-
-  // 日期：確保可選
-  (function fixDate(){
-    const dateInp = el("signDate");
-    if(!dateInp) return;
-    dateInp.removeAttribute("readonly");
-    dateInp.removeAttribute("disabled");
-    try{ dateInp.type = "date"; }catch(e){}
-  })();
-
-  // 簽名：唯一一套（iPhone/Android/LINE WebView OK）
-  (function setupSignature(){
-    const canvas = el("sig");
-    if(!canvas) return;
-
+  (function(){
+    const canvas = document.getElementById("sig");
+    const overlay = document.getElementById("sigOverlay");
+    const clearBtn = document.getElementById("clear");
+    const msg = document.getElementById("msg");
     const ctx = canvas.getContext("2d");
 
     function syncSize(){
-      const rect = canvas.getBoundingClientRect();
+      const r = canvas.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-
-      canvas.width  = Math.max(1, Math.round(rect.width * dpr));
-      canvas.height = Math.max(1, Math.round(rect.height * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
+      canvas.width  = Math.round(r.width * dpr);
+      canvas.height = Math.round(r.height * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
       ctx.lineWidth = 4;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
       ctx.strokeStyle = "#111";
     }
 
-    canvas.style.touchAction = "none";
     syncSize();
     window.addEventListener("resize", syncSize);
 
     let drawing = false;
 
     function point(e){
-      const rect = canvas.getBoundingClientRect();
+      const r = overlay.getBoundingClientRect();
       const p = e.touches ? e.touches[0] : e;
-      return { x: p.clientX - rect.left, y: p.clientY - rect.top };
+      return { x:p.clientX-r.left, y:p.clientY-r.top };
     }
 
     function down(e){
@@ -398,38 +372,34 @@
       drawing = true;
       const p = point(e);
       ctx.beginPath();
-      ctx.moveTo(p.x, p.y);
-      setMsg(""); // 清除提示
+      ctx.moveTo(p.x,p.y);
+      msg.textContent = "";
     }
-
     function move(e){
       if(!drawing) return;
       e.preventDefault();
       const p = point(e);
-      ctx.lineTo(p.x, p.y);
+      ctx.lineTo(p.x,p.y);
       ctx.stroke();
     }
-
     function up(e){
-      if(!drawing) return;
-      e.preventDefault();
       drawing = false;
     }
 
-    canvas.addEventListener("touchstart", down, { passive:false });
-    canvas.addEventListener("touchmove", move, { passive:false });
-    window.addEventListener("touchend", up, { passive:false });
+    overlay.addEventListener("touchstart",down,{passive:false});
+    overlay.addEventListener("touchmove",move,{passive:false});
+    window.addEventListener("touchend",up);
 
-    canvas.addEventListener("pointerdown", down, { passive:false });
-    canvas.addEventListener("pointermove", move, { passive:false });
-    window.addEventListener("pointerup", up, { passive:false });
+    overlay.addEventListener("pointerdown",down,{passive:false});
+    overlay.addEventListener("pointermove",move,{passive:false});
+    window.addEventListener("pointerup",up);
 
-    function clear(){
-      const rect = canvas.getBoundingClientRect();
-      ctx.clearRect(0, 0, rect.width, rect.height);
-      setMsg("");
-    }
-
-    if(clearBtn) clearBtn.addEventListener("click", clear);
+    clearBtn.onclick = () => {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      msg.textContent = "已清除，請重新簽名";
+    };
   })();
 </script>
+
+</body>
+</html>
