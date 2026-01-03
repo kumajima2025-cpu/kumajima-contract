@@ -336,6 +336,11 @@
 
   
   <script>
+    document.addEventListener("DOMContentLoaded", () => {
+  const m = document.getElementById("msg");
+  if (m) m.textContent = "✅ 程式已載入 v20260103-4";
+});
+
     const LIFF_ID = "2008805180-dNJmIam4";
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec";
 
