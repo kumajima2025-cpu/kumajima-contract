@@ -470,5 +470,29 @@
     dateInp.removeAttribute("disabled");
     try{ dateInp.type = "date"; }catch(e){}
   })();
+
+      // ===== 簽名框觸控偵測（一定要看到訊息）=====
+(() => {
+  const c = document.getElementById("sig");
+  const m = document.getElementById("msg");
+  if (!c || !m) return;
+
+  m.textContent = "✅ JS 已載入（請點/摸簽名框測試）";
+
+  c.addEventListener("click", () => {
+    m.textContent = "✅ 有點到簽名框（click）";
+  });
+
+  c.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    m.textContent = "✅ 有碰到簽名框（touchstart）";
+  }, { passive: false });
+
+  c.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    m.textContent = "✅ 有碰到簽名框（pointerdown）";
+  }, { passive: false });
+})();
+
 </script>
 
