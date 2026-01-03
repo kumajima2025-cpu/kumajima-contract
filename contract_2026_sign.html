@@ -572,7 +572,9 @@ ______________________________________________
     const p = e.touches ? e.touches[0] : e;
     return { x: p.clientX - r.left, y: p.clientY - r.top };
   }
-
+function lockScroll(lock){
+  document.body.style.overflow = lock ? "hidden" : "";
+}
   function down(e){
     e.preventDefault();
     lockScroll(true);
@@ -738,10 +740,7 @@ ______________________________________________
   
 
 })();
-function lockScroll(lock){
-  document.body.style.overflow = lock ? "hidden" : "";
-  document.body.style.touchAction = lock ? "none" : "";
-}
+
   
 </script>
 
