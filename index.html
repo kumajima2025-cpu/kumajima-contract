@@ -317,7 +317,11 @@
 
     <div class="card">
       <div class="label" style="margin-top:0">甲方簽名</div>
-      <canvas id="sig"></canvas>
+      <div id="sigWrap" style="position:relative;">
+  <canvas id="sig"></canvas>
+  <div id="sigOverlay" style="position:absolute; inset:0; background:transparent;"></div>
+</div>
+
 
       <div class="dangerNote">簽名完成後將自動回傳至聊天室並同步上傳至雲端</div>
 
@@ -471,28 +475,95 @@
     try{ dateInp.type = "date"; }catch(e){}
   })();
 
-      // ===== 簽名框觸控偵測（一定要看到訊息）=====
-(() => {
-  const c = document.getElementById("sig");
-  const m = document.getElementById("msg");
-  if (!c || !m) return;
 
-  m.textContent = "✅ JS 已載入（請點/摸簽名框測試）";
+#sig{
+  position: relative !important;
+  z-index: 2147483647 !important;
+  pointer-events: auto !important;
+  touch-action: none !important;
+}
 
-  c.addEventListener("click", () => {
-    m.textContent = "✅ 有點到簽名框（click）";
-  });
 
-  c.addEventListener("touchstart", (e) => {
+.card, .wrap, body{
+  pointer-events: auto !important;
+}
+
+      (() => {
+  const canvas = document.getElementById("sig");
+  const overlay = document.getElementById("sigOverlay");
+  const msgEl = document.getElementById("msg");
+  const clearBtn = document.getElementById("clear");
+  if(!canvas || !overlay) return;
+
+  const ctx = canvas.getContext("2d");
+
+  function setMsg(t){ if(msgEl) msgEl.textContent = t || ""; }
+
+  function syncSize(){
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#111";
+  }
+
+  syncSize();
+  window.addEventListener("resize", syncSize);
+
+  let drawing = false;
+
+  function point(e){
+    const r = overlay.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return { x: p.clientX - r.left, y: p.clientY - r.top };
+  }
+
+  function down(e){
     e.preventDefault();
-    m.textContent = "✅ 有碰到簽名框（touchstart）";
-  }, { passive: false });
+    drawing = true;
+    const p = point(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    setMsg("✅ 已開始簽名");
+  }
 
-  c.addEventListener("pointerdown", (e) => {
+  function move(e){
+    if(!drawing) return;
     e.preventDefault();
-    m.textContent = "✅ 有碰到簽名框（pointerdown）";
-  }, { passive: false });
+    const p = point(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  }
+
+  function up(e){
+    if(!drawing) return;
+    e.preventDefault();
+    drawing = false;
+    setMsg("");
+  }
+
+  overlay.style.touchAction = "none";
+
+  overlay.addEventListener("touchstart", down, { passive:false });
+  overlay.addEventListener("touchmove", move, { passive:false });
+  window.addEventListener("touchend", up, { passive:false });
+
+  overlay.addEventListener("pointerdown", down, { passive:false });
+  overlay.addEventListener("pointermove", move, { passive:false });
+  window.addEventListener("pointerup", up, { passive:false });
+
+  function clear(){
+    const r = canvas.getBoundingClientRect();
+    ctx.clearRect(0,0,r.width,r.height);
+    setMsg("");
+  }
+  if(clearBtn) clearBtn.addEventListener("click", clear);
 })();
+
 
 </script>
 
