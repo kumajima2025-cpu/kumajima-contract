@@ -158,6 +158,14 @@
   font-weight:900;
   line-height:1.35;
 }
+    html, body{
+  overscroll-behavior: none; 
+}
+
+#sigWrap, #sig{
+  touch-action: none;         
+  overscroll-behavior: contain;
+}
 
     
   </style>
@@ -567,6 +575,7 @@ ______________________________________________
 
   function down(e){
     e.preventDefault();
+    lockScroll(true);
     drawing = true;
     const p = point(e);
     ctx.beginPath();
@@ -585,6 +594,7 @@ ______________________________________________
 
   function up(){
     drawing = false;
+    lockScroll(false);
   }
 
   canvas.addEventListener("pointerdown", down, { passive:false });
@@ -725,8 +735,14 @@ ______________________________________________
       resetSubmit();
     }
   };
+  
 
 })();
+function lockScroll(lock){
+  document.body.style.overflow = lock ? "hidden" : "";
+  document.body.style.touchAction = lock ? "none" : "";
+}
+  
 </script>
 
 
