@@ -380,148 +380,95 @@
       const p = pos(e);
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
-    }
-    function move(e){
-      if(!drawing) return;
-      e.preventDefault();
-      const p = pos(e);
-      ctx.lineTo(p.x, p.y);
-      ctx.stroke();
-    }
-    function end(e
+    }<script>
+  const LIFF_ID = "2008805180-dNJmIam4";
+  const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec";
 
-                 (function enableMobileSignature() {
-  const canvas = document.getElementById("sig");
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-
-  function resizeCanvasToDisplaySize() {
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-
-    const displayW = Math.max(1, Math.round(rect.width * dpr));
-    const displayH = Math.max(1, Math.round(rect.height * dpr));
-    if (canvas.width !== displayW || canvas.height !== displayH) {
-      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      canvas.width = displayW;
-      canvas.height = displayH;
-      ctx.scale(dpr, dpr);
-      
-    }
-  }
-
-
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  let drawing = false;
-
-  function getPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
-    const clientY = (e.touches ? e.touches[0].clientY : e.clientY);
-    return { x: clientX - rect.left, y: clientY - rect.top };
-  }
-
-  function start(e) {
-    e.preventDefault();
-    resizeCanvasToDisplaySize();
-    drawing = true;
-    const p = getPos(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  }
-
-  function move(e) {
-    if (!drawing) return;
-    e.preventDefault();
-    const p = getPos(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-  }
-
-  function end(e) {
-    if (!drawing) return;
-    e.preventDefault();
-    drawing = false;
-  }
-
-
-(() => {
-  const canvas = document.getElementById("sig");
-  const clearBtn = document.getElementById("clear");
-  const msgEl = document.getElementById("msg");
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
+  const el = (id)=>document.getElementById(id);
+  const msgEl = el("msg");
+  const clearBtn = el("clear");
 
   function setMsg(t){ if(msgEl) msgEl.textContent = t || ""; }
 
-  function syncSize(){
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width  = Math.max(1, Math.round(rect.width * dpr));
-    canvas.height = Math.max(1, Math.round(rect.height * dpr));
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  // --- 簽名（iPhone/Android/LINE WebView 都可）---
+  (function setupSignature(){
+    const canvas = el("sig");
+    if(!canvas) return;
 
-    ctx.lineWidth = 4;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "#111";
-  }
+    const ctx = canvas.getContext("2d");
 
-  canvas.style.touchAction = "none";
-  syncSize();
-  window.addEventListener("resize", syncSize);
+    function syncSize(){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
 
-  let drawing = false;
+      canvas.width  = Math.max(1, Math.round(rect.width * dpr));
+      canvas.height = Math.max(1, Math.round(rect.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  function point(e){
-    const rect = canvas.getBoundingClientRect();
-    const p = e.touches ? e.touches[0] : e;
-    return { x: p.clientX - rect.left, y: p.clientY - rect.top };
-  }
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "#111";
+    }
 
-  function down(e){
-    e.preventDefault();
-    drawing = true;
-    const p = point(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-    setMsg("");
-  }
+    canvas.style.touchAction = "none";
+    syncSize();
+    window.addEventListener("resize", syncSize);
 
-  function move(e){
-    if(!drawing) return;
-    e.preventDefault();
-    const p = point(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-  }
+    let drawing = false;
 
-  function up(e){
-    if(!drawing) return;
-    e.preventDefault();
-    drawing = false;
-  }
+    function point(e){
+      const rect = canvas.getBoundingClientRect();
+      const p = e.touches ? e.touches[0] : e;
+      return { x: p.clientX - rect.left, y: p.clientY - rect.top };
+    }
 
-  canvas.addEventListener("touchstart", down, { passive:false });
-  canvas.addEventListener("touchmove", move, { passive:false });
-  window.addEventListener("touchend", up, { passive:false });
+    function down(e){
+      e.preventDefault();
+      drawing = true;
+      const p = point(e);
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      setMsg("");
+    }
 
-  canvas.addEventListener("pointerdown", down, { passive:false });
-  canvas.addEventListener("pointermove", move, { passive:false });
-  window.addEventListener("pointerup", up, { passive:false });
+    function move(e){
+      if(!drawing) return;
+      e.preventDefault();
+      const p = point(e);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    }
 
-  function clear(){
-    const rect = canvas.getBoundingClientRect();
-    ctx.clearRect(0,0,rect.width,rect.height);
-    setMsg("");
-  }
-  if(clearBtn) clearBtn.addEventListener("click", clear);
-})();
+    function up(e){
+      if(!drawing) return;
+      e.preventDefault();
+      drawing = false;
+    }
 
-})();
+    canvas.addEventListener("touchstart", down, { passive:false });
+    canvas.addEventListener("touchmove", move, { passive:false });
+    window.addEventListener("touchend", up, { passive:false });
+
+    canvas.addEventListener("pointerdown", down, { passive:false });
+    canvas.addEventListener("pointermove", move, { passive:false });
+    window.addEventListener("pointerup", up, { passive:false });
+
+    function clear(){
+      const rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0,0,rect.width,rect.height);
+      setMsg("");
+    }
+    if(clearBtn) clearBtn.addEventListener("click", clear);
+  })();
+
+  // --- 日期欄位：確保可選 ---
+  (function fixDate(){
+    const dateInp = el("signDate");
+    if(!dateInp) return;
+    dateInp.removeAttribute("readonly");
+    dateInp.removeAttribute("disabled");
+    try{ dateInp.type = "date"; }catch(e){}
+  })();
+</script>
 
