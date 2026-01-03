@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>熊嶼寵物
-犬、貓美容服務定型化契約</title>
+  <title>寵物美容服務定型化契約</title>
 
   <style>
     :root{
@@ -52,6 +51,14 @@
       font-size:20px;
       font-weight:900;
     }
+    #sig{
+      touch-action: none;
+    }
+    #signDate{
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 
     /* ===== 簽名區 ===== */
     #sigWrap{
@@ -459,7 +466,6 @@ ______________________________________________
 
       <div id="sigWrap">
         <canvas id="sig"></canvas>
-        <div id="sigOverlay"></div>
       </div>
 
       <div class="dangerNote">簽名完成後將自動回傳至聊天室並同步上傳至雲端</div>
@@ -518,44 +524,48 @@ ______________________________________________
   let hasStroke = false;
 
   function point(e){
-    const r = overlay.getBoundingClientRect();
-    const p = e.touches ? e.touches[0] : e;
-    return { x:p.clientX-r.left, y:p.clientY-r.top };
-  }
+  const r = canvas.getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : e;
+  return { x: p.clientX - r.left, y: p.clientY - r.top };
+}
 
-  function down(e){
-    e.preventDefault();
-    drawing = true;
-    const p = point(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x,p.y);
-    msg.textContent = "";
-  }
-  function move(e){
-    if(!drawing) return;
-    e.preventDefault();
-    const p = point(e);
-    ctx.lineTo(p.x,p.y);
-    ctx.stroke();
-    hasStroke = true;
-  }
-  function up(){
-    drawing = false;
-  }
+function down(e){
+  e.preventDefault();
+  drawing = true;
+  const p = point(e);
+  ctx.beginPath();
+  ctx.moveTo(p.x, p.y);
+  msg.textContent = "";
+}
 
-  overlay.addEventListener("touchstart", down, {passive:false});
-  overlay.addEventListener("touchmove",  move, {passive:false});
-  window.addEventListener("touchend", up);
+function move(e){
+  if(!drawing) return;
+  e.preventDefault();
+  const p = point(e);
+  ctx.lineTo(p.x, p.y);
+  ctx.stroke();
+  hasStroke = true;
+}
 
-  overlay.addEventListener("pointerdown", down, {passive:false});
-  overlay.addEventListener("pointermove",  move, {passive:false});
-  window.addEventListener("pointerup", up);
+function up(){
+  drawing = false;
+}
 
-  clearBtn.onclick = () => {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    hasStroke = false;
-    msg.textContent = "已清除，請重新簽名";
-  };
+// ✅ 事件全部改綁在 canvas（不要綁 overlay）
+canvas.addEventListener("touchstart", down, { passive:false });
+canvas.addEventListener("touchmove",  move, { passive:false });
+window.addEventListener("touchend", up);
+
+canvas.addEventListener("pointerdown", down, { passive:false });
+canvas.addEventListener("pointermove", move, { passive:false });
+window.addEventListener("pointerup", up);
+
+clearBtn.onclick = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  hasStroke = false;
+  msg.textContent = "已清除，請重新簽名";
+};
+
 
   // ====== 小工具 ======
   function setError(t){ msg.textContent = t; }
