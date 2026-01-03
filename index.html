@@ -242,7 +242,7 @@
 
   <script>
     const LIFF_ID = "2008805180-dNJmIam4";
-    const GAS_WEBAPP_URL = "貼上你的GAS Web App /exec";
+    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx4jE9rFT5DVGmRhKYDQH-m60t2h6rHe1JOnoSqrisv4NWtZaQrzxWo-qP7rNrGQ7bqYA/exec";
 
     const el = (id)=>document.getElementById(id);
     const msgEl = el("msg");
@@ -250,16 +250,17 @@
     function setMsg(t){ msgEl.textContent = t || ""; }
     function v(id){ return (el(id).value || "").trim(); }
 
-    // 日期
-    (function initDate(){
-      const d = new Date();
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth()+1).padStart(2,"0");
-      const dd = String(d.getDate()).padStart(2,"0");
-      el("signDate").value = `${yyyy}-${mm}-${dd}`;
-    })();
+  
+    (function fixDateInput() {
+  const candidates = document.querySelectorAll('input[type="date"], input[name*="date" i], input[id*="date" i], input[placeholder*="日期"]');
+  candidates.forEach(inp => {
+    inp.removeAttribute("readonly");
+    inp.removeAttribute("disabled");
 
-    // 簽名板
+    if (inp.type !== "date") {
+      try { inp.type = "date"; } catch (e) {}
+
+  
     const canvas = el("sig");
     const ctx = canvas.getContext("2d");
     function resizeCanvas(){
