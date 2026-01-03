@@ -294,3 +294,78 @@
       ctx.stroke();
     }
     function end(e
+
+                 (function enableMobileSignature() {
+  const canvas = document.getElementById("sig");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+
+  function resizeCanvasToDisplaySize() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    const displayW = Math.max(1, Math.round(rect.width * dpr));
+    const displayH = Math.max(1, Math.round(rect.height * dpr));
+    if (canvas.width !== displayW || canvas.height !== displayH) {
+      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      canvas.width = displayW;
+      canvas.height = displayH;
+      ctx.scale(dpr, dpr);
+      
+    }
+  }
+
+
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  let drawing = false;
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
+    const clientY = (e.touches ? e.touches[0].clientY : e.clientY);
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function start(e) {
+    e.preventDefault();
+    resizeCanvasToDisplaySize();
+    drawing = true;
+    const p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  }
+
+  function move(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = getPos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+  }
+
+  function end(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    drawing = false;
+  }
+
+
+  canvas.style.touchAction = "none";
+
+  canvas.addEventListener("pointerdown", start, { passive: false });
+  canvas.addEventListener("pointermove", move, { passive: false });
+  window.addEventListener("pointerup", end, { passive: false });
+
+  canvas.addEventListener("touchstart", start, { passive: false });
+  canvas.addEventListener("touchmove", move, { passive: false });
+  window.addEventListener("touchend", end, { passive: false });
+      
+  canvas.addEventListener("mousedown", start);
+  canvas.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", end);
+})();
+
