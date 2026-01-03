@@ -511,7 +511,7 @@ ______________________________________________
   // ====== 小工具 ======
   function setError(t){
     msg.textContent = t || "";
-    msg.style.color = "var(--danger)";
+    msg.style.color = "#d21f1f";
   }
   function setOK(t){
     msg.textContent = t || "";
@@ -523,7 +523,7 @@ ______________________________________________
     if(!v){
       setError(`請填寫：${label}`);
       inputEl.focus();
-      resetSubmit(); // ✅ 避免卡在送出中
+      resetSubmit();
       return null;
     }
     return v;
@@ -546,7 +546,6 @@ ______________________________________________
     canvas.width  = Math.round(r.width * dpr);
     canvas.height = Math.round(r.height * dpr);
 
-    // 之後用 CSS px 畫（最直覺）
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.lineWidth = 4;
     ctx.lineCap = "round";
@@ -576,9 +575,6 @@ ______________________________________________
   }
 
   function move(e){
-    // 你原本的行為保留：畫一下就讓按鈕回到可送出
-    resetSubmit();
-
     if(!drawing) return;
     e.preventDefault();
     const p = point(e);
@@ -591,7 +587,6 @@ ______________________________________________
     drawing = false;
   }
 
-  // ✅ 事件全部改綁在 canvas
   canvas.addEventListener("pointerdown", down, { passive:false });
   canvas.addEventListener("pointermove", move, { passive:false });
   window.addEventListener("pointerup", up);
@@ -599,13 +594,11 @@ ______________________________________________
   window.addEventListener("pointerleave", up);
 
   clearBtn.onclick = () => {
-    // ✅ 用 CSS px 尺寸清，避免 dpr 殘影
     const r = canvas.getBoundingClientRect();
     ctx.clearRect(0, 0, r.width, r.height);
 
     hasStroke = false;
     setError("已清除，請重新簽名");
-    canvas.style.touchAction = "none";
     resetSubmit();
   };
 
@@ -623,7 +616,6 @@ ______________________________________________
   }
 
   submitBtn.onclick = async () => {
-    // 清掉訊息
     msg.style.color = "";
     msg.textContent = "";
 
@@ -633,7 +625,7 @@ ______________________________________________
     // 1) 同意勾選
     if(!agree.checked){
       setError("請先勾選：我已完整閱讀並同意上述契約內容");
-      resetSubmit(); // ✅ 重要：避免卡死
+      resetSubmit();
       return;
     }
 
@@ -649,7 +641,6 @@ ______________________________________________
       signDate:     requireValue(signDate, "審閱／簽署日期"),
     };
     if (Object.values(data).some(v => v === null)){
-      // requireValue 已 resetSubmit，但保險再做一次
       resetSubmit();
       return;
     }
@@ -657,7 +648,7 @@ ______________________________________________
     // 3) 簽名檢查
     if(!hasStroke){
       setError("請先完成簽名再送出");
-      resetSubmit(); // ✅ 重要：避免卡死
+      resetSubmit();
       return;
     }
 
@@ -674,20 +665,13 @@ ______________________________________________
       try{
         const profile = await liff.getProfile();
         userId = profile.userId || "";
-      }catch(e){
-        // ignore
-      }
+      }catch(e){}
 
       // 6) 產出簽名 PNG（base64）
       const signatureDataUrl = canvas.toDataURL("image/png");
 
       // 7) 丟到 GAS
-      const payload = {
-        ...data,
-        userId,
-        signatureDataUrl,
-        // contractText: document.getElementById("contractText").innerText
-      };
+      const payload = { ...data, userId, signatureDataUrl };
 
       const res = await fetch(GAS_WEBAPP_URL, {
         method: "POST",
