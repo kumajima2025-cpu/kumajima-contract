@@ -51,49 +51,22 @@
       font-size:20px;
       font-weight:900;
     }
-    /* 簽名區修正 */
-#sig {
-  width: 100%;
-  height: 220px;
-  border: 2px solid #ccc;
-  border-radius: 12px;
-  background: #fff;
-  touch-action: none;        /* ⭐ 關鍵：手機才能畫 */
-  pointer-events: auto;      /* ⭐ 強制可操作 */
-  display: block;
+    /* ===== 簽名區（只留這份）===== */
+#sigWrap{
+  position:relative;
+  width:100%;
+  height:320px;
 }
 
-/* 防止被父層裁切 */
-.signature-wrap {
-  overflow: visible;
-}
+#sig{
+  width:100%;
+  height:320px;
+  border:2px solid var(--border);
+  border-radius:18px;
+  background:#fff;
+  display:block;
+  touch-action:none;   /* 手機可畫的關鍵 */
 
-    #signDate{
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-
-    /* ===== 簽名區 ===== */
-    #sigWrap{
-      position:relative;
-      width:100%;
-      height:320px;
-    }
-    #sig{
-      width:100%;
-      height:320px;
-      border:2px solid var(--border);
-      border-radius:18px;
-      background:#fff;
-      display:block;
-    }
-    #sigOverlay{
-      position:absolute;
-      inset:0;
-      background:transparent;
-      touch-action:none;
-      pointer-events:auto;
     }
 
     .btn{
