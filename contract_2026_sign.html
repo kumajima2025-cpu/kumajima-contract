@@ -445,6 +445,8 @@ ______________________________________________
 (function(){
 
   const LIFF_ID = "2008805180-dNJmIam4";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJLUQpem3gbqNYQbmt8aQxt7tDE-y-JUCSb9wXjY1YmFAFf07pEVf4VrPIwN0nQUSolQ/exec";
+  const SHARED_SECRET = "kumajima2025";
 
   const canvas = document.getElementById("sig");
   const clearBtn = document.getElementById("clear");
@@ -661,6 +663,31 @@ ______________________________________________
 （請在此訊息貼上簽名截圖。/n若有多隻毛孩，請每隻毛孩分別填寫一份表單並各自送出。）`;
 
       await liff.sendMessages([{ type:"text", text:textMsg }]);
+
+      let profile = null;
+      try { profile = await liff.getProfile(); } catch(e){}
+
+
+      const signatureDataUrl = canvas.toDataURL("image/png");
+
+
+      try{
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          body: JSON.stringify({
+            secret: SHARED_SECRET,
+            data,
+            signatureDataUrl,
+            line: {
+              userId: profile?.userId || "",
+              displayName: profile?.displayName || ""
+            }
+          })
+        });
+      }catch(e){
+        console.warn("Google upload failed:", e);
+      }
 
       showAfterSendUI();
       setOK("簽署資料已送出！\n請完成簽名截圖並回到聊天室");
