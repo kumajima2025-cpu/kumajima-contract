@@ -445,7 +445,7 @@ ______________________________________________
 (function(){
 
   const LIFF_ID = "2008805180-dNJmIam4";
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJLUQpem3gbqNYQbmt8aQxt7tDE-y-JUCSb9wXjY1YmFAFf07pEVf4VrPIwN0nQUSolQ/exec";
+  const GOOGLE_SCRIPT_URL = "https://docs.google.com/spreadsheets/d/17UpV5cL4Ks0ogE_CQLRPyr056StikaRLe-g-xQvOXJo/edit?gid=0#gid=0";
   const SHARED_SECRET = "kumajima2025";
 
   const canvas = document.getElementById("sig");
@@ -660,7 +660,7 @@ ______________________________________________
 體重(公斤)：${data.petWeight}
 審閱/簽署日期：${data.signDate}
 
-（請在此訊息貼上簽名截圖。/n若有多隻毛孩，請每隻毛孩分別填寫一份表單並各自送出。）`;
+（請在此訊息貼上簽名截圖。\n若有多隻毛孩，請每隻毛孩分別填寫一份表單並各自送出。）`;
 
       await liff.sendMessages([{ type:"text", text:textMsg }]);
 
