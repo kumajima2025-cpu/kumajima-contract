@@ -575,7 +575,7 @@ ______________________________________________
     if(afterSendModal) afterSendModal.style.display = "flex";
     if(afterSendBar) afterSendBar.style.display = "block";
     if(!afterSendModal && !afterSendBar){
-      alert("已把簽署資料送到聊天室，\n請截圖簽名後回到LINE貼上送出。");
+      alert("已把簽署資料送到聊天室。");
     }
   }
 
@@ -613,7 +613,7 @@ ______________________________________________
   submitBtn.onclick = async () => {
     msg.textContent = "";
     submitBtn.disabled = true;
-    submitBtn.textContent = "送出中...";
+    submitBtn.textContent = "謝謝您！資料上傳中...";
 
     if(!agree.checked){
       setError("請先勾選同意契約內容");
@@ -660,7 +660,8 @@ ______________________________________________
 體重(公斤)：${data.petWeight}
 審閱/簽署日期：${data.signDate}
 
-（請在此訊息貼上簽名截圖。\n若有多隻毛孩，請每隻毛孩分別填寫一份表單並各自送出。）`;
+（簽署資料與簽名已完成，並已自動上傳至雲端保存。
+若有多隻毛孩，請每隻毛孩分別填寫一份表單並各自送出。）`;
 
       await liff.sendMessages([{ type:"text", text:textMsg }]);
 
@@ -690,8 +691,10 @@ ______________________________________________
       }
 
       showAfterSendUI();
-      setOK("簽署資料已送出！\n請完成簽名截圖並回到聊天室");
-      resetSubmit();
+setOK("簽署資料已送出！\n可以回到聊天室了！");
+resetSubmit();
+
+
 
     }catch(err){
       setError(err.message || "送出失敗");
