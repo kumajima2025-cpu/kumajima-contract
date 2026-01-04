@@ -388,44 +388,42 @@ ______________________________________________
 </pre>
       </div>
 
-      checkRow">
+      <div class="checkRow">
         <input id="agree" type="checkbox">
         <label for="agree">我已完整閱讀並同意上述契約內容</label>
       </div>
     </div>
 
-    card">
-      sectionTitle">甲方資料填寫</div>
-      subText">請填寫以下資料以完成契約簽署</div>
+    <div class="card">
+      <div class="sectionTitle">甲方資料填寫</div>
+      <div class="subText">請填寫以下資料以完成契約簽署</div>
 
-      label">甲方姓名（飼主）</div>
+      <div class="label">甲方姓名（飼主）</div>
       <input id="ownerName" class="input" placeholder="請輸入飼主姓名">
 
-      label">身分證字號</div>
+      <div class="label">身分證字號</div>
       <input id="ownerIdNo" class="input" placeholder="請輸入身分證字號（例：A123456789）">
 
-      label">聯絡電話</div>
+      <div class="label">聯絡電話</div>
       <input id="ownerPhone" class="input" inputmode="tel" placeholder="請輸入聯絡電話">
 
-      label">通訊地址</div>
+      <div class="label">通訊地址</div>
       <input id="ownerAddress" class="input" placeholder="請輸入通訊地址">
 
-      label">寵物姓名</div>
+      <div class="label">寵物姓名</div>
       <input id="petName" class="input" placeholder="請輸入寵物姓名">
 
-      label">寵物品種</div>
+      <div class="label">寵物品種</div>
       <input id="petBreed" class="input" placeholder="例：比熊犬">
 
-      label">體重（公斤）</div>
+      <div class="label">體重（公斤）</div>
       <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
 
-      label">審閱 / 簽署日期</div>
-<input type="date" class="input" id="signDate">
-
+      <div class="label">審閱 / 簽署日期</div>
+      <input type="date" class="input" id="signDate">
     </div>
 
-    
-    card">
+    <div class="card">
       <div class="label" style="margin-top:0">甲方簽名</div>
 
       <div id="sigWrap">
@@ -435,245 +433,11 @@ ______________________________________________
       <div class="dangerNote">簽名完成後將自動回傳至聊天室</div>
 
       <button id="clear" class="btn btnClear" type="button">清除簽名</button>
-<div id="msg" class="msg"></div>
+      <div id="msg" class="msg"></div>
 
-<button id="submit" class="btn btnSubmit" type="button">送出簽名</button>
+      <button id="submit" class="btn btnSubmit" type="button">送出簽名</button>
+    </div>
 
-  </div>
-
-<script>
-(function(){
-
-  const LIFF_ID = "2008805180-dNJmIam4";
-
-  const canvas = document.getElementById("sig");
-  const clearBtn = document.getElementById("clear");
-  const submitBtn = document.getElementById("submit");
-  const msg = document.getElementById("msg");
-
-  const agree = document.getElementById("agree");
-
-  const ownerName = document.getElementById("ownerName");
-  const ownerIdNo = document.getElementById("ownerIdNo");
-  const ownerPhone = document.getElementById("ownerPhone");
-  const ownerAddress = document.getElementById("ownerAddress");
-  const petName = document.getElementById("petName");
-  const petBreed = document.getElementById("petBreed");
-  const petWeight = document.getElementById("petWeight");
-  const signDate = document.getElementById("signDate");
-
-  const afterSendModal = document.getElementById("afterSendModal");
-  const btnBackToScreenshot = document.getElementById("btnBackToScreenshot");
-  const btnCloseToLINE = document.getElementById("btnCloseToLINE");
-  const afterSendBar = document.getElementById("afterSendBar");
-  const btnCloseToLINE2 = document.getElementById("btnCloseToLINE2");
-
-  const ctx = canvas.getContext("2d");
-  canvas.style.touchAction = "none";
-
-  function resetSubmit(){
-    submitBtn.disabled = false;
-    submitBtn.textContent = "送出簽名";
-  }
-
-  function setError(t){
-    msg.textContent = t || "";
-    msg.style.color = "#d21f1f";
-  }
-
-  function setOK(t){
-    msg.textContent = t || "";
-    msg.style.color = "#111";
-  }
-
-  function requireValue(inputEl, label){
-    const v = (inputEl.value || "").trim();
-    if(!v){
-      setError(`請填寫：${label}`);
-      inputEl.focus();
-      resetSubmit();
-      return null;
-    }
-    return v;
-  }
-
-  function todayISO(){
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,"0");
-    const dd = String(d.getDate()).padStart(2,"0");
-    return `${yyyy}-${mm}-${dd}`;
-  }
-  if(signDate && !signDate.value) signDate.value = todayISO();
-
-  function syncSize(){
-    const r = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width  = Math.round(r.width * dpr);
-    canvas.height = Math.round(r.height * dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.lineWidth = 4;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "#111";
-  }
-  syncSize();
-
-  let drawing = false;
-  let hasStroke = false;
-
-  function point(e){
-    const r = canvas.getBoundingClientRect();
-    return { x: e.clientX - r.left, y: e.clientY - r.top };
-  }
-
-  function lockScroll(lock){
-    document.body.style.overflow = lock ? "hidden" : "";
-    document.body.style.touchAction = lock ? "none" : "";
-  }
-
-  function down(e){
-    e.preventDefault();
-    lockScroll(true);
-    drawing = true;
-    const p = point(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-    msg.textContent = "";
-  }
-
-  function move(e){
-    if(!drawing) return;
-    e.preventDefault();
-    const p = point(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-    hasStroke = true;
-  }
-
-  function up(){
-    drawing = false;
-    lockScroll(false);
-  }
-
-  canvas.addEventListener("pointerdown", down, { passive:false });
-  canvas.addEventListener("pointermove", move, { passive:false });
-  window.addEventListener("pointerup", up);
-  window.addEventListener("pointercancel", up);
-
-  clearBtn.onclick = () => {
-    const r = canvas.getBoundingClientRect();
-    ctx.clearRect(0, 0, r.width, r.height);
-    hasStroke = false;
-    setError("已清除，請重新簽名");
-    resetSubmit();
-  };
-
-  function showAfterSendUI(){
-    if(afterSendModal) afterSendModal.style.display = "flex";
-    if(afterSendBar) afterSendBar.style.display = "block";
-    if(!afterSendModal && !afterSendBar){
-      alert("已把簽署資料送到聊天室，\n請截圖簽名後回到LINE貼上送出。");
-    }
-  }
-
-  function closeToLINE(){
-    if(window.liff && liff.isInClient()){
-      liff.closeWindow();
-    }else{
-      alert("請從 LINE 聊天室內開啟此頁面");
-    }
-  }
-
-  if(btnBackToScreenshot){
-    btnBackToScreenshot.onclick = () => {
-      afterSendModal.style.display = "none";
-    };
-  }
-  if(btnCloseToLINE) btnCloseToLINE.onclick = closeToLINE;
-  if(btnCloseToLINE2) btnCloseToLINE2.onclick = closeToLINE;
-
-  async function initLIFF(){
-    if(!window.liff){
-      throw new Error("LIFF SDK 未載入");
-    }
-    await liff.init({ liffId: LIFF_ID });
-    if(!liff.isInClient()){
-      throw new Error("請從 LINE 聊天室開啟此連結");
-    }
-    if(!liff.isLoggedIn()){
-      liff.login();
-      return false;
-    }
-    return true;
-  }
-
-  submitBtn.onclick = async () => {
-    msg.textContent = "";
-    submitBtn.disabled = true;
-    submitBtn.textContent = "送出中...";
-
-    if(!agree.checked){
-      setError("請先勾選同意契約內容");
-      resetSubmit();
-      return;
-    }
-
-    const data = {
-      ownerName:    requireValue(ownerName, "甲方姓名"),
-      ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
-      ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
-      ownerAddress: requireValue(ownerAddress, "通訊地址"),
-      petName:      requireValue(petName, "寵物姓名"),
-      petBreed:     requireValue(petBreed, "寵物品種"),
-      petWeight:    requireValue(petWeight, "體重"),
-      signDate:     requireValue(signDate, "簽署日期"),
-    };
-    if(Object.values(data).some(v => v === null)){
-      resetSubmit();
-      return;
-    }
-
-    if(!hasStroke){
-      setError("請先完成簽名");
-      resetSubmit();
-      return;
-    }
-
-    try{
-      const ok = await initLIFF();
-      if(!ok){
-        resetSubmit();
-        return;
-      }
-
-      const textMsg =
-`【犬貓美容契約簽署資料】
-甲方姓名：${data.ownerName}
-聯絡電話：${data.ownerPhone}
-身分證字號：${data.ownerIdNo}
-通訊地址：${data.ownerAddress}
-寵物名字：${data.petName}
-品種：${data.petBreed}
-體重(公斤)：${data.petWeight}
-審閱/簽署日期：${data.signDate}
-
-（請在此訊息貼上簽名截圖）`;
-
-      await liff.sendMessages([{ type:"text", text:textMsg }]);
-
-      showAfterSendUI();
-      setOK("簽署資料已送出！\n請完成簽名截圖並回到聊天室");
-      resetSubmit();
-
-    }catch(err){
-      setError(err.message || "送出失敗");
-      resetSubmit();
-    }
-  };
-
-})();
-</script>
 
 
 
