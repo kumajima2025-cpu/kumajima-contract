@@ -205,6 +205,65 @@
   }
 </style>
 
+  <style>
+  :root {
+    --bg: #FFF7ED;        /* 奶油底色 */
+    --card: #FFFFFF;     /* 卡片白 */
+    --border: #F2D6B3;   /* 淡奶茶邊框 */
+    --text: #4A342E;     /* 深奶茶文字 */
+    --muted: #8B6F61;    /* 次要文字 */
+    --accent: #F4A261;   /* 暖橘重點 */
+    --accent-soft: #FCE3C6; /* 淡橘底 */
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+
+  .sectionTitle {
+    color: var(--text);
+    border-left: 6px solid var(--accent);
+    padding-left: 10px;
+  }
+
+  .subText,
+  .hint {
+    color: var(--muted);
+  }
+
+  input,
+  textarea {
+    border: 1px solid var(--border);
+    background: #FFFDF9;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+  }
+
+  button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+  }
+
+  button.secondary {
+    background: #EAD8C6;
+    color: var(--text);
+  }
+</style>
+
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
 </head>
