@@ -57,38 +57,42 @@ body{
 .card{
   background:var(--card);
   border-radius:var(--radius);
-  padding:18px 16px;
+  padding:20px 18px;               /* 原本 18px 16px → 更像簡報留白 */
   margin:14px 0;
-  border:1px solid rgba(231,215,201,.9);
-  box-shadow:var(--shadow);
+  border:1px solid rgba(231,215,201,.75);
+  box-shadow:
+    0 18px 45px rgba(36, 26, 22, .08),
+    0  2px 10px rgba(36, 26, 22, .04);  /* 兩層薄霧陰影 */
 }
 
 /* 標題字體：更有質感（不用外掛字體） */
 .title{
   font-size:26px;
-  font-weight:800;
+  font-weight:750;                 /* 原本 800 → 稍微降一點更有質感 */
   margin:2px 0 10px;
-  letter-spacing:.6px;
+  letter-spacing:1.1px;            /* 原本 .6 → 再拉開一點更像簡報 */
   font-family: ui-serif, "Georgia", "Times New Roman", serif;
 }
 
 .sectionTitle{
-  font-size:18px;
-  font-weight:800;
+  font-size:17.5px;                /* 原本 18 → 微降 */
+  font-weight:780;                 /* 原本 800 → 微降 */
   margin:10px 0 12px;
-  padding-left:8px;
+  padding-left:10px;               /* 原本 8 → 多一點留白 */
   position:relative;
+  letter-spacing:.7px;             /* 新增：簡報感 */
 }
 
 .sectionTitle:before{
   content:"";
   position:absolute;
   left:0;
-  top:2px;
-  bottom:2px;
-  width:3px;
+  top:3px;
+  bottom:3px;
+  width:2px;                       /* 原本 3 → 2 更精緻 */
   border-radius:10px;
   background:linear-gradient(180deg, var(--dusty), var(--border));
+  opacity:.9;
 }
 
 .subText{
