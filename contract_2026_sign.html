@@ -5,23 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>寵物美容服務定型化契約</title>
 
-  <style>
+<style>
 :root{
-  --bg:#FFF7ED;
+  /* Nude color palette（接近你圖） */
+  --bg:#EDE9E3;        /* ivory */
   --card:#FFFFFF;
-  --border:#F2D6B3;
-  --muted:#8B6F61;
-  --text:#4A342E;
-  --danger:#d21f1f;
-}
+  --border:#E7D7C9;    /* nude */
+  --muted:#7B6F6A;     /* 溫柔灰棕 */
+  --text:#3B2F2A;      /* 深拿鐵字色 */
+  --stone:#CDC6C3;     /* stone */
+  --dusty:#D4B2A7;     /* dusty rose */
+  --latte:#A38F85;     /* latte */
+  --danger:#C62828;
 
-#msg{
-  text-align:center;
-  margin-top:12px;
-  line-height:1.6;
+  --radius:22px;
+  --radius-sm:16px;
+  --shadow:0 10px 28px rgba(36, 26, 22, .08);
+  --shadow-sm:0 6px 16px rgba(36, 26, 22, .06);
 }
 
 *{box-sizing:border-box}
+
+html,body{
+  overscroll-behavior:none;
+}
 
 body{
   margin:0;
@@ -29,122 +36,118 @@ body{
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Heiti TC",sans-serif;
   overflow-x:hidden;
+  letter-spacing:.2px;
 }
 
 .wrap{
   max-width:720px;
   margin:0 auto;
-  padding:16px 14px 40px;
+  padding:18px 14px 44px;
 }
 
+#msg{
+  text-align:center;
+  margin-top:12px;
+  line-height:1.7;
+  color:var(--muted);
+  font-weight:600;
+}
+
+/* 卡片：更像簡報的柔霧白卡 */
 .card{
   background:var(--card);
-  border-radius:22px;
+  border-radius:var(--radius);
   padding:18px 16px;
-  box-shadow:0 1px 10px rgba(0,0,0,.06);
   margin:14px 0;
+  border:1px solid rgba(231,215,201,.9);
+  box-shadow:var(--shadow);
 }
 
+/* 標題字體：更有質感（不用外掛字體） */
 .title{
-  font-size:28px;
-  font-weight:900;
-  margin-bottom:10px;
-}
-
-.label{
-  font-size:22px;
-  font-weight:900;
-  margin:18px 0 10px;
-}
-
-.input{
-  width:100%;
-  border:2px solid var(--border);
-  border-radius:18px;
-  padding:14px;
-  font-size:20px;
-  font-weight:900;
-  background:#FFFDF9;
-}
-
-#signDate{
-  height:58px;
-  padding:14px;
-  font-size:20px;
-  font-weight:900;
-  appearance:none;
-  -webkit-appearance:none;
-}
-
-#sig{
-  position:relative;
-  width:100%;
-  height:320px;
-  border:2px solid var(--border);
-  border-radius:18px;
-  background:#fff;
-  display:block;
-  touch-action:none;
-  overscroll-behavior:contain;
-  -webkit-user-select:none;
-  user-select:none;
-}
-
-.btn{
-  width:100%;
-  border:none;
-  border-radius:18px;
-  padding:16px;
-  font-size:22px;
-  font-weight:900;
-  cursor:pointer;
-  margin-top:12px;
-}
-
-.btnClear{
-  background:#EAD8C6;
-  color:var(--text);
-}
-
-.btnSubmit{
-  background:#F4A261;
-  color:#fff;
-}
-
-.msg{
-  margin-top:10px;
-  color:var(--danger);
-  font-weight:900;
-}
-
-.meta{
-  color:var(--text);
-  font-weight:700;
-  line-height:1.6;
+  font-size:26px;
+  font-weight:800;
+  margin:2px 0 10px;
+  letter-spacing:.6px;
+  font-family: ui-serif, "Georgia", "Times New Roman", serif;
 }
 
 .sectionTitle{
-  font-size:20px;
-  font-weight:900;
+  font-size:18px;
+  font-weight:800;
   margin:10px 0 12px;
-  padding-left:6px;
+  padding-left:8px;
+  position:relative;
+}
+
+.sectionTitle:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:2px;
+  bottom:2px;
+  width:3px;
+  border-radius:10px;
+  background:linear-gradient(180deg, var(--dusty), var(--border));
 }
 
 .subText{
   color:var(--muted);
-  font-weight:700;
+  font-weight:600;
   margin:0 0 14px;
-  line-height:1.6;
+  line-height:1.7;
 }
 
+.label{
+  font-size:18px;
+  font-weight:800;
+  margin:18px 0 10px;
+  letter-spacing:.2px;
+}
+
+/* 輸入框：邊框變細、內部更乾淨、聚焦更高級 */
+.input{
+  width:100%;
+  border:1.6px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 14px;
+  font-size:18px;
+  font-weight:650;
+  background:rgba(255,255,255,.92);
+  color:var(--text);
+  outline:none;
+  box-shadow:0 1px 0 rgba(36,26,22,.04) inset;
+}
+
+.input::placeholder{
+  color:rgba(59,47,42,.45);
+  font-weight:550;
+}
+
+.input:focus{
+  border-color:rgba(212,178,167,.95);
+  box-shadow:0 0 0 4px rgba(212,178,167,.22);
+}
+
+#signDate{
+  height:56px;
+  padding:14px;
+  font-size:18px;
+  font-weight:650;
+  appearance:none;
+  -webkit-appearance:none;
+}
+
+/* 契約區塊：更像簡報的內容框 */
 .contractBox{
-  border:2px solid var(--border);
-  border-radius:18px;
-  padding:12px;
-  background:#fff;
+  border:1.6px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:12px 12px;
+  background:rgba(255,255,255,.95);
   max-height:360px;
   overflow-y:auto;
   overflow-x:hidden;
+  box-shadow:var(--shadow-sm);
 }
 
 .contractBox pre{
@@ -152,11 +155,91 @@ body{
   white-space:pre-wrap;
   word-break:break-word;
   overflow-wrap:break-word;
-  line-height:1.7;
-  font-size:17px;
-  font-weight:700;
-  color:var(--text);
+  line-height:1.8;
+  font-size:16.5px;
+  font-weight:600;
+  color:rgba(59,47,42,.92);
   font-family:inherit;
+}
+
+/* 簽名板：線條更細緻、框更一致 */
+#sig{
+  position:relative;
+  width:100%;
+  height:320px;
+  border:1.6px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.98);
+  display:block;
+  touch-action:none;
+  overscroll-behavior:contain;
+  -webkit-user-select:none;
+  user-select:none;
+  box-shadow:var(--shadow-sm);
+}
+
+/* 按鈕：更像高級品牌的霧面質感 */
+.btn{
+  width:100%;
+  border:none;
+  border-radius:18px;
+  padding:15px 16px;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:12px;
+  letter-spacing:.4px;
+  box-shadow:0 10px 20px rgba(36,26,22,.10);
+  transition:transform .06s ease, filter .15s ease;
+}
+.btn:active{ transform:translateY(1px); }
+
+.btnClear{
+  background:linear-gradient(180deg, rgba(231,215,201,.9), rgba(205,198,195,.75));
+  color:rgba(59,47,42,.92);
+}
+
+.btnSubmit{
+  background:linear-gradient(180deg, rgba(163,143,133,1), rgba(212,178,167,.95));
+  color:#fff;
+}
+
+.msg{
+  margin-top:10px;
+  color:var(--danger);
+  font-weight:800;
+}
+
+.meta{
+  color:rgba(59,47,42,.85);
+  font-weight:600;
+  line-height:1.7;
+}
+
+/* 勾選列：更一致、更精緻 */
+.checkRow{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  margin-top:14px;
+  padding:12px 12px;
+  border-radius:16px;
+  background:rgba(237,233,227,.55);
+  border:1px solid rgba(231,215,201,.7);
+}
+
+.checkRow input{
+  width:24px;
+  height:24px;
+  margin-top:2px;
+  accent-color:var(--latte);
+}
+
+.checkRow label{
+  font-size:18px;
+  font-weight:800;
+  line-height:1.4;
+  color:rgba(59,47,42,.92);
 }
 
 .dangerNote{
@@ -164,40 +247,17 @@ body{
   font-weight:900;
   text-align:center;
   margin:14px 0 12px;
-  font-size:18px;
-}
-
-.checkRow{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-  margin-top:14px;
-}
-
-.checkRow input{
-  width:26px;
-  height:26px;
-  margin-top:2px;
-  accent-color:#F4A261;  /* 橘色勾選 */
-}
-
-.checkRow label{
-  font-size:20px;
-  font-weight:900;
-  line-height:1.35;
-}
-
-html,body{
-  overscroll-behavior:none;
+  font-size:17px;
 }
 
 .section-title{
-  font-size:20px;
-  font-weight:900;
+  font-size:18px;
+  font-weight:800;
   padding-left:18px;
   margin:10px 0 12px;
 }
 </style>
+
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
