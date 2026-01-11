@@ -6,17 +6,13 @@
   <title>寵物美容服務定型化契約</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap');
-
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;800&display=swap');
 
 :root{
-
- 
   --bg:#FFF7ED;             
   --card:#FFFFFF;         
   --border:#E6C9B1;
-  --text:#4A342E;
+  --text:#2F201B;        /* 深咖啡字色 */
   --muted:#8B6F61;
   --stone:#EFE6DD;
   --dusty:#E9B18F; 
@@ -38,14 +34,16 @@ body{
   margin:0;
   background:var(--bg);
   color:var(--text);
-  font-family:"Noto Serif TC",
-              ui-serif,
-              "Songti TC",
-              "PingFang TC",
-              "Noto Sans TC",
-              serif;
+  font-family:
+    "Noto Sans TC",
+    -apple-system,
+    BlinkMacSystemFont,
+    "PingFang TC",
+    "Heiti TC",
+    "Microsoft JhengHei",
+    sans-serif;
   overflow-x:hidden;
-  letter-spacing:.45px;
+  letter-spacing:.2px;
 }
 
 .wrap{
@@ -75,19 +73,18 @@ body{
 
 .title{
   font-size:26px;
-  font-weight:750;                
+  font-weight:800;                
   margin:2px 0 10px;
-  letter-spacing:1.1px;           
-  font-family: ui-serif, "Georgia", "Times New Roman", serif;
+  letter-spacing:.5px;
 }
 
 .sectionTitle{
   font-size:17.5px;               
-  font-weight:780;                 
+  font-weight:800;                 
   margin:10px 0 12px;
   padding-left:10px;               
   position:relative;
-  letter-spacing:.7px;             
+  letter-spacing:.4px;             
 }
 
 .sectionTitle:before{
@@ -98,8 +95,8 @@ body{
   bottom:3px;
   width:2px;                       
   border-radius:10px;
-  background:linear-gradient(180deg, var(--dusty), var(--border));
-  opacity:.9;
+  background:var(--latte);
+  opacity:.8;
 }
 
 .subText{
@@ -113,7 +110,6 @@ body{
   font-size:18px;
   font-weight:800;
   margin:18px 0 10px;
-  letter-spacing:.2px;
 }
 
 .input{
@@ -122,7 +118,7 @@ body{
   border-radius:var(--radius-sm);
   padding:14px 14px;
   font-size:18px;
-  font-weight:650;
+  font-weight:600;
   background:#FFFBF6;
   color:var(--text);
   outline:none;
@@ -130,28 +126,18 @@ body{
 }
 
 .input::placeholder{
-  color:rgba(74,52,46,.45);
-  font-weight:550;
+  color:rgba(47,32,27,.45);
 }
 
 .input:focus{
-  border-color:var(--dusty);
-  box-shadow:0 0 0 4px rgba(233,177,143,.25);
-}
-
-#signDate{
-  height:56px;
-  padding:14px;
-  font-size:18px;
-  font-weight:650;
-  appearance:none;
-  -webkit-appearance:none;
+  border-color:var(--latte);
+  box-shadow:0 0 0 4px rgba(195,90,46,.18);
 }
 
 .contractBox{
   border:1.6px solid var(--border);
   border-radius:var(--radius-sm);
-  padding:12px 12px;
+  padding:12px;
   background:#FFFBF6;
   max-height:360px;
   overflow-y:auto;
@@ -163,28 +149,23 @@ body{
   margin:0;
   white-space:pre-wrap;
   word-break:break-word;
-  overflow-wrap:break-word;
-  line-height:1.8;
-  font-size:16.5px;
-  font-weight:600;
-  color:rgba(74,52,46,.92);
-  font-family:inherit;
+  line-height:1.75;
+  font-size:16px;
+  font-weight:500;
+  color:rgba(47,32,27,.95);
 }
 
 #sig{
-  position:relative;
   width:100%;
   height:320px;
   border:1.6px solid var(--border);
   border-radius:var(--radius-sm);
-  background:#FFFFFF;
-  display:block;
+  background:#fff;
   touch-action:none;
-  overscroll-behavior:contain;
-  -webkit-user-select:none;
-  user-select:none;
   box-shadow:var(--shadow-sm);
 }
+
+/* 單色按鈕 */
 
 .btn{
   width:100%;
@@ -195,19 +176,22 @@ body{
   font-weight:800;
   cursor:pointer;
   margin-top:12px;
-  letter-spacing:.4px;
+  letter-spacing:.3px;
   box-shadow:0 10px 20px rgba(36,26,22,.10);
-  transition:transform .06s ease, filter .15s ease;
+  transition:.15s ease;
 }
-.btn:active{ transform:translateY(1px); }
+
+.btn:active{
+  transform:scale(.98);
+}
 
 .btnClear{
-  background:linear-gradient(180deg, #F3E2D2, #E6C9B1);
-  color:var(--text);
+  background:#EFE0D3;
+  color:#2F201B;
 }
 
 .btnSubmit{
-  background:linear-gradient(180deg, #C35A2E, #E9B18F);
+  background:#C35A2E;
   color:#fff;
 }
 
@@ -218,7 +202,7 @@ body{
 }
 
 .meta{
-  color:rgba(74,52,46,.85);
+  color:rgba(47,32,27,.85);
   font-weight:600;
   line-height:1.7;
 }
@@ -228,40 +212,24 @@ body{
   gap:12px;
   align-items:flex-start;
   margin-top:14px;
-  padding:12px 12px;
+  padding:12px;
   border-radius:16px;
   background:#FFF3E8;
   border:1px solid var(--border);
 }
 
 .checkRow input{
-  width:24px;
-  height:24px;
-  margin-top:2px;
+  width:22px;
+  height:22px;
   accent-color:var(--latte);
 }
 
 .checkRow label{
-  font-size:18px;
-  font-weight:800;
-  line-height:1.4;
+  font-size:17px;
+  font-weight:700;
   color:var(--text);
 }
 
-.dangerNote{
-  color:var(--danger);
-  font-weight:900;
-  text-align:center;
-  margin:14px 0 12px;
-  font-size:17px;
-}
-
-.section-title{
-  font-size:18px;
-  font-weight:800;
-  padding-left:18px;
-  margin:10px 0 12px;
-}
 </style>
 
 
