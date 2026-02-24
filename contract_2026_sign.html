@@ -229,12 +229,9 @@ body{
   font-weight:700;
   color:var(--text);
 }
-
 </style>
 
-
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
 </head>
 
 <body>
@@ -254,7 +251,6 @@ body{
 
     <div class="contractBox">
       <pre id="contractText">
-
 為保障毛孩的安全與您的權益，
 本店採用犬、貓美容服務定型化契約。
 請您於簽署前詳閱契約內容，
@@ -420,9 +416,7 @@ body{
   
 第 二十二 條（附件之效力）
 本契約之附件「毛孩資料卡」（包含但不限於寵物基本資料、健康狀況、個性傾向、病史、 服務項目及相關告知事項），為本契約之一部分，與本契約具有同一之效力。甲方確認已於簽訂本契約前，依乙方之說明完整填寫前述附件，並同意其內容作為乙方評估是否提供犬、貓美容服務及服務方式之依據。前述附件得以書面、電子文件、拍照、掃描或其他可供日後查證之方式留存，均視為有效。
-
-        
-</pre>
+      </pre>
       </div>
 
       <div class="checkRow">
@@ -444,6 +438,9 @@ body{
       <div class="label">聯絡電話</div>
       <input id="ownerPhone" class="input" inputmode="tel" placeholder="請輸入聯絡電話">
 
+      <div class="label">Email（用於寄送契約副本）</div>
+      <input id="ownerEmail" class="input" inputmode="email" placeholder="例：abc@gmail.com">
+
       <div class="label">通訊地址</div>
       <input id="ownerAddress" class="input" placeholder="請輸入通訊地址">
 
@@ -457,11 +454,9 @@ body{
       <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
 
       <div class="label">審閱 / 簽署日期</div>
-<input type="date" class="input" id="signDate">
-
+      <input type="date" class="input" id="signDate">
     </div>
 
-    
     <div class="card">
       <div class="label" style="margin-top:0">甲方簽名</div>
 
@@ -472,17 +467,17 @@ body{
       <div class="dangerNote">簽名完成後將自動回傳至聊天室</div>
 
       <button id="clear" class="btn btnClear" type="button">清除簽名</button>
-<div id="msg" class="msg"></div>
+      <div id="msg" class="msg"></div>
 
-<button id="submit" class="btn btnSubmit" type="button">送出簽名</button>
-
+      <button id="submit" class="btn btnSubmit" type="button">送出簽名</button>
+    </div>
   </div>
 
 <script>
 (function(){
 
   const LIFF_ID = "2008805180-dNJmIam4";
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJLUQpem3gbqNYQbmt8aQxt7tDE-y-JUCSb9wXjY1YmFAFf07pEVf4VrPIwN0nQUSolQ/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxjIPXHhHGrvrPGTgk3HxhLFUW9KDZtIEmHt3CLMObtMzlTHl9Wj5hPNC9lUJFFTZt2g/exec";
   const SHARED_SECRET = "kumajima2025";
 
   const canvas = document.getElementById("sig");
@@ -495,6 +490,7 @@ body{
   const ownerName = document.getElementById("ownerName");
   const ownerIdNo = document.getElementById("ownerIdNo");
   const ownerPhone = document.getElementById("ownerPhone");
+  const ownerEmail = document.getElementById("ownerEmail"); 
   const ownerAddress = document.getElementById("ownerAddress");
   const petName = document.getElementById("petName");
   const petBreed = document.getElementById("petBreed");
@@ -526,6 +522,11 @@ body{
   }
 
   function requireValue(inputEl, label){
+    if(!inputEl){
+      setError(`系統缺少欄位：${label}（請聯絡店家）`);
+      resetSubmit();
+      return null;
+    }
     const v = (inputEl.value || "").trim();
     if(!v){
       setError(`請填寫：${label}`);
@@ -534,6 +535,10 @@ body{
       return null;
     }
     return v;
+  }
+
+  function isValidEmail(email){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
   function todayISO(){
@@ -652,8 +657,6 @@ body{
     submitBtn.disabled = true;
     submitBtn.textContent = "謝謝您！資料上傳中...";
 
-    
-
     if(!agree.checked){
       setError("請先勾選同意契約內容");
       resetSubmit();
@@ -663,6 +666,7 @@ body{
     const data = {
       ownerName:    requireValue(ownerName, "甲方姓名"),
       ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
+      ownerEmail:   requireValue(ownerEmail, "Email（用於寄送契約副本）"),
       ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
       ownerAddress: requireValue(ownerAddress, "通訊地址"),
       petName:      requireValue(petName, "寵物姓名"),
@@ -671,6 +675,13 @@ body{
       signDate:     requireValue(signDate, "簽署日期"),
     };
     if(Object.values(data).some(v => v === null)){
+      resetSubmit();
+      return;
+    }
+
+    if(!isValidEmail(data.ownerEmail)){
+      setError("Email 格式不正確，請重新確認");
+      ownerEmail.focus();
       resetSubmit();
       return;
     }
@@ -692,6 +703,7 @@ body{
 `【犬貓美容契約簽署資料】
 甲方姓名：${data.ownerName}
 聯絡電話：${data.ownerPhone}
+Email：${data.ownerEmail}
 身分證字號：${data.ownerIdNo}
 通訊地址：${data.ownerAddress}
 寵物名字：${data.petName}
@@ -707,9 +719,8 @@ body{
       let profile = null;
       try { profile = await liff.getProfile(); } catch(e){}
 
-
+      const contractText = (document.getElementById("contractText")?.innerText || "").trim();
       const signatureDataUrl = canvas.toDataURL("image/png");
-
 
       try{
         await fetch(GOOGLE_SCRIPT_URL, {
@@ -722,7 +733,8 @@ body{
             line: {
               userId: profile?.userId || "",
               displayName: profile?.displayName || ""
-            }
+            },
+            contractText
           })
         });
       }catch(e){
@@ -730,10 +742,8 @@ body{
       }
 
       showAfterSendUI();
-setOK("簽署資料已送出！\n可以回到聊天室了！");
-resetSubmit();
-
-
+      setOK("簽署資料已送出！\n可以回到聊天室了！");
+      resetSubmit();
 
     }catch(err){
       setError(err.message || "送出失敗");
@@ -743,8 +753,6 @@ resetSubmit();
 
 })();
 </script>
-
-
 
 </body>
 </html>
