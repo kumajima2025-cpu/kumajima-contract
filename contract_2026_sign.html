@@ -711,7 +711,7 @@ Email：${data.ownerEmail}
 體重(公斤)：${data.petWeight}
 審閱/簽署日期：${data.signDate}
 
-（簽署資料與簽名已完成，並已自動上傳至雲端保存。
+（簽署資料與簽名已完成，並已自動寄送副本至您的信箱。
 若有多隻毛孩，請每隻毛孩分別填寫一份表單並各自送出。）`;
 
       await liff.sendMessages([{ type:"text", text:textMsg }]);
@@ -742,7 +742,7 @@ Email：${data.ownerEmail}
       }
 
       showAfterSendUI();
-      setOK("簽署資料已送出！\n可以回到聊天室了！");
+      setOK("資料已送出！\n可以回到聊天室了！");
       resetSubmit();
 
     }catch(err){
