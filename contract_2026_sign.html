@@ -133,6 +133,25 @@ body{
   border-color:var(--latte);
   box-shadow:0 0 0 4px rgba(195,90,46,.18);
 }
+  .input[type="date"]{
+  -webkit-appearance: none;
+  appearance: none;
+  display:flex;
+  align-items:center;
+  min-height:56px;
+  padding:14px 14px;
+  line-height:1.2;
+}
+
+.input[type="date"]::-webkit-date-and-time-value{
+  text-align:left;
+  line-height:1.2;
+}
+
+.input[type="date"]::-webkit-calendar-picker-indicator{
+  opacity:.7;
+  margin-left:8px;
+}
 
 .contractBox{
   border:1.6px solid var(--border);
