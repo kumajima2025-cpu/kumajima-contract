@@ -205,7 +205,6 @@
     accent-color:var(--latte);
   }
 
-  /* 多選格 */
   .checkGrid{
     display:grid;
     grid-template-columns:repeat(3, 1fr);
@@ -311,11 +310,7 @@
 本店採用犬、貓美容服務定型化契約。
 請您於簽署前詳閱契約內容，
 了解雙方之權利義務及相關服務事項。
-另有「毛孩資料卡」，將於到店時填寫，
-作為了解毛孩健康狀況、個性與照護需求之依據，
-並視為本契約之一部分。
-如有任何疑問，
-歡迎隨時向我們詢問，
+如有任何疑問，歡迎隨時向我們詢問，
 我們將竭誠為您說明，
 一同為毛孩提供安心、完善的服務。
 
@@ -329,11 +324,14 @@
 二、
 乙方應於簽訂本契約前，
 提供「犬、貓美容服務簽約前詢問事項及基本資料表」（如附件），
-並由甲、乙雙方就相關內容共同填妥。
-乙方並應出示本定型化契約書空白文本，
-逐條向甲方說明契約內容，
-使甲方充分瞭解其權利與義務。
-
+由甲方依實際情況於線上填寫完整資料，
+並經電子方式確認。
+乙方並應提供本定型化契約書內容，
+使甲方得於簽署前充分審閱，
+並瞭解其權利與義務。
+乙方得以書面、電子或其他適當方式，
+向甲方說明契約內容。
+          
 三、
 本契約雖屬定型化契約之一種，
 甲、乙雙方仍得依個別情形，
@@ -345,11 +343,10 @@
 
 四、
 甲方於首次接受乙方提供之犬、貓美容服務前，
-應填寫乙方所提供之「毛孩資料卡」，
-視為本契約之一部分，
+應於線上完整填寫寵物基本資料、健康狀況及相關詢問事項，
+並經電子簽署確認。
+前項所填寫之資料，視為本契約之一部分，
 與本契約具有同一法律效力。
-毛孩資料卡得以紙本或電子方式製作，一式兩份，
-由甲、乙雙方各執一份為憑。
 甲方應確保所填資料之真實性與完整性，
 並於資料有變更時主動告知乙方；
 因資料不實、遺漏或未即時告知，
@@ -357,7 +354,7 @@
 相關責任概由甲方自行負責。
 
 －
-        
+
 立契約書人
 消費者姓名：_____(以下簡稱甲方)
 企業經營者：熊嶼寵物有限公司(以下簡稱乙方)
@@ -366,6 +363,7 @@
 除非依本契約約定或經雙方書面或電子方式合意終止外，持續有效，
 並適用於甲方委託乙方提供之所有犬、貓美容相關服務，
 甲方無須於每次服務時重複簽署。
+          
 甲乙雙方同意就本契約所載條款及附件內容辦理：
 第 一 條 (契約目的與範圍)
 犬、貓美容服務，指提供犬、貓外表部位清洗或清潔、吹乾梳毛、毛髮修剪及造型設計等美容服務之行為。但不得涉及動物醫療行為及宣稱醫療效能。
@@ -471,7 +469,9 @@
 本契約自簽約日起生效，雙方各執一份契約正本。本契約廣告及相關附件視為本契約之一部分。
   
 第 二十二 條（附件之效力）
-本契約之附件「毛孩資料卡」（包含但不限於寵物基本資料、健康狀況、個性傾向、病史、 服務項目及相關告知事項），為本契約之一部分，與本契約具有同一之效力。甲方確認已於簽訂本契約前，依乙方之說明完整填寫前述附件，並同意其內容作為乙方評估是否提供犬、貓美容服務及服務方式之依據。前述附件得以書面、電子文件、拍照、掃描或其他可供日後查證之方式留存，均視為有效。
+
+本契約之附件「寵物基本資料及健康狀況填寫表」（包含但不限於寵物基本資料、健康狀況、個性傾向、病史、服務項目及相關告知事項），
+為本契約之一部分，與本契約具有同一之效力。甲方確認已於簽訂本契約前，依乙方之說明完整填寫前述附件，並同意其內容作為乙方評估是否提供犬、貓美容服務及服務方式之依據。前述附件得以書面、電子文件、拍照、掃描或其他可供日後查證之方式留存，均視為有效。
         </pre>
       </div>
 
@@ -553,7 +553,6 @@
       <div class="label">體重（公斤）</div>
       <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
 
-      <!-- ✅ 寵物個性（可複選） -->
       <div class="label">寵物個性（可複選）</div>
       <div class="checkGrid" id="temperamentGrid">
         <label class="ck"><input type="checkbox" class="pt" value="親人">親人</label>
@@ -706,7 +705,6 @@
 
   const medicalNote = document.getElementById("medicalNote");
 
-  // ✅ 寵物個性
   const ptBoxes = Array.from(document.querySelectorAll(".pt"));
   const petTemperamentNote = document.getElementById("petTemperamentNote");
 
@@ -718,7 +716,7 @@
   const vetPhone = document.getElementById("vetPhone");
   const vetAddress = document.getElementById("vetAddress");
 
-  // Canvas
+
   const ctx = canvas.getContext("2d");
   canvas.style.touchAction = "none";
 
@@ -974,11 +972,8 @@
       petAge:       requireValue(petAge, "寵物年齡"),
       petBirthday:  requireValue(petBirthday, "寵物生日"),
       petWeight:    requireValue(petWeight, "體重"),
-
-      // ✅ 寵物個性（多選）+ 選填備註
       petTemperament: getPetTemperament(),
       petTemperamentNote: (petTemperamentNote?.value || "").trim(),
-
       signDate:     requireValue(signDate, "簽署日期"),
 
       chipHas,
@@ -1041,7 +1036,6 @@
 
       const noteText = data.medicalNote ? data.medicalNote : "（未填）";
 
-      // ✅ 寵物個性顯示
       const ptText = (data.petTemperament && data.petTemperament.length)
         ? data.petTemperament.join("、")
         : "（未勾選）";
