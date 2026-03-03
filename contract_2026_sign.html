@@ -9,118 +9,71 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;800&display=swap');
 
 :root{
-  --bg:#FFF7ED;             
-  --card:#FFFFFF;         
+  --bg:#FFF7ED;
+  --card:#FFFFFF;
   --border:#E6C9B1;
-  --text:#2F201B; 
+  --text:#2F201B;
   --muted:#8B6F61;
   --stone:#EFE6DD;
-  --dusty:#E9B18F; 
+  --dusty:#E9B18F;
   --latte:#C35A2E;
   --danger:#C0392B;
   --radius:22px;
   --radius-sm:16px;
-  --shadow:0 10px 28px rgba(36, 26, 22, .08);
   --shadow-sm:0 6px 16px rgba(36, 26, 22, .06);
 }
 
 *{box-sizing:border-box}
-
-html,body{
-  overscroll-behavior:none;
-}
+html,body{ overscroll-behavior:none; }
 
 body{
   margin:0;
   background:#F4EFE8;
   color:var(--text);
-  font-family:
-    "Noto Sans TC",
-    -apple-system,
-    BlinkMacSystemFont,
-    "PingFang TC",
-    "Heiti TC",
-    "Microsoft JhengHei",
-    sans-serif;
+  font-family:"Noto Sans TC",-apple-system,BlinkMacSystemFont,"PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
   overflow-x:hidden;
   letter-spacing:.2px;
 }
 
-.wrap{
-  max-width:520px;
-  margin:0 auto;
-  padding:20px 22px;
-}
-
-#msg{
-  text-align:center;
-  margin-top:12px;
-  line-height:1.7;
-  color:var(--muted);
-  font-weight:600;
-}
+.wrap{ max-width:520px; margin:0 auto; padding:20px 22px; }
 
 .card{
   background:var(--card);
   border-radius:var(--radius);
-  padding:20px 18px;              
+  padding:20px 18px;
   margin:14px 0;
   border:1px solid rgba(230,201,177,.75);
-  box-shadow:
-    0 18px 45px rgba(36, 26, 22, .08),
-    0  2px 10px rgba(36, 26, 22, .04); 
+  box-shadow:0 18px 45px rgba(36, 26, 22, .08), 0 2px 10px rgba(36, 26, 22, .04);
 }
 
-.title{
-  font-size:26px;
-  font-weight:800;                
-  margin:2px 0 10px;
-  letter-spacing:.5px;
+.logoBox{ text-align:center; margin:14px 0 6px; }
+.logoBox img{ width:64px; opacity:.85; filter:grayscale(10%); }
+
+.title{ font-size:26px; font-weight:800; margin:2px 0 10px; letter-spacing:.5px; }
+
+.infoBox{
+  border:1.6px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:14px 14px;
+  background:#FFFBF6;
+  box-shadow:var(--shadow-sm);
+  text-align:left;
 }
+
+.meta{ color:rgba(47,32,27,.85); font-weight:600; line-height:1.7; text-align:left; }
 
 .sectionTitle{
   font-size:22px;
   font-weight:900;
   margin:10px 0 14px;
-  padding-left:0;
-  letter-spacing:.6px;
-  text-align:left; 
-  color:var(--text);
-}
-
-.sectionTitle:before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:3px;
-  bottom:3px;
-  width:2px;                       
-  border-radius:10px;
-  background:var(--latte);
-  opacity:.8;
-}
-.contractTitle{
-  font-size:22px;
-  font-weight:900;
-  margin:20px 0 14px;
   letter-spacing:.6px;
   text-align:left;
   color:var(--text);
-  padding-bottom:8px;
-  border-bottom:1px solid rgba(230,201,177,.6);
-}
-.subText{
-  color:var(--muted);
-  font-weight:600;
-  margin:0 0 14px;
-  line-height:1.7;
 }
 
-.label{
-  font-size:18px;
-  font-weight:800;
-  margin:18px 0 10px;
-}
+.subText{ color:var(--muted); font-weight:600; margin:0 0 14px; line-height:1.7; }
+
+.label{ font-size:18px; font-weight:800; margin:18px 0 10px; }
 
 .input{
   width:100%;
@@ -135,17 +88,13 @@ body{
   box-shadow:0 1px 0 rgba(36,26,22,.04) inset;
 }
 
-.input::placeholder{
-  color:rgba(47,32,27,.45);
-}
+.input::placeholder{ color:rgba(47,32,27,.45); }
 
-.input:focus{
-  border-color:var(--latte);
-  box-shadow:0 0 0 4px rgba(195,90,46,.18);
-}
-  .input[type="date"]{
-  -webkit-appearance: none;
-  appearance: none;
+.input:focus{ border-color:var(--latte); box-shadow:0 0 0 4px rgba(195,90,46,.18); }
+
+.input[type="date"]{
+  -webkit-appearance:none;
+  appearance:none;
   display:flex;
   align-items:center;
   min-height:56px;
@@ -153,14 +102,49 @@ body{
   line-height:1.2;
 }
 
-.input[type="date"]::-webkit-date-and-time-value{
-  text-align:left;
-  line-height:1.2;
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media (max-width:520px){ .grid2{ grid-template-columns:1fr; } }
+
+.pillGroup{
+  border:1.6px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:12px;
+  background:#FFFBF6;
+  box-shadow:var(--shadow-sm);
 }
 
-.input[type="date"]::-webkit-calendar-picker-indicator{
-  opacity:.7;
-  margin-left:8px;
+.optRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 14px;
+  align-items:center;
+  margin-top:8px;
+}
+.opt{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  font-weight:700;
+}
+.opt input{
+  width:20px;
+  height:20px;
+  accent-color:var(--latte);
+}
+
+.contractTitle{
+  font-size:22px;
+  font-weight:900;
+  margin:20px 0 14px;
+  letter-spacing:.6px;
+  text-align:left;
+  color:var(--text);
+  padding-bottom:8px;
+  border-bottom:1px solid rgba(230,201,177,.6);
 }
 
 .contractBox{
@@ -174,7 +158,6 @@ body{
   box-shadow:var(--shadow-sm);
   text-align:left;
 }
-
 .contractBox pre{
   margin:0;
   white-space:pre-wrap;
@@ -183,8 +166,20 @@ body{
   font-size:16px;
   font-weight:500;
   color:rgba(47,32,27,.95);
-  text-align:left;
 }
+
+.checkRow{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  margin-top:14px;
+  padding:12px;
+  border-radius:16px;
+  background:#FFF3E8;
+  border:1px solid var(--border);
+}
+.checkRow input{ width:22px; height:22px; accent-color:var(--latte); }
+.checkRow label{ font-size:17px; font-weight:700; color:var(--text); }
 
 #sig{
   width:100%;
@@ -195,7 +190,6 @@ body{
   touch-action:none;
   box-shadow:var(--shadow-sm);
 }
-
 
 .btn{
   width:100%;
@@ -210,73 +204,15 @@ body{
   box-shadow:0 10px 20px rgba(36,26,22,.10);
   transition:.15s ease;
 }
+.btn:active{ transform:scale(.98); }
+.btnClear{ background:#EFE0D3; color:#2F201B; }
+.btnSubmit{ background:#C35A2E; color:#fff; }
 
-.btn:active{
-  transform:scale(.98);
-}
+.msg{ margin-top:10px; color:var(--danger); font-weight:800; white-space:pre-line; }
 
-.btnClear{
-  background:#EFE0D3;
-  color:#2F201B;
-}
+.smallNote{ color:var(--muted); font-weight:700; margin-top:8px; line-height:1.6; }
 
-.btnSubmit{
-  background:#C35A2E;
-  color:#fff;
-}
-
-.msg{
-  margin-top:10px;
-  color:var(--danger);
-  font-weight:800;
-}
-
-.meta{
-  color:rgba(47,32,27,.85);
-  font-weight:600;
-  line-height:1.7;
-  text-align:left;
-}
-
-.checkRow{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-  margin-top:14px;
-  padding:12px;
-  border-radius:16px;
-  background:#FFF3E8;
-  border:1px solid var(--border);
-}
-
-.checkRow input{
-  width:22px;
-  height:22px;
-  accent-color:var(--latte);
-}
-
-.checkRow label{
-  font-size:17px;
-  font-weight:700;
-  color:var(--text);
-}
-  .logoBox{
-  text-align:center;
-  margin:14px 0 6px;
-}
-.logoBox img{
-  width:64px;
-  opacity:0.85;
-  filter:grayscale(10%);
-}
-  .infoBox{
-  border:1.6px solid var(--border);
-  border-radius:var(--radius-sm);
-  padding:14px 14px;
-  background:#FFFBF6;
-  box-shadow:var(--shadow-sm);
-  text-align:left;
-}
+.reqHint{ color:var(--danger); font-weight:900; margin-left:6px; }
 </style>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -284,24 +220,208 @@ body{
 
 <body>
   <div class="wrap">
-    <div class="logoBox">
-  <img src="images/logo.png" alt="熊嶼寵物" />
-<div class="card">
-  <div class="title">寵物美容服務定型化契約</div>
 
-  <div class="infoBox">
-    <div class="meta">
-      公司名稱：熊嶼寵物有限公司<br>
-      地址：新北市板橋區合宜一路11號<br>
-      官方LINE：@kumajima2025
+    <div class="logoBox">
+      <img src="images/logo.png" alt="熊嶼寵物" />
     </div>
+
+    <div class="card">
+      <div class="title">寵物美容服務定型化契約</div>
+      <div class="infoBox">
+        <div class="meta">
+          公司名稱：熊嶼寵物有限公司<br>
+          地址：新北市板橋區合宜一路11號<br>
+          官方LINE：@kumajima2025
+        </div>
+      </div>
+    </div>
+    <div class="card" id="cardProfile">
+      <div class="sectionTitle">毛孩基本資料資料<span class="reqHint">（全部必填）</span></div>
+      <div class="subText">請完整填寫，作為契約附件與服務評估依據。</div>
+
+      <div class="label">飼主姓名</div>
+      <input id="ownerName" class="input" placeholder="請輸入飼主姓名">
+
+      <div class="grid2">
+        <div>
+          <div class="label">身分證字號</div>
+          <input id="ownerIdNo" class="input" placeholder="請輸入身分證字號">
+        </div>
+        <div>
+          <div class="label">聯絡電話</div>
+          <input id="ownerPhone" class="input" inputmode="tel" placeholder="請輸入聯絡電話">
+        </div>
+      </div>
+
+      <div class="label">Email（用於寄送副本）</div>
+      <input id="ownerEmail" class="input" inputmode="email" placeholder="例：abc@gmail.com">
+
+      <div class="label">通訊地址</div>
+      <input id="ownerAddress" class="input" placeholder="請輸入通訊地址">
+
+      <div class="label">緊急聯絡人</div>
+      <input id="emergencyName" class="input" placeholder="請輸入緊急聯絡人姓名">
+
+      <div class="label">緊急聯絡人電話</div>
+      <input id="emergencyPhone" class="input" inputmode="tel" placeholder="請輸入緊急聯絡人電話">
+
+      <div class="label">是否為飼主本人</div>
+      <div class="pillGroup">
+        <div class="optRow">
+          <label class="opt"><input type="radio" name="isOwnerSelf" value="是">是</label>
+          <label class="opt"><input type="radio" name="isOwnerSelf" value="否">否</label>
+        </div>
+      </div>
+
+      <div class="label">與飼主關係（若非本人）</div>
+      <input id="ownerRelation" class="input" placeholder="例：家人 / 朋友 / 代送" />
+
+      <div class="label">寵物姓名</div>
+      <input id="petName" class="input" placeholder="請輸入寵物姓名">
+
+      <div class="grid2">
+        <div>
+          <div class="label">寵物性別</div>
+          <div class="pillGroup">
+            <div class="optRow">
+              <label class="opt"><input type="radio" name="petSex" value="男生">男生</label>
+              <label class="opt"><input type="radio" name="petSex" value="女生">女生</label>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="label">是否絕育</div>
+          <div class="pillGroup">
+            <div class="optRow">
+              <label class="opt"><input type="radio" name="petNeuter" value="已絕育">已絕育</label>
+              <label class="opt"><input type="radio" name="petNeuter" value="未絕育">未絕育</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+  <div>
+    <div class="label">寵物品種</div>
+    <input id="petBreed" class="input" placeholder="例：比熊犬">
+  </div>
+  <div>
+    <div class="label">寵物毛色</div>
+    <input id="petColor" class="input" placeholder="例：白 / 奶油 / 黑白">
   </div>
 </div>
 
-    <div class="contractTitle">契約內容（請完整閱讀）</div>
+<div class="grid2">
+  <div>
+    <div class="label">寵物年齡（歲）</div>
+    <input id="petAge" class="input" inputmode="numeric" placeholder="例：3">
+  </div>
+  <div>
+    <div class="label">寵物生日</div>
+    <input type="date" class="input" id="petBirth">
+  </div>
+</div>
 
-    <div class="contractBox">
-      <pre id="contractText">
+<div class="label">體重（公斤）</div>
+<input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
+
+      <div class="label">寵物個性（請至少勾選１項）</div>
+      <div class="pillGroup" id="temperamentGroup">
+        <div class="optRow">
+          <label class="opt"><input type="checkbox" name="temperament" value="親近人">親近人</label>
+          <label class="opt"><input type="checkbox" name="temperament" value="親近狗">親近狗</label>
+          <label class="opt"><input type="checkbox" name="temperament" value="不會咬人">不會咬人</label>
+          <label class="opt"><input type="checkbox" name="temperament" value="會咬人">會咬人</label>
+          <label class="opt"><input type="checkbox" name="temperament" value="容易緊張">容易緊張</label>
+          <label class="opt"><input type="checkbox" name="temperament" value="有攻擊性">有攻擊性</label>
+          <label class="opt"><input type="checkbox" name="temperament" value="不會咬狗貓">不會咬狗貓</label>
+          <label class="opt"><input type="checkbox" name="temperament" value="會咬狗貓">會咬狗貓</label>
+        </div>
+        <div style="margin-top:10px;">
+          <div class="label" style="margin:0 0 8px; font-size:16px;">其他應注意</div>
+          <input id="temperamentNote" class="input" placeholder="請輸入（沒有也請填：無）">
+        </div>
+      </div>
+
+      <div class="label">晶片號碼</div>
+      <input id="chipNo" class="input" placeholder="請輸入晶片號碼（沒有也請填：無）">
+
+      <div class="label">食物過敏</div>
+      <div class="pillGroup">
+        <div class="optRow">
+          <label class="opt"><input type="radio" name="foodAllergy" value="有">有</label>
+          <label class="opt"><input type="radio" name="foodAllergy" value="無">無</label>
+        </div>
+      </div>
+
+      <div class="label">零食</div>
+      <div class="pillGroup">
+        <div class="optRow">
+          <label class="opt"><input type="radio" name="snackOK" value="可以">可以</label>
+          <label class="opt"><input type="radio" name="snackOK" value="不可以">不可以</label>
+        </div>
+      </div>
+
+      <div class="label">病史（至少勾選 1 項；沒有請勾「無」）</div>
+      <div class="pillGroup" id="historyGroup">
+        <div class="optRow">
+          <label class="opt"><input type="checkbox" name="history" value="無">無</label>
+          <label class="opt"><input type="checkbox" name="history" value="心臟病">心臟病</label>
+          <label class="opt"><input type="checkbox" name="history" value="氣喘">氣喘</label>
+          <label class="opt"><input type="checkbox" name="history" value="氣管塌陷">氣管塌陷</label>
+          <label class="opt"><input type="checkbox" name="history" value="白內障">白內障</label>
+          <label class="opt"><input type="checkbox" name="history" value="癲癇">癲癇</label>
+          <label class="opt"><input type="checkbox" name="history" value="骨折">骨折</label>
+          <label class="opt"><input type="checkbox" name="history" value="懷孕">懷孕</label>
+          <label class="opt"><input type="checkbox" name="history" value="腸炎">腸炎</label>
+          <label class="opt"><input type="checkbox" name="history" value="血便">血便</label>
+          <label class="opt"><input type="checkbox" name="history" value="血尿">血尿</label>
+          <label class="opt"><input type="checkbox" name="history" value="外傷未癒合">外傷未癒合</label>
+          <label class="opt"><input type="checkbox" name="history" value="關節問題">關節問題</label>
+        </div>
+       <div style="margin-top:10px;">
+  <div class="label" style="margin:0 0 8px; font-size:16px;">
+    其他應注意 <span style="color:#8B6F61; font-weight:600;">（選填）</span>
+  </div>
+  <input 
+    id="historyNote" 
+    class="input" 
+    placeholder="如有其他補充再填寫"
+  >
+</div>
+
+      <div class="label">緊急就醫機構（必選一種）</div>
+      <div class="pillGroup">
+        <div class="optRow">
+          <label class="opt"><input type="radio" name="vetMode" value="甲方指定">甲方指定獸醫診療機構</label>
+          <label class="opt"><input type="radio" name="vetMode" value="乙方就近">乙方指定鄰近獸醫診療機構</label>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <div class="label">獸醫院名稱</div>
+          <input id="vetName" class="input" placeholder="請輸入獸醫院名稱">
+        </div>
+        <div>
+          <div class="label">獸醫院電話</div>
+          <input id="vetPhone" class="input" inputmode="tel" placeholder="請輸入獸醫院電話">
+        </div>
+      </div>
+
+      <div class="label">獸醫院地址</div>
+      <input id="vetAddress" class="input" placeholder="請輸入獸醫院地址">
+
+      <div class="label">審閱 / 簽署日期</div>
+      <input type="date" class="input" id="signDate">
+    </div>
+
+    <!-- ② 契約內容 -->
+    <div class="card" id="cardContract">
+      <div class="contractTitle">契約內容（請完整閱讀）</div>
+
+      <div class="contractBox">
+        <pre id="contractText">
 為保障毛孩的安全與您的權益，
 本店採用犬、貓美容服務定型化契約。
 請您於簽署前詳閱契約內容，
@@ -467,69 +587,35 @@ body{
   
 第 二十二 條（附件之效力）
 本契約之附件「毛孩資料卡」（包含但不限於寵物基本資料、健康狀況、個性傾向、病史、 服務項目及相關告知事項），為本契約之一部分，與本契約具有同一之效力。甲方確認已於簽訂本契約前，依乙方之說明完整填寫前述附件，並同意其內容作為乙方評估是否提供犬、貓美容服務及服務方式之依據。前述附件得以書面、電子文件、拍照、掃描或其他可供日後查證之方式留存，均視為有效。
-      </pre>
+        </pre>
       </div>
 
       <div class="checkRow">
         <input id="agree" type="checkbox">
         <label for="agree">我已完整閱讀並同意上述契約內容</label>
       </div>
+
+      <div class="smallNote">送出後系統將寄送「資料卡＋契約副本（含簽名）」到您的 Email，店家也會收到副本。</div>
     </div>
 
-    <div class="card">
-      <div class="sectionTitle">甲方資料填寫</div>
-      <div class="subText">請填寫以下資料以完成契約簽署</div>
-
-      <div class="label">甲方姓名（飼主）</div>
-      <input id="ownerName" class="input" placeholder="請輸入飼主姓名">
-
-      <div class="label">身分證字號</div>
-      <input id="ownerIdNo" class="input" placeholder="請輸入身分證字號">
-
-      <div class="label">聯絡電話</div>
-      <input id="ownerPhone" class="input" inputmode="tel" placeholder="請輸入聯絡電話">
-
-      <div class="label">Email（用於寄送契約副本）</div>
-      <input id="ownerEmail" class="input" inputmode="email" placeholder="例：abc@gmail.com">
-
-      <div class="label">通訊地址</div>
-      <input id="ownerAddress" class="input" placeholder="請輸入通訊地址">
-
-      <div class="label">寵物姓名</div>
-      <input id="petName" class="input" placeholder="請輸入寵物姓名">
-
-      <div class="label">寵物品種</div>
-      <input id="petBreed" class="input" placeholder="例：比熊犬">
-
-      <div class="label">體重（公斤）</div>
-      <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
-
-      <div class="label">審閱 / 簽署日期</div>
-      <input type="date" class="input" id="signDate">
-    </div>
-
-    <div class="card">
+    <!-- ③ 簽名與送出 -->
+    <div class="card" id="cardSign">
       <div class="label" style="margin-top:0">甲方簽名</div>
-
-      <div id="sigWrap">
-        <canvas id="sig"></canvas>
-      </div>
-
-      <div class="dangerNote">簽名完成後將自動回傳至聊天室</div>
+      <canvas id="sig"></canvas>
 
       <button id="clear" class="btn btnClear" type="button">清除簽名</button>
       <div id="msg" class="msg"></div>
 
-      <button id="submit" class="btn btnSubmit" type="button">送出簽名</button>
+      <button id="submit" class="btn btnSubmit" type="button">送出（資料卡＋契約）</button>
     </div>
+
   </div>
 
 <script>
 (function(){
-
-  const LIFF_ID = "2008805180-dNJmIam4";
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUpzsVt2ZmztyvkztloqWUOLP78gKr5c01GILUnNy5fMbIoQjTYQfdMVfD1YMzMrHi/exec";
-  const SHARED_SECRET = "kumajima2025";
+  const LIFF_ID = "2008805180-dNJmIam4"; //
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwx5Otdx-p4gkEDNzWFP7kPII5j8Ph86lMAMSwupF3_pnni6IpOw2WRdHDYSg0xMWpihg/exec"; //
+  const SHARED_SECRET = "kumajima2025"; //
 
   const canvas = document.getElementById("sig");
   const clearBtn = document.getElementById("clear");
@@ -538,54 +624,80 @@ body{
 
   const agree = document.getElementById("agree");
 
+  // inputs
   const ownerName = document.getElementById("ownerName");
   const ownerIdNo = document.getElementById("ownerIdNo");
   const ownerPhone = document.getElementById("ownerPhone");
-  const ownerEmail = document.getElementById("ownerEmail"); 
+  const ownerEmail = document.getElementById("ownerEmail");
   const ownerAddress = document.getElementById("ownerAddress");
+  const emergencyName = document.getElementById("emergencyName");
+  const emergencyPhone = document.getElementById("emergencyPhone");
+  const ownerRelation = document.getElementById("ownerRelation");
+
   const petName = document.getElementById("petName");
   const petBreed = document.getElementById("petBreed");
+  const petColor = document.getElementById("petColor");
+  const petAge = document.getElementById("petAge");
   const petWeight = document.getElementById("petWeight");
-  const signDate = document.getElementById("signDate");
+  const petBirth = document.getElementById("petBirth");
 
-  const afterSendModal = document.getElementById("afterSendModal");
-  const btnBackToScreenshot = document.getElementById("btnBackToScreenshot");
-  const btnCloseToLINE = document.getElementById("btnCloseToLINE");
-  const afterSendBar = document.getElementById("afterSendBar");
-  const btnCloseToLINE2 = document.getElementById("btnCloseToLINE2");
+  const temperamentNote = document.getElementById("temperamentNote");
+  const chipNo = document.getElementById("chipNo");
+  const historyNote = document.getElementById("historyNote");
+
+  const vetName = document.getElementById("vetName");
+  const vetPhone = document.getElementById("vetPhone");
+  const vetAddress = document.getElementById("vetAddress");
+
+  const signDate = document.getElementById("signDate");
 
   const ctx = canvas.getContext("2d");
   canvas.style.touchAction = "none";
 
   function resetSubmit(){
     submitBtn.disabled = false;
-    submitBtn.textContent = "送出簽名";
+    submitBtn.textContent = "送出（資料卡＋契約）";
   }
-
   function setError(t){
     msg.textContent = t || "";
     msg.style.color = "#d21f1f";
   }
-
   function setOK(t){
     msg.textContent = t || "";
     msg.style.color = "#111";
   }
 
   function requireValue(inputEl, label){
-    if(!inputEl){
-      setError(`系統缺少欄位：${label}（請聯絡店家）`);
-      resetSubmit();
-      return null;
-    }
+    if(!inputEl){ setError(`系統缺少欄位：${label}`); return null; }
     const v = (inputEl.value || "").trim();
     if(!v){
       setError(`請填寫：${label}`);
       inputEl.focus();
-      resetSubmit();
       return null;
     }
     return v;
+  }
+
+  function requireRadio(name, label){
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    if(!el){
+      setError(`請選擇：${label}`);
+      const first = document.querySelector(`input[name="${name}"]`);
+      first && first.scrollIntoView({behavior:"smooth", block:"center"});
+      return null;
+    }
+    return el.value;
+  }
+
+  function requireChecks(name, label){
+    const els = [...document.querySelectorAll(`input[name="${name}"]:checked`)];
+    if(els.length === 0){
+      setError(`請至少勾選 1 項：${label}`);
+      const first = document.querySelector(`input[name="${name}"]`);
+      first && first.scrollIntoView({behavior:"smooth", block:"center"});
+      return null;
+    }
+    return els.map(x => x.value);
   }
 
   function isValidEmail(email){
@@ -600,6 +712,7 @@ body{
     return `${yyyy}-${mm}-${dd}`;
   }
   if(signDate && !signDate.value) signDate.value = todayISO();
+  if(petBirth && !petBirth.value) petBirth.value = todayISO(); // 你不想預設也可移除
 
   function syncSize(){
     const r = canvas.getBoundingClientRect();
@@ -664,38 +777,10 @@ body{
     resetSubmit();
   };
 
-  function showAfterSendUI(){
-    if(afterSendModal) afterSendModal.style.display = "flex";
-    if(afterSendBar) afterSendBar.style.display = "block";
-    if(!afterSendModal && !afterSendBar){
-      alert("已把簽署資料傳送至聊天室。");
-    }
-  }
-
-  function closeToLINE(){
-    if(window.liff && liff.isInClient()){
-      liff.closeWindow();
-    }else{
-      alert("請從 LINE 聊天室內開啟此頁面");
-    }
-  }
-
-  if(btnBackToScreenshot){
-    btnBackToScreenshot.onclick = () => {
-      afterSendModal.style.display = "none";
-    };
-  }
-  if(btnCloseToLINE) btnCloseToLINE.onclick = closeToLINE;
-  if(btnCloseToLINE2) btnCloseToLINE2.onclick = closeToLINE;
-
   async function initLIFF(){
-    if(!window.liff){
-      throw new Error("LIFF SDK 未載入");
-    }
+    if(!window.liff) throw new Error("LIFF SDK 未載入");
     await liff.init({ liffId: LIFF_ID });
-    if(!liff.isInClient()){
-      throw new Error("請從 LINE 聊天室開啟此連結");
-    }
+    if(!liff.isInClient()) throw new Error("請從 LINE 聊天室開啟此連結");
     if(!liff.isLoggedIn()){
       liff.login();
       return false;
@@ -708,28 +793,59 @@ body{
     submitBtn.disabled = true;
     submitBtn.textContent = "謝謝您！資料上傳中...";
 
+    // 契約同意
     if(!agree.checked){
       setError("請先勾選同意契約內容");
       resetSubmit();
       return;
     }
 
+    // 全必填（含 radio / checkbox 群組）
     const data = {
-      ownerName:    requireValue(ownerName, "甲方姓名"),
-      ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
-      ownerEmail:   requireValue(ownerEmail, "Email（用於寄送契約副本）"),
-      ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
+      ownerName: requireValue(ownerName, "飼主姓名"),
+      ownerIdNo: requireValue(ownerIdNo, "身分證字號"),
+      ownerPhone: requireValue(ownerPhone, "聯絡電話"),
+      ownerEmail: requireValue(ownerEmail, "Email"),
       ownerAddress: requireValue(ownerAddress, "通訊地址"),
-      petName:      requireValue(petName, "寵物姓名"),
-      petBreed:     requireValue(petBreed, "寵物品種"),
-      petWeight:    requireValue(petWeight, "體重"),
-      signDate:     requireValue(signDate, "簽署日期"),
+      emergencyName: requireValue(emergencyName, "緊急聯絡人"),
+      emergencyPhone: requireValue(emergencyPhone, "緊急聯絡人電話"),
+      isOwnerSelf: requireRadio("isOwnerSelf", "是否為飼主本人"),
+      ownerRelation: requireValue(ownerRelation, "與飼主關係（若為本人也請填：本人）"),
+
+      petName: requireValue(petName, "寵物姓名"),
+      petSex: requireRadio("petSex", "寵物性別"),
+      petBreed: requireValue(petBreed, "寵物品種"),
+      petColor: requireValue(petColor, "寵物毛色"),
+      petAge: requireValue(petAge, "寵物年齡"),
+      petNeuter: requireRadio("petNeuter", "是否絕育"),
+      petWeight: requireValue(petWeight, "體重"),
+      petBirth: requireValue(petBirth, "寵物生日"),
+
+      temperament: requireChecks("temperament", "寵物個性"),
+      temperamentNote: requireValue(temperamentNote, "個性其他應注意（沒有也請填：無）"),
+
+      chipNo: requireValue(chipNo, "晶片號碼（沒有也請填：無）"),
+      foodAllergy: requireRadio("foodAllergy", "食物過敏"),
+      snackOK: requireRadio("snackOK", "零食可不可以"),
+
+      history: requireChecks("history", "病史"),
+      historyNote: historyNote.value.trim(),
+
+      vetMode: requireRadio("vetMode", "緊急就醫機構"),
+      vetName: requireValue(vetName, "獸醫院名稱"),
+      vetPhone: requireValue(vetPhone, "獸醫院電話"),
+      vetAddress: requireValue(vetAddress, "獸醫院地址"),
+
+      signDate: requireValue(signDate, "簽署日期"),
     };
+
+    // 任一為 null -> 中止
     if(Object.values(data).some(v => v === null)){
       resetSubmit();
       return;
     }
 
+    // Email 格式
     if(!isValidEmail(data.ownerEmail)){
       setError("Email 格式不正確，請重新確認");
       ownerEmail.focus();
@@ -737,6 +853,7 @@ body{
       return;
     }
 
+    // 簽名
     if(!hasStroke){
       setError("請先完成簽名");
       resetSubmit();
@@ -745,25 +862,17 @@ body{
 
     try{
       const ok = await initLIFF();
-      if(!ok){
-        resetSubmit();
-        return;
-      }
+      if(!ok){ resetSubmit(); return; }
 
+      // LINE 訊息（精簡版）
       const textMsg =
-`【犬貓美容契約簽署資料】
-甲方姓名：${data.ownerName}
-聯絡電話：${data.ownerPhone}
-Email：${data.ownerEmail}
-身分證字號：${data.ownerIdNo}
-通訊地址：${data.ownerAddress}
-寵物名字：${data.petName}
-品種：${data.petBreed}
-體重(公斤)：${data.petWeight}
-審閱/簽署日期：${data.signDate}
+`【毛孩資料卡＋契約 已完成】
+飼主：${data.ownerName}
+電話：${data.ownerPhone}
+毛孩：${data.petName}（${data.petBreed}）
+簽署日：${data.signDate}
 
-（簽署資料與簽名已完成，並已自動寄送副本至您的信箱。
-若有多隻毛孩，請每隻毛孩分別填寫一份表單並各自送出。）`;
+副本已寄送到您的 Email，店家也會收到副本。`;
 
       await liff.sendMessages([{ type:"text", text:textMsg }]);
 
@@ -773,31 +882,30 @@ Email：${data.ownerEmail}
       const contractText = (document.getElementById("contractText")?.innerText || "").trim();
       const signatureDataUrl = canvas.toDataURL("image/png");
 
-      try{
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=UTF-8" },
-          body: JSON.stringify({
-            secret: SHARED_SECRET,
-            data,
-            signatureDataUrl,
-            line: {
-              userId: profile?.userId || "",
-              displayName: profile?.displayName || ""
-            },
-            contractText
-          })
-        });
-      }catch(e){
-        console.warn("Google upload failed:", e);
-      }
+      // 送到 GAS：由 GAS 負責寄給「ownerEmail + 店家Email」
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=UTF-8" },
+        body: JSON.stringify({
+          secret: SHARED_SECRET,
+          data,
+          signatureDataUrl,
+          contractText,
+          line: {
+            userId: profile?.userId || "",
+            displayName: profile?.displayName || ""
+          }
+        })
+      });
 
-      showAfterSendUI();
-      setOK("資料已送出！\n可以回到聊天室了！");
+      setOK("資料已送出！\n請回到 LINE 聊天室查看，Email 也會收到副本。");
       resetSubmit();
 
+      // 可選：自動關閉
+      // if(liff.isInClient()) liff.closeWindow();
+
     }catch(err){
-      setError(err.message || "送出失敗");
+      setError(err?.message || "送出失敗");
       resetSubmit();
     }
   };
