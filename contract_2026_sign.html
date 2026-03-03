@@ -36,7 +36,6 @@
     letter-spacing:.2px;
   }
 
-  /* ✅ 讓契約不要「擠得太中間」：加寬、減少左右 padding */
   .wrap{
     max-width:680px;
     margin:0 auto;
@@ -54,14 +53,8 @@
       0  2px 10px rgba(36, 26, 22, .04);
   }
 
-  .logoBox{
-    text-align:center;
-    margin:10px 0 8px;
-  }
-  .logoBox img{
-    width:66px;
-    opacity:.9;
-  }
+  .logoBox{ text-align:center; margin:10px 0 8px; }
+  .logoBox img{ width:66px; opacity:.9; }
 
   .title{
     font-size:26px;
@@ -146,7 +139,6 @@
   .input[type="date"]::-webkit-date-and-time-value{ text-align:left; line-height:1.2; }
   .input[type="date"]::-webkit-calendar-picker-indicator{ opacity:.7; margin-left:8px; }
 
-  /* ✅ 你有用到 grid2，但原本 CSS 沒有：補上 */
   .grid2{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -156,7 +148,6 @@
     .grid2{ grid-template-columns:1fr; }
   }
 
-  /* 契約區塊：取消多層卡片感 → 用「一張卡＋內部容器」 */
   .contractTitle{
     font-size:22px;
     font-weight:900;
@@ -235,6 +226,35 @@
     accent-color:var(--latte);
   }
 
+  /* ✅ 病史多選：像資料卡那樣一排排 */
+  .checkGrid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px 12px;
+    padding:12px;
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#FFFBF6;
+    box-shadow:var(--shadow-sm);
+  }
+  @media (max-width:620px){
+    .checkGrid{ grid-template-columns:repeat(2, 1fr); }
+  }
+  @media (max-width:420px){
+    .checkGrid{ grid-template-columns:1fr; }
+  }
+  .ck{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:800;
+    line-height:1.2;
+  }
+  .ck input{
+    width:20px; height:20px;
+    accent-color:var(--latte);
+  }
+
   #sig{
     width:100%;
     height:320px;
@@ -279,11 +299,6 @@
   }
 
   .hidden{ display:none !important; }
-  .disabled{
-    opacity:.55;
-    pointer-events:none;
-    filter:grayscale(10%);
-  }
   </style>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -292,7 +307,6 @@
 <body>
   <div class="wrap">
 
-    <!-- ✅ 只留一張「標題卡」，避免層層卡片 -->
     <div class="card">
       <div class="logoBox">
         <img src="images/logo.png" alt="熊嶼寵物" />
@@ -308,62 +322,13 @@
       </div>
     </div>
 
-    <!-- 契約內容 -->
+    <!-- 契約內容（你會自己貼） -->
     <div class="card" style="padding:18px 16px;">
       <div class="contractTitle">契約內容（請完整閱讀）</div>
 
       <div class="contractBox">
         <pre id="contractText">
-為保障毛孩的安全與您的權益，
-本店採用犬、貓美容服務定型化契約。
-請您於簽署前詳閱契約內容，
-了解雙方之權利義務及相關服務事項。
-另有「毛孩資料卡」，將於到店時填寫，
-作為了解毛孩健康狀況、個性與照護需求之依據，
-並視為本契約之一部分。
-如有任何疑問，
-歡迎隨時向我們詢問，
-我們將竭誠為您說明，
-一同為毛孩提供安心、完善的服務。
-
-【簽約注意事項】
-一、
-本契約之審閱期間原則上不得少於一日；
-如提供單次犬、貓美容服務或有即時必要情形者，
-乙方仍應給予甲方即時或合理之審閱期間。
-但審閱期間經雙方合意另行約定者，不在此限。
-
-二、
-乙方應於簽訂本契約前，
-提供「犬、貓美容服務簽約前詢問事項及基本資料表」（如附件），
-並由甲、乙雙方就相關內容共同填妥。
-乙方並應出示本定型化契約書空白文本，
-逐條向甲方說明契約內容，
-使甲方充分瞭解其權利與義務。
-
-三、
-本契約雖屬定型化契約之一種，
-甲、乙雙方仍得依個別情形，
-經雙方合意後增、刪或修改契約內容。
-雙方不得以本契約內容係主管機關所定為由，
-主張不得修改，
-亦不得為有利於己之修正後，
-宣稱為政府機關版本而主張不得再行變更。
-
-四、
-甲方於首次接受乙方提供之犬、貓美容服務前，
-應填寫乙方所提供之「毛孩資料卡」，
-視為本契約之一部分，
-與本契約具有同一法律效力。
-毛孩資料卡得以紙本或電子方式製作，一式兩份，
-由甲、乙雙方各執一份為憑。
-甲方應確保所填資料之真實性與完整性，
-並於資料有變更時主動告知乙方；
-因資料不實、遺漏或未即時告知，
-致乙方於合理專業注意範圍內仍無法預防之風險或損害者，
-相關責任概由甲方自行負責。
-
-（以下略…你原本的全文請照貼）
+（契約內容請自行貼上）
         </pre>
       </div>
 
@@ -373,7 +338,7 @@
       </div>
     </div>
 
-    <!-- 資料卡 / 甲方資料 -->
+    <!-- 資料卡 -->
     <div class="card">
       <div class="sectionTitle">毛孩資料卡內容填寫</div>
       <div class="subText">以下資料將作為契約附件之一部分</div>
@@ -387,13 +352,24 @@
       <div class="label">聯絡電話</div>
       <input id="ownerPhone" class="input" inputmode="tel" placeholder="請輸入聯絡電話">
 
+      <!-- ✅ 新增：緊急聯絡人 / 緊急聯絡人電話 -->
+      <div class="grid2" style="margin-top:10px;">
+        <div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">緊急聯絡人</div>
+          <input id="emergencyName" class="input" placeholder="請輸入緊急聯絡人姓名">
+        </div>
+        <div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">緊急聯絡人電話</div>
+          <input id="emergencyPhone" class="input" inputmode="tel" placeholder="請輸入緊急聯絡人電話">
+        </div>
+      </div>
+
       <div class="label">Email（用於寄送副本）</div>
       <input id="ownerEmail" class="input" inputmode="email" placeholder="例：abc@gmail.com">
 
       <div class="label">通訊地址</div>
       <input id="ownerAddress" class="input" placeholder="請輸入通訊地址">
 
-      <!-- ✅ 1. 與飼主關係：非本人可不填（只有選「否」才顯示/必填） -->
       <div class="label">是否為飼主本人</div>
       <div class="choiceRow" id="isOwnerSelfRow">
         <label class="choice"><input type="radio" name="isOwnerSelf" value="是" checked> 是</label>
@@ -412,7 +388,7 @@
       <div class="label">寵物品種</div>
       <input id="petBreed" class="input" placeholder="例：比熊犬">
 
-      <!-- ✅ 2. 晶片：改成打勾 有(選填號碼) / 無 -->
+      <!-- ✅ 晶片：有/無 +（選填號碼），且號碼改成數字鍵盤 -->
       <div class="label">晶片</div>
       <div class="choiceRow" id="chipRow">
         <label class="choice"><input type="radio" name="chipHas" value="有"> 有</label>
@@ -421,16 +397,55 @@
 
       <div id="chipNoWrap" class="hidden">
         <div class="label">晶片號碼 <span style="color:var(--muted); font-weight:700; font-size:14px;">（選填）</span></div>
-        <input id="chipNo" class="input" placeholder="如方便可填寫（不填也可）">
+        <input id="chipNo" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="可填數字（不填也可）">
       </div>
 
       <div class="label">體重（公斤）</div>
       <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
 
+      <!-- ✅ 新增：食物過敏（有/無） -->
+      <div class="label">食物過敏</div>
+      <div class="choiceRow" id="foodAllergyRow">
+        <label class="choice"><input type="radio" name="foodAllergy" value="有"> 有</label>
+        <label class="choice"><input type="radio" name="foodAllergy" value="無" checked> 無</label>
+      </div>
+
+      <!-- ✅ 新增：零食可不可以（可以/不可以） -->
+      <div class="label">零食</div>
+      <div class="choiceRow" id="treatRow">
+        <label class="choice"><input type="radio" name="treatAllowed" value="可以" checked> 可以</label>
+        <label class="choice"><input type="radio" name="treatAllowed" value="不可以"> 不可以</label>
+      </div>
+
+      <!-- ✅ 病史：跟資料卡一樣的項目 -->
+      <div class="label">病史</div>
+      <div class="checkGrid" id="medicalGrid">
+        <label class="ck"><input type="checkbox" class="mh" value="心臟病">心臟病</label>
+        <label class="ck"><input type="checkbox" class="mh" value="氣喘">氣喘</label>
+        <label class="ck"><input type="checkbox" class="mh" value="氣管塌陷">氣管塌陷</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="白內障">白內障</label>
+        <label class="ck"><input type="checkbox" class="mh" value="癲癇">癲癇</label>
+        <label class="ck"><input type="checkbox" class="mh" value="骨折">骨折</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="懷孕">懷孕</label>
+        <label class="ck"><input type="checkbox" class="mh" value="腸炎">腸炎</label>
+        <label class="ck"><input type="checkbox" class="mh" value="血便">血便</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="血尿">血尿</label>
+        <label class="ck"><input type="checkbox" class="mh" value="外傷未癒合">外傷未癒合</label>
+        <label class="ck"><input type="checkbox" class="mh" value="關節問題">關節問題</label>
+      </div>
+
+      <div style="margin-top:10px;">
+        <div class="label" style="margin:0 0 8px; font-size:16px;">其他應注意</div>
+        <input id="medicalNote" class="input" placeholder="請輸入（沒有也請填：無）">
+      </div>
+
       <div class="label">審閱 / 簽署日期</div>
       <input type="date" class="input" id="signDate">
 
-      <!-- ✅ 3. 緊急就醫：乙方指定 → 醫院資訊可不填（隱藏且不驗證） -->
+      <!-- 緊急就醫 -->
       <div class="label">緊急就醫機構</div>
       <div class="choiceRow" id="vetModeRow">
         <label class="choice"><input type="radio" name="vetMode" value="甲方指定" checked> 甲方指定</label>
@@ -494,6 +509,9 @@
   const ownerEmail = document.getElementById("ownerEmail");
   const ownerAddress = document.getElementById("ownerAddress");
 
+  const emergencyName = document.getElementById("emergencyName");
+  const emergencyPhone = document.getElementById("emergencyPhone");
+
   const ownerRelationWrap = document.getElementById("ownerRelationWrap");
   const ownerRelation = document.getElementById("ownerRelation");
 
@@ -504,6 +522,8 @@
 
   const chipNoWrap = document.getElementById("chipNoWrap");
   const chipNo = document.getElementById("chipNo");
+
+  const medicalNote = document.getElementById("medicalNote");
 
   const vetDetailWrap = document.getElementById("vetDetailWrap");
   const vetName = document.getElementById("vetName");
@@ -619,7 +639,6 @@
     resetSubmit();
   };
 
-  // ✅ 1. 與飼主關係：只有「非本人」才顯示/必填
   function getRadio(name){
     return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
   }
@@ -627,38 +646,28 @@
     if(!el) return;
     el.classList.toggle("hidden", !!hidden);
   }
-  function setDisabled(el, disabled){
-    if(!el) return;
-    el.disabled = !!disabled;
-    el.classList.toggle("disabled", !!disabled);
-  }
 
+  // 1) 與飼主關係：只有「非本人」才顯示/必填
   function refreshOwnerRelation(){
     const v = getRadio("isOwnerSelf");
     const notSelf = (v === "否");
     setHidden(ownerRelationWrap, !notSelf);
-    if(!notSelf){
-      ownerRelation.value = "";
-    }
+    if(!notSelf) ownerRelation.value = "";
   }
-  document.querySelectorAll('input[name="isOwnerSelf"]').forEach(r => {
-    r.addEventListener("change", refreshOwnerRelation);
-  });
+  document.querySelectorAll('input[name="isOwnerSelf"]').forEach(r => r.addEventListener("change", refreshOwnerRelation));
   refreshOwnerRelation();
 
-  // ✅ 2. 晶片：有 → 顯示「選填號碼」
+  // 2) 晶片：有 → 顯示「選填號碼」
   function refreshChip(){
     const has = getRadio("chipHas");
     const show = (has === "有");
     setHidden(chipNoWrap, !show);
     if(!show) chipNo.value = "";
   }
-  document.querySelectorAll('input[name="chipHas"]').forEach(r => {
-    r.addEventListener("change", refreshChip);
-  });
+  document.querySelectorAll('input[name="chipHas"]').forEach(r => r.addEventListener("change", refreshChip));
   refreshChip();
 
-  // ✅ 3. 乙方指定 → 醫院資訊可不填（隱藏＋不驗證）
+  // 3) 乙方指定 → 醫院資訊可不填（隱藏＋不驗證）
   function refreshVet(){
     const mode = getRadio("vetMode");
     const isStore = (mode === "乙方指定");
@@ -669,10 +678,12 @@
       vetAddress.value = "";
     }
   }
-  document.querySelectorAll('input[name="vetMode"]').forEach(r => {
-    r.addEventListener("change", refreshVet);
-  });
+  document.querySelectorAll('input[name="vetMode"]').forEach(r => r.addEventListener("change", refreshVet));
   refreshVet();
+
+  function getMedicalHistory(){
+    return Array.from(document.querySelectorAll('.mh:checked')).map(el => el.value);
+  }
 
   async function initLIFF(){
     if(!window.liff){
@@ -700,20 +711,25 @@
       return;
     }
 
-    // ✅ 讀取選項
-    const isOwnerSelf = getRadio("isOwnerSelf");
-    const chipHas = getRadio("chipHas");
-    const vetMode = getRadio("vetMode");
+    const isOwnerSelf = getRadio("isOwnerSelf") || "是";
+    const chipHas = getRadio("chipHas") || "無";
+    const vetMode = getRadio("vetMode") || "甲方指定";
+    const foodAllergy = getRadio("foodAllergy") || "無";
+    const treatAllowed = getRadio("treatAllowed") || "可以";
 
-    // ✅ 必填欄位（條件式）
+    const medicalHistory = getMedicalHistory();
+    const medicalNoteText = (medicalNote?.value || "").trim();
+
     const data = {
       ownerName:    requireValue(ownerName, "甲方姓名"),
       ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
+      emergencyName:  requireValue(emergencyName, "緊急聯絡人"),
+      emergencyPhone: requireValue(emergencyPhone, "緊急聯絡人電話"),
       ownerEmail:   requireValue(ownerEmail, "Email（用於寄送副本）"),
       ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
       ownerAddress: requireValue(ownerAddress, "通訊地址"),
 
-      isOwnerSelf:  isOwnerSelf || "是",
+      isOwnerSelf,
       ownerRelation: (isOwnerSelf === "否") ? requireValue(ownerRelation, "與飼主關係") : "",
 
       petName:      requireValue(petName, "寵物姓名"),
@@ -721,10 +737,16 @@
       petWeight:    requireValue(petWeight, "體重"),
       signDate:     requireValue(signDate, "簽署日期"),
 
-      chipHas: chipHas || "無",
+      chipHas,
       chipNo: (chipHas === "有") ? (chipNo.value || "").trim() : "",
 
-      vetMode: vetMode || "甲方指定",
+      foodAllergy,
+      treatAllowed,
+
+      medicalHistory,                 // 陣列
+      medicalNote: medicalNoteText,   // 文字
+
+      vetMode,
       vetName: (vetMode === "甲方指定") ? requireValue(vetName, "獸醫院名稱") : "",
       vetPhone:(vetMode === "甲方指定") ? requireValue(vetPhone,"獸醫院電話") : "",
       vetAddress:(vetMode === "甲方指定") ? requireValue(vetAddress,"獸醫院地址") : ""
@@ -763,10 +785,17 @@
         ? "乙方指定"
         : `甲方指定：${data.vetName} / ${data.vetPhone}`;
 
+      const mhText = (data.medicalHistory && data.medicalHistory.length)
+        ? data.medicalHistory.join("、")
+        : "無";
+      const noteText = data.medicalNote ? data.medicalNote : "無";
+
       const textMsg =
 `【犬貓美容契約簽署資料】
 甲方姓名：${data.ownerName}
 聯絡電話：${data.ownerPhone}
+緊急聯絡人：${data.emergencyName}
+緊急聯絡人電話：${data.emergencyPhone}
 Email：${data.ownerEmail}
 身分證字號：${data.ownerIdNo}
 通訊地址：${data.ownerAddress}
@@ -776,6 +805,10 @@ Email：${data.ownerEmail}
 品種：${data.petBreed}
 體重(公斤)：${data.petWeight}
 晶片：${chipText}
+食物過敏：${data.foodAllergy}
+零食：${data.treatAllowed}
+病史：${mhText}
+其他應注意：${noteText}
 緊急就醫：${vetText}
 審閱/簽署日期：${data.signDate}
 
@@ -811,14 +844,6 @@ Email：${data.ownerEmail}
 
       setOK("資料已送出！\n可以回到聊天室了！");
       resetSubmit();
-
-      // 若在 LINE 內可直接關閉
-      try{
-        if(window.liff && liff.isInClient()){
-          // 讓使用者看到成功訊息後再關閉（不強制）
-          // liff.closeWindow();
-        }
-      }catch(e){}
 
     }catch(err){
       setError(err.message || "送出失敗");
