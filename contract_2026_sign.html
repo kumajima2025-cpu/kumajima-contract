@@ -127,18 +127,6 @@
     box-shadow:0 0 0 4px rgba(195,90,46,.18);
   }
 
-  .input[type="date"]{
-    -webkit-appearance:none;
-    appearance:none;
-    display:flex;
-    align-items:center;
-    min-height:56px;
-    padding:14px 14px;
-    line-height:1.2;
-  }
-  .input[type="date"]::-webkit-date-and-time-value{ text-align:left; line-height:1.2; }
-  .input[type="date"]::-webkit-calendar-picker-indicator{ opacity:.7; margin-left:8px; }
-
   .grid2{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -226,7 +214,7 @@
     accent-color:var(--latte);
   }
 
-  /* ✅ 病史多選：像資料卡那樣一排排 */
+  /* 病史多選 */
   .checkGrid{
     display:grid;
     grid-template-columns:repeat(3, 1fr);
@@ -352,7 +340,6 @@
       <div class="label">聯絡電話</div>
       <input id="ownerPhone" class="input" inputmode="tel" placeholder="請輸入聯絡電話">
 
-      <!-- ✅ 新增：緊急聯絡人 / 緊急聯絡人電話 -->
       <div class="grid2" style="margin-top:10px;">
         <div>
           <div class="label" style="margin:0 0 8px; font-size:16px;">緊急聯絡人</div>
@@ -388,7 +375,20 @@
       <div class="label">寵物品種</div>
       <input id="petBreed" class="input" placeholder="例：比熊犬">
 
-      <!-- ✅ 晶片：有/無 +（選填號碼），且號碼改成數字鍵盤 -->
+      <!-- ✅ 新增：寵物年齡 / 寵物生日（預設顯示 1111/11/11，並自動補斜線） -->
+      <div class="grid2" style="margin-top:10px;">
+        <div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
+          <input id="petAge" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="例：3">
+        </div>
+        <div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
+          <input id="petBirthday" class="input" inputmode="numeric" placeholder="1111/11/11">
+          <div class="hintSmall">格式：YYYY/MM/DD（會自動補上 /）</div>
+        </div>
+      </div>
+
+      <!-- 晶片 -->
       <div class="label">晶片</div>
       <div class="choiceRow" id="chipRow">
         <label class="choice"><input type="radio" name="chipHas" value="有"> 有</label>
@@ -403,23 +403,33 @@
       <div class="label">體重（公斤）</div>
       <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
 
-      <!-- ✅ 新增：食物過敏（有/無） -->
+      <!-- ✅ 食物過敏：像晶片一樣 有/無 + 有才顯示「過敏內容」 -->
       <div class="label">食物過敏</div>
       <div class="choiceRow" id="foodAllergyRow">
         <label class="choice"><input type="radio" name="foodAllergy" value="有"> 有</label>
         <label class="choice"><input type="radio" name="foodAllergy" value="無" checked> 無</label>
       </div>
 
-      <!-- ✅ 新增：零食可不可以（可以/不可以） -->
+      <div id="allergyDetailWrap" class="hidden">
+        <div class="label">過敏內容</div>
+        <input id="allergyDetail" class="input" placeholder="例：雞肉 / 牛肉 / 乳製品">
+        <div class="hintSmall">選「有」時請填寫過敏內容</div>
+      </div>
+
       <div class="label">零食</div>
       <div class="choiceRow" id="treatRow">
         <label class="choice"><input type="radio" name="treatAllowed" value="可以" checked> 可以</label>
         <label class="choice"><input type="radio" name="treatAllowed" value="不可以"> 不可以</label>
       </div>
 
-      <!-- ✅ 病史：跟資料卡一樣的項目 -->
+      <!-- ✅ 病史：新增「毛孩狀況良好、無病史」為第一個，且與其他項目互斥 -->
       <div class="label">病史</div>
       <div class="checkGrid" id="medicalGrid">
+        <label class="ck">
+          <input type="checkbox" id="mh_none" value="毛孩狀況良好、無病史">
+          毛孩狀況良好、無病史
+        </label>
+
         <label class="ck"><input type="checkbox" class="mh" value="心臟病">心臟病</label>
         <label class="ck"><input type="checkbox" class="mh" value="氣喘">氣喘</label>
         <label class="ck"><input type="checkbox" class="mh" value="氣管塌陷">氣管塌陷</label>
@@ -437,9 +447,10 @@
         <label class="ck"><input type="checkbox" class="mh" value="關節問題">關節問題</label>
       </div>
 
+      <!-- ✅ 其他應注意：改為選填 -->
       <div style="margin-top:10px;">
-        <div class="label" style="margin:0 0 8px; font-size:16px;">其他應注意</div>
-        <input id="medicalNote" class="input" placeholder="請輸入（沒有也請填：無）">
+        <div class="label" style="margin:0 0 8px; font-size:16px;">其他應注意 <span style="color:var(--muted); font-weight:700; font-size:14px;">（選填）</span></div>
+        <input id="medicalNote" class="input" placeholder="如無可留空">
       </div>
 
       <div class="label">審閱 / 簽署日期</div>
@@ -517,13 +528,22 @@
 
   const petName = document.getElementById("petName");
   const petBreed = document.getElementById("petBreed");
+  const petAge = document.getElementById("petAge");
+  const petBirthday = document.getElementById("petBirthday");
+
   const petWeight = document.getElementById("petWeight");
   const signDate = document.getElementById("signDate");
 
   const chipNoWrap = document.getElementById("chipNoWrap");
   const chipNo = document.getElementById("chipNo");
 
+  const allergyDetailWrap = document.getElementById("allergyDetailWrap");
+  const allergyDetail = document.getElementById("allergyDetail");
+
   const medicalNote = document.getElementById("medicalNote");
+
+  const mhNone = document.getElementById("mh_none");
+  const mhBoxes = Array.from(document.querySelectorAll(".mh"));
 
   const vetDetailWrap = document.getElementById("vetDetailWrap");
   const vetName = document.getElementById("vetName");
@@ -575,6 +595,30 @@
     return `${yyyy}-${mm}-${dd}`;
   }
   if(signDate && !signDate.value) signDate.value = todayISO();
+
+  // ✅ 生日預設顯示 1111/11/11（可自行改）
+  if(petBirthday && !petBirthday.value) petBirthday.value = "1111/11/11";
+
+  // ✅ 生日自動補斜線：輸入數字會變成 YYYY/MM/DD
+  function formatYMD(v){
+    const digits = String(v || "").replace(/\D/g,"").slice(0,8);
+    const y = digits.slice(0,4);
+    const m = digits.slice(4,6);
+    const d = digits.slice(6,8);
+    let out = y;
+    if(m) out += "/" + m;
+    if(d) out += "/" + d;
+    return out;
+  }
+  petBirthday.addEventListener("input", (e) => {
+    const start = e.target.selectionStart || 0;
+    const before = e.target.value;
+    e.target.value = formatYMD(e.target.value);
+    // 簡單維持游標（不做極端精準）
+    if(before.length < e.target.value.length) {
+      e.target.setSelectionRange(start+1, start+1);
+    }
+  });
 
   function syncSize(){
     const r = canvas.getBoundingClientRect();
@@ -647,7 +691,7 @@
     el.classList.toggle("hidden", !!hidden);
   }
 
-  // 1) 與飼主關係：只有「非本人」才顯示/必填
+  // 與飼主關係：只有「非本人」才顯示/必填
   function refreshOwnerRelation(){
     const v = getRadio("isOwnerSelf");
     const notSelf = (v === "否");
@@ -657,7 +701,7 @@
   document.querySelectorAll('input[name="isOwnerSelf"]').forEach(r => r.addEventListener("change", refreshOwnerRelation));
   refreshOwnerRelation();
 
-  // 2) 晶片：有 → 顯示「選填號碼」
+  // 晶片：有 → 顯示「選填號碼」
   function refreshChip(){
     const has = getRadio("chipHas");
     const show = (has === "有");
@@ -667,7 +711,17 @@
   document.querySelectorAll('input[name="chipHas"]').forEach(r => r.addEventListener("change", refreshChip));
   refreshChip();
 
-  // 3) 乙方指定 → 醫院資訊可不填（隱藏＋不驗證）
+  // ✅ 食物過敏：有 → 顯示過敏內容（且送出時必填）
+  function refreshAllergy(){
+    const v = getRadio("foodAllergy");
+    const show = (v === "有");
+    setHidden(allergyDetailWrap, !show);
+    if(!show) allergyDetail.value = "";
+  }
+  document.querySelectorAll('input[name="foodAllergy"]').forEach(r => r.addEventListener("change", refreshAllergy));
+  refreshAllergy();
+
+  // 乙方指定 → 醫院資訊可不填（隱藏＋不驗證）
   function refreshVet(){
     const mode = getRadio("vetMode");
     const isStore = (mode === "乙方指定");
@@ -681,8 +735,25 @@
   document.querySelectorAll('input[name="vetMode"]').forEach(r => r.addEventListener("change", refreshVet));
   refreshVet();
 
+  // ✅ 病史互斥邏輯：
+  // - 勾「無病史」→ 其他全部取消
+  // - 勾任何其他 → 「無病史」取消
+  function enforceMedicalExclusive(){
+    if(mhNone.checked){
+      mhBoxes.forEach(b => b.checked = false);
+    }else{
+      const anyOther = mhBoxes.some(b => b.checked);
+      if(anyOther) mhNone.checked = false;
+    }
+  }
+  mhNone.addEventListener("change", enforceMedicalExclusive);
+  mhBoxes.forEach(b => b.addEventListener("change", enforceMedicalExclusive));
+
   function getMedicalHistory(){
-    return Array.from(document.querySelectorAll('.mh:checked')).map(el => el.value);
+    const arr = [];
+    if(mhNone.checked) arr.push(mhNone.value);
+    mhBoxes.forEach(el => { if(el.checked) arr.push(el.value); });
+    return arr;
   }
 
   async function initLIFF(){
@@ -718,7 +789,10 @@
     const treatAllowed = getRadio("treatAllowed") || "可以";
 
     const medicalHistory = getMedicalHistory();
-    const medicalNoteText = (medicalNote?.value || "").trim();
+    const medicalNoteText = (medicalNote?.value || "").trim(); // ✅ 選填
+
+    // ✅ 若食物過敏＝有 → 過敏內容必填
+    const allergyDetailText = (foodAllergy === "有") ? requireValue(allergyDetail, "過敏內容") : "";
 
     const data = {
       ownerName:    requireValue(ownerName, "甲方姓名"),
@@ -734,6 +808,8 @@
 
       petName:      requireValue(petName, "寵物姓名"),
       petBreed:     requireValue(petBreed, "寵物品種"),
+      petAge:       requireValue(petAge, "寵物年齡"),
+      petBirthday:  requireValue(petBirthday, "寵物生日"),
       petWeight:    requireValue(petWeight, "體重"),
       signDate:     requireValue(signDate, "簽署日期"),
 
@@ -741,10 +817,12 @@
       chipNo: (chipHas === "有") ? (chipNo.value || "").trim() : "",
 
       foodAllergy,
+      allergyDetail: allergyDetailText,
+
       treatAllowed,
 
-      medicalHistory,                 // 陣列
-      medicalNote: medicalNoteText,   // 文字
+      medicalHistory,               // 陣列
+      medicalNote: medicalNoteText, // 選填文字
 
       vetMode,
       vetName: (vetMode === "甲方指定") ? requireValue(vetName, "獸醫院名稱") : "",
@@ -781,14 +859,19 @@
         ? `有${data.chipNo ? "（" + data.chipNo + "）" : "（未填號碼）"}`
         : "無";
 
+      const allergyText = (data.foodAllergy === "有")
+        ? `有（${data.allergyDetail}）`
+        : "無";
+
       const vetText = (data.vetMode === "乙方指定")
         ? "乙方指定"
         : `甲方指定：${data.vetName} / ${data.vetPhone}`;
 
       const mhText = (data.medicalHistory && data.medicalHistory.length)
         ? data.medicalHistory.join("、")
-        : "無";
-      const noteText = data.medicalNote ? data.medicalNote : "無";
+        : "（未勾選）";
+
+      const noteText = data.medicalNote ? data.medicalNote : "（未填）";
 
       const textMsg =
 `【犬貓美容契約簽署資料】
@@ -803,9 +886,11 @@ Email：${data.ownerEmail}
 
 寵物名字：${data.petName}
 品種：${data.petBreed}
+年齡：${data.petAge}
+生日：${data.petBirthday}
 體重(公斤)：${data.petWeight}
 晶片：${chipText}
-食物過敏：${data.foodAllergy}
+食物過敏：${allergyText}
 零食：${data.treatAllowed}
 病史：${mhText}
 其他應注意：${noteText}
