@@ -1084,7 +1084,10 @@
         : "（未勾選）";
       const ptNoteText = data.petTemperamentNote ? data.petTemperamentNote : "（未填）";
 
-      const textMsg =
+const completeNote =
+"（簽署資料與簽名已完成。\n副本已寄送至您的Email信箱。\n\n若有多隻毛孩，請為每隻毛孩分別填寫一份表單並各自送出。）";
+
+const textMsg =
 `【犬貓美容契約簽署資料】
 甲方姓名：${data.ownerName}
 聯絡電話：${data.ownerPhone}
@@ -1111,8 +1114,7 @@ ${otherInjuryTextLine}
 緊急就醫：${vetText}
 審閱/簽署日期：${data.signDate}
 
-`（簽署資料與簽名已完成。\n副本已寄送至您的 Email 信箱。\n\n若有多隻毛孩，請為每隻毛孩分別填寫一份表單並各自送出。）`;
-
+${completeNote}`;
       await liff.sendMessages([{ type:"text", text:textMsg }]);
 
       let profile = null;
