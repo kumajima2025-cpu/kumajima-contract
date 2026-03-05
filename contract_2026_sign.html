@@ -232,10 +232,7 @@
     flex-shrink:0;
   }
 
-  /* 讓「其他外傷」「無病史」單獨一整行 */
   .fullRow{ grid-column: 1 / -1; }
-
-  /* 其他外傷輸入框（預設隱藏，勾選才出現） */
   .otherInputWrap{ display:none; margin-top:10px; }
   .otherInputWrap .input{ width:100%; }
 
@@ -301,7 +298,7 @@
       <div class="infoBox">
         <div class="meta">
           公司名稱：熊嶼寵物有限公司<br>
-          地址：新北市板橋區合宜一路11號<br>
+          營業地址：新北市板橋區合宜一路11號<br>
           官方LINE：@kumajima2025
         </div>
       </div>
@@ -511,7 +508,7 @@
         </div>
       </div>
 
-      <div class="label">Email</div>
+      <div class="label">Email（寄送附本用）</div>
       <input id="ownerEmail" class="input" inputmode="email" placeholder="例：abc@gmail.com">
 
       <div class="label">通訊地址</div>
@@ -545,7 +542,7 @@
        class="input"
        type="text"
        name="petBirthday"
-       placeholder="YYYY/MM/DD"
+       placeholder="YYYY/MM/DD 若忘記年份可填1111"
        inputmode="numeric"
        pattern="\d{4}/\d{1,2}/\d{1,2}"
        required>
@@ -586,7 +583,7 @@
 
       <div style="margin-top:10px;">
         <div class="label" style="margin:0 0 8px; font-size:16px;">其他應注意（選填）</div>
-        <input id="petTemperamentNote" class="input" placeholder="例如：怕吹風、會護食、碰腳會縮等">
+        <input id="petTemperamentNote" class="input" placeholder="例如：怕吹風、不喜歡剪磨指甲等">
       </div>
 
       <div class="label">食物過敏</div>
@@ -631,14 +628,13 @@
         </label>
       </div>
 
-      <!-- 勾選「其他外傷」才出現 -->
       <div id="otherInjuryWrap" class="otherInputWrap">
-        <input id="otherInjuryText" class="input" type="text" placeholder="請填寫外傷說明（可留空）">
+        <input id="otherInjuryText" class="input" type="text" placeholder="請填寫外傷說明">
       </div>
 
       <div style="margin-top:10px;">
         <div class="label" style="margin:0 0 8px; font-size:16px;">其他應注意 <span style="color:var(--muted); font-weight:700; font-size:14px;">（選填）</span></div>
-        <input id="medicalNote" class="input" placeholder="如無可留空">
+        <input id="medicalNote" class="input" placeholder="例：2021年疝氣手術、脂肪瘤手術等">
       </div>
 
       <div class="label">審閱 / 簽署日期</div>
@@ -647,23 +643,23 @@
       <div class="label">緊急就醫機構</div>
       <div class="choiceRow" id="vetModeRow">
         <label class="choice"><input type="radio" name="vetMode" value="甲方指定" checked> 甲方指定</label>
-        <label class="choice"><input type="radio" name="vetMode" value="乙方指定"> 乙方指定</label>
+        <label class="choice"><input type="radio" name="vetMode" value="乙方指定"> 乙方指定鄰近動物醫院</label>
       </div>
 
       <div id="vetDetailWrap">
         <div class="grid2" style="margin-top:10px;">
           <div>
-            <div class="label" style="margin:0 0 8px; font-size:16px;">獸醫院名稱</div>
-            <input id="vetName" class="input" placeholder="請輸入獸醫院名稱">
+            <div class="label" style="margin:0 0 8px; font-size:16px;">動物醫院名稱</div>
+            <input id="vetName" class="input" placeholder="請輸入動物醫院名稱">
           </div>
           <div>
-            <div class="label" style="margin:0 0 8px; font-size:16px;">獸醫院電話</div>
+            <div class="label" style="margin:0 0 8px; font-size:16px;">動物醫院電話</div>
             <input id="vetPhone" class="input" inputmode="tel" placeholder="請輸入電話">
           </div>
         </div>
 
         <div style="margin-top:10px;">
-          <div class="label" style="margin:0 0 8px; font-size:16px;">獸醫院地址</div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">動物醫院地址</div>
           <input id="vetAddress" class="input" placeholder="請輸入地址">
         </div>
       </div>
@@ -671,7 +667,10 @@
 
     <div class="card">
       <div class="sectionTitle">簽名</div>
-      <div class="subText">簽名送出後，將寄送副本到您的 Email（並同時寄送店家備份）</div>
+<div class="subText">
+  <span>簽名送出後，將寄送副本到您的 Email</span><br>
+  <span>（並同時寄送店家備份）</span>
+</div>
 
       <div class="label" style="margin-top:0">甲方簽名</div>
       <canvas id="sig"></canvas>
@@ -777,7 +776,6 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  // 中文日期：2026年3月3日
   function todayZh(){
     const d = new Date();
     const y = d.getFullYear();
@@ -787,7 +785,6 @@
   }
   if(signDate) signDate.value = todayZh();
 
-  // 生日自動格式化：只輸入數字也能變 YYYY/MM/DD
   function formatYMD(v){
     const digits = String(v || "").replace(/\D/g,"").slice(0,8);
     const y = digits.slice(0,4);
@@ -809,7 +806,6 @@
     });
   }
 
-  // 其他外傷：勾選顯示輸入框
   function refreshOtherInjury(){
     if(!otherInjury || !otherWrap) return;
     const show = !!otherInjury.checked;
@@ -995,8 +991,6 @@
     const medicalHistory = getMedicalHistory();
     const medicalNoteText = (medicalNote?.value || "").trim();
     const allergyDetailText = (foodAllergy === "有") ? requireValue(allergyDetail, "過敏內容") : "";
-
-    // 其他外傷文字（選填，但勾選後可要求必填也可以，我先做選填）
     const otherInjuryNote = (otherInjury && otherInjury.checked) ? (otherText?.value || "").trim() : "";
 
     const data = {
@@ -1004,7 +998,7 @@
       ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
       emergencyName:  requireValue(emergencyName, "緊急聯絡人"),
       emergencyPhone: requireValue(emergencyPhone, "緊急聯絡人電話"),
-      ownerEmail:   requireValue(ownerEmail, "Email（用於寄送副本）"),
+      ownerEmail:   requireValue(ownerEmail, "Email（寄送附本用）"),
       ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
       ownerAddress: requireValue(ownerAddress, "通訊地址"),
 
@@ -1033,9 +1027,9 @@
       otherInjuryNote,
 
       vetMode,
-      vetName: (vetMode === "甲方指定") ? requireValue(vetName, "獸醫院名稱") : "",
-      vetPhone:(vetMode === "甲方指定") ? requireValue(vetPhone,"獸醫院電話") : "",
-      vetAddress:(vetMode === "甲方指定") ? requireValue(vetAddress,"獸醫院地址") : ""
+      vetName: (vetMode === "甲方指定") ? requireValue(vetName, "動物醫院名稱") : "",
+      vetPhone:(vetMode === "甲方指定") ? requireValue(vetPhone,"動物醫院電話") : "",
+      vetAddress:(vetMode === "甲方指定") ? requireValue(vetAddress,"動物醫院地址") : ""
     };
 
     if(Object.values(data).some(v => v === null)){
@@ -1118,8 +1112,7 @@ ${otherInjuryTextLine}
 緊急就醫：${vetText}
 審閱/簽署日期：${data.signDate}
 
-（簽署資料與簽名已完成，副本已寄送至您的信箱。
-若有多隻毛孩，請每隻毛孩分別填寫一份表單並各自送出。）`;
+`（簽署資料與簽名已完成。\n副本已寄送至您的 Email 信箱。\n\n若有多隻毛孩，請為每隻毛孩分別填寫一份表單並各自送出。）`;
 
       await liff.sendMessages([{ type:"text", text:textMsg }]);
 
