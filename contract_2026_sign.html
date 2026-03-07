@@ -716,7 +716,6 @@
   const petBreed = document.getElementById("petBreed");
   const petAge = document.getElementById("petAge");
   const petBirthday = document.getElementById("petBirthday");
-
   const petWeight = document.getElementById("petWeight");
   const signDate = document.getElementById("signDate");
 
@@ -779,6 +778,22 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
+  function isValidDateString(v){
+    const m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(v);
+    if(!m) return false;
+    const y = Number(m[1]);
+    const mm = Number(m[2]);
+    const d = Number(m[3]);
+    const dt = new Date(y, mm - 1, d);
+    return dt.getFullYear() === y &&
+           dt.getMonth() === mm - 1 &&
+           dt.getDate() === d;
+  }
+
+  function isValidWeight(v){
+    return /^\d+(\.\d+)?$/.test(v);
+  }
+
   function todayZh(){
     const d = new Date();
     const y = d.getFullYear();
@@ -798,6 +813,7 @@
     if(d) out += "/" + d;
     return out;
   }
+
   if(petBirthday){
     petBirthday.addEventListener("input", (e) => {
       const start = e.target.selectionStart || 0;
@@ -809,6 +825,15 @@
     });
   }
 
+  function getRadio(name){
+    return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+  }
+
+  function setHidden(el, hidden){
+    if(!el) return;
+    el.classList.toggle("hidden", !!hidden);
+  }
+
   function refreshOtherInjury(){
     if(!otherInjury || !otherWrap) return;
     const show = !!otherInjury.checked;
@@ -818,77 +843,6 @@
   if(otherInjury){
     otherInjury.addEventListener("change", refreshOtherInjury);
     refreshOtherInjury();
-  }
-
-  function syncSize(){
-    const r = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width  = Math.round(r.width * dpr);
-    canvas.height = Math.round(r.height * dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.lineWidth = 4;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.strokeStyle = "#111";
-  }
-  syncSize();
-
-  let drawing = false;
-  let hasStroke = false;
-
-  function point(e){
-    const r = canvas.getBoundingClientRect();
-    return { x: e.clientX - r.left, y: e.clientY - r.top };
-  }
-
-  function lockScroll(lock){
-    document.body.style.overflow = lock ? "hidden" : "";
-    document.body.style.touchAction = lock ? "none" : "";
-  }
-
-  function down(e){
-    e.preventDefault();
-    lockScroll(true);
-    drawing = true;
-    const p = point(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-    msg.textContent = "";
-  }
-
-  function move(e){
-    if(!drawing) return;
-    e.preventDefault();
-    const p = point(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-    hasStroke = true;
-  }
-
-  function up(){
-    drawing = false;
-    lockScroll(false);
-  }
-
-  canvas.addEventListener("pointerdown", down, { passive:false });
-  canvas.addEventListener("pointermove", move, { passive:false });
-  window.addEventListener("pointerup", up);
-  window.addEventListener("pointercancel", up);
-
-  clearBtn.onclick = () => {
-    const r = canvas.getBoundingClientRect();
-    ctx.clearRect(0, 0, r.width, r.height);
-    hasStroke = false;
-    setError("已清除，請重新簽名");
-    resetSubmit();
-  };
-
-  function getRadio(name){
-    return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
-  }
-  function setHidden(el, hidden){
-    if(!el) return;
-    el.classList.toggle("hidden", !!hidden);
   }
 
   function refreshOwnerRelation(){
@@ -959,6 +913,68 @@
     return arr;
   }
 
+  function syncSize(){
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = Math.round(r.width * dpr);
+    canvas.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#111";
+  }
+  syncSize();
+
+  let drawing = false;
+  let hasStroke = false;
+
+  function point(e){
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function lockScroll(lock){
+    document.body.style.overflow = lock ? "hidden" : "";
+    document.body.style.touchAction = lock ? "none" : "";
+  }
+
+  function down(e){
+    e.preventDefault();
+    lockScroll(true);
+    drawing = true;
+    const p = point(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    msg.textContent = "";
+  }
+
+  function move(e){
+    if(!drawing) return;
+    e.preventDefault();
+    const p = point(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    hasStroke = true;
+  }
+
+  function up(){
+    drawing = false;
+    lockScroll(false);
+  }
+
+  canvas.addEventListener("pointerdown", down, { passive:false });
+  canvas.addEventListener("pointermove", move, { passive:false });
+  window.addEventListener("pointerup", up);
+  window.addEventListener("pointercancel", up);
+
+  clearBtn.onclick = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasStroke = false;
+    setError("已清除，請重新簽名");
+    resetSubmit();
+  };
+
   async function initLIFF(){
     if(!window.liff){
       throw new Error("LIFF SDK 未載入");
@@ -998,26 +1014,26 @@
     const otherInjuryNote = (otherInjury && otherInjury.checked) ? (otherText?.value || "").trim() : "";
 
     const data = {
-      ownerName:    requireValue(ownerName, "甲方姓名"),
-      ownerPhone:   requireValue(ownerPhone, "聯絡電話"),
-      emergencyName:  requireValue(emergencyName, "緊急聯絡人"),
+      ownerName: requireValue(ownerName, "甲方姓名"),
+      ownerPhone: requireValue(ownerPhone, "聯絡電話"),
+      emergencyName: requireValue(emergencyName, "緊急聯絡人"),
       emergencyPhone: requireValue(emergencyPhone, "緊急聯絡人電話"),
-      ownerEmail:   requireValue(ownerEmail, "Email（寄送附本用）"),
-      ownerIdNo:    requireValue(ownerIdNo, "身分證字號"),
+      ownerEmail: requireValue(ownerEmail, "Email（寄送附本用）"),
+      ownerIdNo: requireValue(ownerIdNo, "身分證字號"),
       ownerAddress: requireValue(ownerAddress, "通訊地址"),
 
       isOwnerSelf,
       ownerRelation: (isOwnerSelf === "否") ? requireValue(ownerRelation, "與飼主關係") : "",
 
-      petName:      requireValue(petName, "寵物姓名"),
-      petBreed:     requireValue(petBreed, "寵物品種"),
+      petName: requireValue(petName, "寵物姓名"),
+      petBreed: requireValue(petBreed, "寵物品種"),
       petSex,
-      petAge:       requireValue(petAge, "寵物年齡"),
-      petBirthday:  requireValue(petBirthday, "寵物生日"),
-      petWeight:    requireValue(petWeight, "體重"),
+      petAge: requireValue(petAge, "寵物年齡"),
+      petBirthday: requireValue(petBirthday, "寵物生日"),
+      petWeight: requireValue(petWeight, "體重"),
       petTemperament: getPetTemperament(),
       petTemperamentNote: (petTemperamentNote?.value || "").trim(),
-      signDate:     requireValue(signDate, "簽署日期"),
+      signDate: requireValue(signDate, "簽署日期"),
 
       chipHas,
       chipNo: (chipHas === "有") ? (chipNo.value || "").trim() : "",
@@ -1033,11 +1049,25 @@
 
       vetMode,
       vetName: (vetMode === "甲方指定") ? requireValue(vetName, "動物醫院名稱") : "",
-      vetPhone:(vetMode === "甲方指定") ? requireValue(vetPhone,"動物醫院電話") : "",
-      vetAddress:(vetMode === "甲方指定") ? requireValue(vetAddress,"動物醫院地址") : ""
+      vetPhone: (vetMode === "甲方指定") ? requireValue(vetPhone, "動物醫院電話") : "",
+      vetAddress: (vetMode === "甲方指定") ? requireValue(vetAddress, "動物醫院地址") : ""
     };
 
     if(Object.values(data).some(v => v === null)){
+      resetSubmit();
+      return;
+    }
+
+    if(!isValidDateString(data.petBirthday)){
+      setError("寵物生日格式不正確，請輸入有效日期");
+      petBirthday.focus();
+      resetSubmit();
+      return;
+    }
+
+    if(!isValidWeight(data.petWeight)){
+      setError("體重格式不正確，請輸入數字，例如：6.5");
+      petWeight.focus();
       resetSubmit();
       return;
     }
@@ -1088,6 +1118,7 @@
       const ptText = (data.petTemperament && data.petTemperament.length)
         ? data.petTemperament.join("、")
         : "（未勾選）";
+
       const ptNoteText = data.petTemperamentNote ? data.petTemperamentNote : "（未填）";
 
       const completeNote =
@@ -1123,16 +1154,19 @@ ${otherInjuryTextLine}
 
 ${completeNote}`;
 
-      await liff.sendMessages([{ type:"text", text:textMsg }]);
-
       let profile = null;
-      try { profile = await liff.getProfile(); } catch(e){}
+      try {
+        profile = await liff.getProfile();
+      } catch(e){}
 
       const contractText = (document.getElementById("contractText")?.innerText || "").trim();
       const signatureDataUrl = canvas.toDataURL("image/png");
 
+      let res;
+      let result = {};
+
       try{
-        await fetch(GOOGLE_SCRIPT_URL, {
+        res = await fetch(GOOGLE_SCRIPT_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=UTF-8" },
           body: JSON.stringify({
@@ -1147,11 +1181,24 @@ ${completeNote}`;
           })
         });
       }catch(e){
-        console.warn("Google upload failed:", e);
+        throw new Error("資料上傳失敗，請稍後再試");
       }
 
+      try{
+        result = await res.json();
+      }catch(e){
+        throw new Error("伺服器回傳格式異常，請聯絡店家");
+      }
+
+      if(!res.ok || !result.ok){
+        throw new Error(result.error || "副本寄送失敗，請稍後再試");
+      }
+
+      await liff.sendMessages([{ type:"text", text:textMsg }]);
+
       setOK("資料已送出！\n可以回到聊天室了！");
-      resetSubmit();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "已送出";
 
     }catch(err){
       setError(err.message || "送出失敗");
