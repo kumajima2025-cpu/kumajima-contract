@@ -531,6 +531,12 @@
       <div class="label">寵物品種</div>
       <input id="petBreed" class="input" placeholder="例：比熊犬">
 
+      <div class="label">寵物性別</div>
+      <div class="choiceRow" id="petSexRow">
+        <label class="choice"><input type="radio" name="petSex" value="男生" checked> 男生</label>
+        <label class="choice"><input type="radio" name="petSex" value="女生"> 女生</label>
+      </div>
+
       <div class="grid2" style="margin-top:10px;">
         <div>
           <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
@@ -538,14 +544,14 @@
         </div>
         <div>
           <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
-         <input id="petBirthday"
-       class="input"
-       type="text"
-       name="petBirthday"
-       placeholder="YYYY/MM/DD"
-       inputmode="numeric"
-       pattern="\d{4}/\d{1,2}/\d{1,2}"
-       required>
+          <input id="petBirthday"
+                 class="input"
+                 type="text"
+                 name="petBirthday"
+                 placeholder="YYYY/MM/DD"
+                 inputmode="numeric"
+                 pattern="\d{4}/\d{1,2}/\d{1,2}"
+                 required>
         </div>
       </div>
 
@@ -574,8 +580,6 @@
         <label class="ck"><input type="checkbox" class="pt" value="會咬人">會咬人</label>
         <label class="ck"><input type="checkbox" class="pt" value="不會咬狗">不會咬狗</label>
         <label class="ck"><input type="checkbox" class="pt" value="會咬狗">會咬狗</label>
-        
-        
 
         <label class="ck"><input type="checkbox" class="pt" value="容易緊張">容易緊張</label>
         <label class="ck"><input type="checkbox" class="pt" value="過度焦慮">過度焦慮</label>
@@ -667,9 +671,9 @@
 
     <div class="card">
       <div class="sectionTitle">簽名</div>
-<div class="subText">
-  <span>簽名送出後，將寄送副本到您的 Email</span>
-</div>
+      <div class="subText">
+        <span>簽名送出後，將寄送副本到您的 Email</span>
+      </div>
 
       <div class="label" style="margin-top:0">甲方簽名</div>
       <canvas id="sig"></canvas>
@@ -986,6 +990,7 @@
     const vetMode = getRadio("vetMode") || "甲方指定";
     const foodAllergy = getRadio("foodAllergy") || "無";
     const treatAllowed = getRadio("treatAllowed") || "可以";
+    const petSex = getRadio("petSex") || "男生";
 
     const medicalHistory = getMedicalHistory();
     const medicalNoteText = (medicalNote?.value || "").trim();
@@ -1006,6 +1011,7 @@
 
       petName:      requireValue(petName, "寵物姓名"),
       petBreed:     requireValue(petBreed, "寵物品種"),
+      petSex,
       petAge:       requireValue(petAge, "寵物年齡"),
       petBirthday:  requireValue(petBirthday, "寵物生日"),
       petWeight:    requireValue(petWeight, "體重"),
@@ -1084,10 +1090,10 @@
         : "（未勾選）";
       const ptNoteText = data.petTemperamentNote ? data.petTemperamentNote : "（未填）";
 
-const completeNote =
+      const completeNote =
 "（簽署資料與簽名已完成。\n副本已寄送至您的Email信箱。\n\n若有多隻毛孩，請為每隻毛孩分別填寫一份表單並各自送出。）";
 
-const textMsg =
+      const textMsg =
 `【犬貓美容契約簽署資料】
 甲方姓名：${data.ownerName}
 聯絡電話：${data.ownerPhone}
@@ -1100,6 +1106,7 @@ Email：${data.ownerEmail}
 
 寵物名字：${data.petName}
 品種：${data.petBreed}
+性別：${data.petSex}
 年齡：${data.petAge}
 生日：${data.petBirthday}
 體重(公斤)：${data.petWeight}
@@ -1115,6 +1122,7 @@ ${otherInjuryTextLine}
 審閱/簽署日期：${data.signDate}
 
 ${completeNote}`;
+
       await liff.sendMessages([{ type:"text", text:textMsg }]);
 
       let profile = null;
