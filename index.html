@@ -238,8 +238,6 @@
   }
 
   .fullRow{ grid-column: 1 / -1; }
-  .otherInputWrap{ display:none; margin-top:10px; }
-  .otherInputWrap .input{ width:100%; }
 
   .vetPresetBox{
     margin-top:10px;
@@ -298,19 +296,18 @@
   }
 
   .hidden{ display:none !important; }
-    
-    .birthdayAgeRow{
-  display:grid;
-  grid-template-columns:minmax(0, 1fr) 110px;
-  gap:10px;
-  align-items:end;
-}
 
-.birthdayAgeRow > div{
-  min-width:0;
-}
+  .birthdayAgeRow{
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) 110px;
+    gap:10px;
+    align-items:end;
+  }
+
+  .birthdayAgeRow > div{
+    min-width:0;
+  }
   </style>
-  
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
@@ -566,27 +563,28 @@
         <label class="choice"><input type="radio" name="petSex" value="女生"> 女生</label>
       </div>
 
-<div class="birthdayAgeRow" style="margin-top:10px;">
-  <div>
-    <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
-    <input id="petBirthday"
-           class="input"
-           type="text"
-           name="petBirthday"
-           placeholder="YYYY/MM/DD"
-           inputmode="numeric"
-           pattern="\d{4}/\d{1,2}/\d{1,2}"
-           required>
-  </div>
+      <div class="birthdayAgeRow" style="margin-top:10px;">
+        <div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
+          <input id="petBirthday"
+                 class="input"
+                 type="text"
+                 name="petBirthday"
+                 placeholder="YYYY/MM/DD"
+                 inputmode="numeric"
+                 pattern="\d{4}/\d{1,2}/\d{1,2}"
+                 required>
+        </div>
 
-  <div>
-    <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
-    <input id="petAge"
-           class="input"
-           type="text"
-           readonly>
-  </div>
-</div>
+        <div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
+          <input id="petAge"
+                 class="input"
+                 type="text"
+                 readonly>
+        </div>
+      </div>
+
       <div class="label">晶片</div>
       <div class="choiceRow" id="chipRow">
         <label class="choice"><input type="radio" name="chipHas" value="有" checked> 有</label>
@@ -617,11 +615,6 @@
         <label class="ck"><input type="checkbox" class="pt" value="過度焦慮">過度焦慮</label>
       </div>
 
-      <div style="margin-top:10px;">
-        <div class="label" style="margin:0 0 8px; font-size:16px;">其他應注意（選填）</div>
-        <input id="petTemperamentNote" class="input" placeholder="例如：怕吹風、不喜歡剪磨指甲等">
-      </div>
-
       <div class="label">食物過敏</div>
       <div class="choiceRow" id="foodAllergyRow">
         <label class="choice"><input type="radio" name="foodAllergy" value="有"> 有</label>
@@ -642,7 +635,7 @@
       <div class="label">病史</div>
       <div class="checkGrid" id="medicalGrid">
         <label class="ck fullRow">
-          <input type="checkbox" id="mh_none" value="毛孩狀況良好、無病史">
+          <input type="checkbox" id="mh_none" value="毛孩狀況良好，無病史">
           毛孩狀況良好，無病史
         </label>
 
@@ -650,27 +643,58 @@
         <label class="ck"><input type="checkbox" class="mh" value="氣管塌陷">氣管塌陷</label>
 
         <label class="ck"><input type="checkbox" class="mh" value="白內障">白內障</label>
+        <label class="ck"><input type="checkbox" class="mh" value="乾眼症">乾眼症</label>
+
         <label class="ck"><input type="checkbox" class="mh" value="癲癇">癲癇</label>
-
-        <label class="ck"><input type="checkbox" class="mh" value="骨折">骨折</label>
-        <label class="ck"><input type="checkbox" class="mh" value="關節問題">關節問題</label>
-
         <label class="ck"><input type="checkbox" class="mh" value="懷孕">懷孕</label>
-        <label class="ck"><input type="checkbox" class="mh" value="腸炎">腸炎</label>
 
-        <label class="ck fullRow">
-          <input type="checkbox" class="mh" id="otherInjury" value="其他外傷">
-          其他外傷
-        </label>
+        <label class="ck"><input type="checkbox" class="mh" value="糖尿病">糖尿病</label>
+        <label class="ck"><input type="checkbox" class="mh" value="骨折">骨折</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="椎間盤突出">椎間盤突出</label>
+        <label class="ck"><input type="checkbox" class="mh" value="髕骨脫位">髕骨脫位</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="腸胃炎">腸胃炎</label>
+        <label class="ck"><input type="checkbox" class="mh" value="胰臟炎">胰臟炎</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="心絲蟲">心絲蟲</label>
+        <label class="ck"><input type="checkbox" class="mh" value="艾利希體">艾利希體</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="血尿">血尿</label>
+        <label class="ck"><input type="checkbox" class="mh" value="血便">血便</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="腹膜炎">腹膜炎</label>
+        <label class="ck"><input type="checkbox" class="mh" value="腹水">腹水</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="腎臟病">腎臟病</label>
+        <label class="ck"><input type="checkbox" class="mh" value="膀胱炎">膀胱炎</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="膀胱結石">膀胱結石</label>
+        <label class="ck"><input type="checkbox" class="mh" value="鼻血">鼻血</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="黴菌感染">黴菌感染</label>
+        <label class="ck"><input type="checkbox" class="mh" value="細菌感染">細菌感染</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="過敏">過敏</label>
+        <label class="ck"><input type="checkbox" class="mh" value="過敏性皮膚炎">過敏性皮膚炎</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="外耳炎">外耳炎</label>
+        <label class="ck"><input type="checkbox" class="mh" value="耳蟎">耳蟎</label>
+
+        <label class="ck"><input type="checkbox" class="mh" value="腫瘤">腫瘤</label>
+        <label class="ck"><input type="checkbox" class="mh" value="傳染性疾病">傳染性疾病</label>
       </div>
 
-      <div id="otherInjuryWrap" class="otherInputWrap">
-        <input id="otherInjuryText" class="input" type="text" placeholder="請填寫外傷說明">
-      </div>
+      <div class="label">美容注意事項</div>
+      <div class="checkGrid" id="groomingNoteGrid">
+        <label class="ck"><input type="checkbox" class="gn" value="基本美容會咬人">基本美容會咬人</label>
+        <label class="ck"><input type="checkbox" class="gn" value="不喜歡水沖頭">不喜歡水沖頭</label>
 
-      <div style="margin-top:10px;">
-        <div class="label" style="margin:0 0 8px; font-size:16px;">其他應注意 <span style="color:var(--muted); font-weight:700; font-size:14px;">（選填）</span></div>
-        <input id="medicalNote" class="input" placeholder="例：2021年疝氣手術、脂肪瘤手術等">
+        <label class="ck"><input type="checkbox" class="gn" value="不喜歡被抓臉">不喜歡被抓臉</label>
+        <label class="ck"><input type="checkbox" class="gn" value="害怕吹風機">害怕吹風機</label>
+
+        <label class="ck"><input type="checkbox" class="gn" value="怕站桌會發抖">怕站桌會發抖</label>
+        <label class="ck"><input type="checkbox" class="gn" value="需特殊保定">需特殊保定</label>
       </div>
 
       <div class="label">審閱 / 簽署日期</div>
@@ -769,17 +793,11 @@
   const allergyDetailWrap = document.getElementById("allergyDetailWrap");
   const allergyDetail = document.getElementById("allergyDetail");
 
-  const medicalNote = document.getElementById("medicalNote");
-
   const ptBoxes = Array.from(document.querySelectorAll(".pt"));
-  const petTemperamentNote = document.getElementById("petTemperamentNote");
 
   const mhNone = document.getElementById("mh_none");
   const mhBoxes = Array.from(document.querySelectorAll(".mh"));
-
-  const otherInjury = document.getElementById("otherInjury");
-  const otherWrap = document.getElementById("otherInjuryWrap");
-  const otherText = document.getElementById("otherInjuryText");
+  const gnBoxes = Array.from(document.querySelectorAll(".gn"));
 
   const vetDetailWrap = document.getElementById("vetDetailWrap");
   const vetPresetBox = document.getElementById("vetPresetBox");
@@ -794,10 +812,12 @@
     submitBtn.disabled = false;
     submitBtn.textContent = "送出簽名";
   }
+
   function setError(t){
     msg.textContent = t || "";
     msg.style.color = "#d21f1f";
   }
+
   function setOK(t){
     msg.textContent = t || "";
     msg.style.color = "#111";
@@ -911,17 +931,6 @@
     el.classList.toggle("hidden", !!hidden);
   }
 
-  function refreshOtherInjury(){
-    if(!otherInjury || !otherWrap) return;
-    const show = !!otherInjury.checked;
-    otherWrap.style.display = show ? "block" : "none";
-    if(!show && otherText) otherText.value = "";
-  }
-  if(otherInjury){
-    otherInjury.addEventListener("change", refreshOtherInjury);
-    refreshOtherInjury();
-  }
-
   function refreshOwnerRelation(){
     const v = getRadio("isOwnerSelf");
     const notSelf = (v === "否");
@@ -972,28 +981,30 @@
   function enforceMedicalExclusive(){
     if(mhNone && mhNone.checked){
       mhBoxes.forEach(b => b.checked = false);
-      if(otherInjury) otherInjury.checked = false;
-      refreshOtherInjury();
     }else{
-      const anyOther = mhBoxes.some(b => b.checked) || (otherInjury && otherInjury.checked);
+      const anyOther = mhBoxes.some(b => b.checked);
       if(anyOther && mhNone) mhNone.checked = false;
     }
   }
   if(mhNone) mhNone.addEventListener("change", enforceMedicalExclusive);
   mhBoxes.forEach(b => b.addEventListener("change", enforceMedicalExclusive));
-  if(otherInjury) otherInjury.addEventListener("change", enforceMedicalExclusive);
 
   function getMedicalHistory(){
     const arr = [];
     if(mhNone && mhNone.checked) arr.push(mhNone.value);
     mhBoxes.forEach(el => { if(el.checked) arr.push(el.value); });
-    if(otherInjury && otherInjury.checked) arr.push(otherInjury.value);
     return arr;
   }
 
   function getPetTemperament(){
     const arr = [];
     ptBoxes.forEach(el => { if(el.checked) arr.push(el.value); });
+    return arr;
+  }
+
+  function getGroomingNotes(){
+    const arr = [];
+    gnBoxes.forEach(el => { if(el.checked) arr.push(el.value); });
     return arr;
   }
 
@@ -1095,9 +1106,8 @@
     const petSex = getRadio("petSex") || "男生";
 
     const medicalHistory = getMedicalHistory();
-    const medicalNoteText = (medicalNote?.value || "").trim();
+    const groomingNotes = getGroomingNotes();
     const allergyDetailText = (foodAllergy === "有") ? requireValue(allergyDetail, "過敏內容") : "";
-    const otherInjuryNote = (otherInjury && otherInjury.checked) ? (otherText?.value || "").trim() : "";
 
     const data = {
       ownerName: requireValue(ownerName, "甲方姓名"),
@@ -1118,7 +1128,7 @@
       petBirthday: requireValue(petBirthday, "寵物生日"),
       petWeight: requireValue(petWeight, "體重"),
       petTemperament: getPetTemperament(),
-      petTemperamentNote: (petTemperamentNote?.value || "").trim(),
+      groomingNotes,
       signDate: requireValue(signDate, "簽署日期"),
 
       chipHas,
@@ -1130,8 +1140,6 @@
       treatAllowed,
 
       medicalHistory,
-      medicalNote: medicalNoteText,
-      otherInjuryNote,
 
       vetMode,
       vetName: (vetMode === "甲方指定") ? requireValue(vetName, "動物醫院名稱") : STORE_VET.name,
@@ -1194,18 +1202,13 @@
         ? data.medicalHistory.join("、")
         : "（未勾選）";
 
-      const otherInjuryTextLine =
-        (otherInjury && otherInjury.checked)
-          ? (data.otherInjuryNote ? `其他外傷說明：${data.otherInjuryNote}` : "其他外傷說明：（未填）")
-          : "其他外傷說明：—";
-
-      const noteText = data.medicalNote ? data.medicalNote : "（未填）";
-
       const ptText = (data.petTemperament && data.petTemperament.length)
         ? data.petTemperament.join("、")
         : "（未勾選）";
 
-      const ptNoteText = data.petTemperamentNote ? data.petTemperamentNote : "（未填）";
+      const groomingText = (data.groomingNotes && data.groomingNotes.length)
+        ? data.groomingNotes.join("、")
+        : "（未勾選）";
 
       const completeNote =
 "（簽署資料與簽名已完成。\n副本已寄送至您的Email信箱。\n\n若有多隻毛孩，請為每隻毛孩分別填寫一份表單並各自送出。）";
@@ -1228,13 +1231,11 @@ Email：${data.ownerEmail}
 生日：${data.petBirthday}
 體重(公斤)：${data.petWeight}
 寵物個性：${ptText}
-個性其他應注意：${ptNoteText}
 晶片：${chipText}
 食物過敏：${allergyText}
 零食：${data.treatAllowed}
 病史：${mhText}
-${otherInjuryTextLine}
-病史其他應注意：${noteText}
+美容注意事項：${groomingText}
 緊急就醫：${vetText}
 審閱/簽署日期：${data.signDate}
 
