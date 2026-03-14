@@ -555,22 +555,26 @@
       </div>
 
       <div class="grid2" style="margin-top:10px;">
-        <div>
-          <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
-          <input id="petAge" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="例：3歲" readonly>
-        </div>
-        <div>
-          <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
-          <input id="petBirthday"
-                 class="input"
-                 type="text"
-                 name="petBirthday"
-                 placeholder="YYYY/MM/DD"
-                 inputmode="numeric"
-                 pattern="\d{4}/\d{1,2}/\d{1,2}"
-                 required>
-        </div>
-      </div>
+  <div>
+    <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
+    <input id="petBirthday"
+           class="input"
+           type="text"
+           name="petBirthday"
+           placeholder="YYYY/MM/DD"
+           inputmode="numeric"
+           pattern="\d{4}/\d{1,2}/\d{1,2}"
+           required>
+  </div>
+
+  <div>
+    <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
+    <input id="petAge"
+           class="input"
+           placeholder="自動計算"
+           readonly>
+  </div>
+</div>
 
       <div class="label">晶片</div>
       <div class="choiceRow" id="chipRow">
