@@ -298,6 +298,61 @@
   }
 
   .hidden{ display:none !important; }
+
+    .summaryCard{
+  background:#FFFBF6;
+  border:1px solid #E6C9B1;
+  border-radius:16px;
+  padding:16px;
+  margin:20px 0;
+}
+
+.summaryTitle{
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.summaryGrid{
+  display:grid;
+  grid-template-columns:110px 1fr;
+  gap:6px 10px;
+  font-size:14px;
+}
+    .multiPetNotice{
+  background:#FFF3E8;
+  border:1px solid #E6C9B1;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:20px;
+  font-size:14px;
+}
+
+    .vetExplain{
+  font-size:13px;
+  color:#8B6F61;
+  margin-top:6px;
+}
+    .submitExplain{
+  background:#F7F3EE;
+  border-radius:12px;
+  padding:12px;
+  font-size:13px;
+  margin-top:16px;
+}
+.faq{
+  margin-top:40px;
+}
+
+.faqTitle{
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+details{
+  border-bottom:1px solid #eee;
+  padding:10px 0;
+}
+    
   </style>
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -501,6 +556,13 @@
       </div>
     </div>
 
+    <div class="multiPetNotice">
+
+若有兩隻以上毛孩，  
+請 **每一隻分開填寫並個別簽署契約**。
+
+</div>
+    
     <div class="card">
       <div class="sectionTitle">基本資料表</div>
       <div class="subText">以下資料將作為契約附件之一部分</div>
@@ -696,6 +758,13 @@
       </div>
     </div>
 
+    <div class="vetExplain">
+
+甲方指定：優先送往飼主指定之動物醫院  
+乙方指定：由本店送往鄰近合作醫院
+
+</div>
+
     <div class="card">
       <div class="sectionTitle">簽名</div>
       <div class="subText">
@@ -709,11 +778,69 @@
 
       <button id="clear" class="btn btnClear" type="button">清除簽名</button>
       <div id="msg" class="msg"></div>
+      <div class="submitExplain">
+
+送出後您將會收到：
+
+• Email 寄送「PDF契約副本」  
+• LINE 聊天室同步收到摘要  
+• 店家端保存簽署紀錄
+
+</div>
 
       <button id="submit" class="btn btnSubmit" type="button">送出簽名</button>
     </div>
-
   </div>
+  <div class="summaryCard">
+  <div class="summaryTitle">送出前確認</div>
+
+  <div class="summaryGrid">
+    <div>飼主姓名</div>
+    <div id="sumOwner"></div>
+
+    <div>毛孩姓名</div>
+    <div id="sumPet"></div>
+
+    <div>生日</div>
+    <div id="sumBirthday"></div>
+
+    <div>年齡</div>
+    <div id="sumAge"></div>
+
+    <div>Email</div>
+    <div id="sumEmail"></div>
+
+    <div>緊急醫院</div>
+    <div id="sumVet"></div>
+  </div>
+<div class="faq">
+
+<div class="faqTitle">常見問題</div>
+
+<details>
+<summary>需要每次都重新簽署嗎？</summary>
+<p>若為固定客戶且資料未變更，通常不需重新簽署。</p>
+</details>
+
+<details>
+<summary>多隻毛孩如何填寫？</summary>
+<p>每一隻毛孩需個別填寫一份資料卡與契約。</p>
+</details>
+
+<details>
+<summary>若臨時取消怎麼辦？</summary>
+<p>請提前通知店家，依預約規則處理。</p>
+</details>
+
+<details>
+<summary>若美容途中有緊急狀況？</summary>
+<p>將依您選擇的醫院或店家合作醫院處理。</p>
+</details>
+
+</div>
+    
+</div>
+  
 
 <script>
 (function(){
@@ -1035,6 +1162,55 @@
     drawing = false;
     lockScroll(false);
   }
+
+
+  
+ if(!validateForm()) return;
+
+  const required = document.querySelectorAll("[required]");
+
+  for(const el of required){
+
+    if(!el.value.trim()){
+
+      el.style.border="2px solid #C0392B";
+
+      el.scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+      });
+
+      alert("請填寫必填欄位");
+
+      return false;
+    }
+  }
+
+  return true;
+}
+  
+  function updateSummary(){
+
+  const v = id => document.getElementById(id)?.value || "";
+
+  document.getElementById("sumOwner").textContent = v("ownerName");
+  document.getElementById("sumPet").textContent = v("petName");
+  document.getElementById("sumBirthday").textContent = v("petBirthday");
+  document.getElementById("sumAge").textContent = v("petAge");
+  document.getElementById("sumEmail").textContent = v("ownerEmail");
+
+  const vetMode = v("vetMode");
+
+  if(vetMode==="乙方指定"){
+    document.getElementById("sumVet").textContent="上弦動物醫院";
+  }else{
+    document.getElementById("sumVet").textContent=v("vetName");
+  }
+}
+
+document.querySelectorAll("input,select").forEach(el=>{
+  el.addEventListener("change",updateSummary)
+})
 
   canvas.addEventListener("pointerdown", down, { passive:false });
   canvas.addEventListener("pointermove", move, { passive:false });
