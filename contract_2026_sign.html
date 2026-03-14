@@ -118,6 +118,11 @@
     box-shadow:0 0 0 4px rgba(195,90,46,.18);
   }
 
+  .input[readonly]{
+    background:#F7F1EA;
+    color:#5F5148;
+  }
+
   .grid2{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -235,6 +240,18 @@
   .fullRow{ grid-column: 1 / -1; }
   .otherInputWrap{ display:none; margin-top:10px; }
   .otherInputWrap .input{ width:100%; }
+
+  .vetPresetBox{
+    margin-top:10px;
+    border:1.6px solid var(--border);
+    border-radius:16px;
+    background:#FFF8F1;
+    padding:14px 14px;
+    line-height:1.8;
+    font-weight:700;
+    color:var(--text);
+    box-shadow:var(--shadow-sm);
+  }
 
   #sig{
     width:100%;
@@ -540,7 +557,7 @@
       <div class="grid2" style="margin-top:10px;">
         <div>
           <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
-          <input id="petAge" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="例：3">
+          <input id="petAge" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="例：3歲" readonly>
         </div>
         <div>
           <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
@@ -557,11 +574,11 @@
 
       <div class="label">晶片</div>
       <div class="choiceRow" id="chipRow">
-        <label class="choice"><input type="radio" name="chipHas" value="有"> 有</label>
-        <label class="choice"><input type="radio" name="chipHas" value="無" checked> 無</label>
+        <label class="choice"><input type="radio" name="chipHas" value="有" checked> 有</label>
+        <label class="choice"><input type="radio" name="chipHas" value="無"> 無</label>
       </div>
 
-      <div id="chipNoWrap" class="hidden">
+      <div id="chipNoWrap">
         <div class="label">晶片號碼 <span style="color:var(--muted); font-weight:700; font-size:14px;">（選填）</span></div>
         <input id="chipNo" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="晶片號碼">
       </div>
@@ -667,6 +684,12 @@
           <input id="vetAddress" class="input" placeholder="請輸入地址">
         </div>
       </div>
+
+      <div id="vetPresetBox" class="vetPresetBox hidden">
+        動物醫院名稱：上弦動物醫院-板橋院區<br>
+        電話：(02)2272-8119<br>
+        地址：新北市板橋區府中路126號之1
+      </div>
     </div>
 
     <div class="card">
@@ -693,6 +716,12 @@
   const LIFF_ID = "2008805180-dNJmIam4";
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9WUUm1Sef4Fz5Lkvtppse0MFepaFKTT0IrvP4qXtdNaTkPew9i3iEsY8mAB3EHh0QcA/exec";
   const SHARED_SECRET = "kumajima2025";
+
+  const STORE_VET = {
+    name: "上弦動物醫院-板橋院區",
+    phone: "(02)2272-8119",
+    address: "新北市板橋區府中路126號之1"
+  };
 
   const canvas = document.getElementById("sig");
   const clearBtn = document.getElementById("clear");
@@ -738,6 +767,7 @@
   const otherText = document.getElementById("otherInjuryText");
 
   const vetDetailWrap = document.getElementById("vetDetailWrap");
+  const vetPresetBox = document.getElementById("vetPresetBox");
   const vetName = document.getElementById("vetName");
   const vetPhone = document.getElementById("vetPhone");
   const vetAddress = document.getElementById("vetAddress");
@@ -778,16 +808,23 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
-  function isValidDateString(v){
+  function parseDateString(v){
     const m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(v);
-    if(!m) return false;
+    if(!m) return null;
     const y = Number(m[1]);
     const mm = Number(m[2]);
     const d = Number(m[3]);
     const dt = new Date(y, mm - 1, d);
-    return dt.getFullYear() === y &&
-           dt.getMonth() === mm - 1 &&
-           dt.getDate() === d;
+    if(
+      dt.getFullYear() !== y ||
+      dt.getMonth() !== mm - 1 ||
+      dt.getDate() !== d
+    ) return null;
+    return dt;
+  }
+
+  function isValidDateString(v){
+    return !!parseDateString(v);
   }
 
   function isValidWeight(v){
@@ -814,6 +851,28 @@
     return out;
   }
 
+  function calcPetAgeText(birthdayStr){
+    const birth = parseDateString(birthdayStr);
+    if(!birth) return "";
+
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const thisYearBirthday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+
+    if(today < thisYearBirthday){
+      age--;
+    }
+
+    if(age < 0) return "";
+    return `${age}歲`;
+  }
+
+  function updatePetAgeByBirthday(){
+    if(!petBirthday || !petAge) return;
+    const value = (petBirthday.value || "").trim();
+    petAge.value = isValidDateString(value) ? calcPetAgeText(value) : "";
+  }
+
   if(petBirthday){
     petBirthday.addEventListener("input", (e) => {
       const start = e.target.selectionStart || 0;
@@ -822,7 +881,10 @@
       if(before.length < e.target.value.length) {
         e.target.setSelectionRange(start+1, start+1);
       }
+      updatePetAgeByBirthday();
     });
+
+    petBirthday.addEventListener("blur", updatePetAgeByBirthday);
   }
 
   function getRadio(name){
@@ -875,8 +937,15 @@
   function refreshVet(){
     const mode = getRadio("vetMode");
     const isStore = (mode === "乙方指定");
+
     setHidden(vetDetailWrap, isStore);
+    setHidden(vetPresetBox, !isStore);
+
     if(isStore){
+      if(vetName) vetName.value = STORE_VET.name;
+      if(vetPhone) vetPhone.value = STORE_VET.phone;
+      if(vetAddress) vetAddress.value = STORE_VET.address;
+    }else{
       if(vetName) vetName.value = "";
       if(vetPhone) vetPhone.value = "";
       if(vetAddress) vetAddress.value = "";
@@ -1001,8 +1070,10 @@
       return;
     }
 
+    updatePetAgeByBirthday();
+
     const isOwnerSelf = getRadio("isOwnerSelf") || "是";
-    const chipHas = getRadio("chipHas") || "無";
+    const chipHas = getRadio("chipHas") || "有";
     const vetMode = getRadio("vetMode") || "甲方指定";
     const foodAllergy = getRadio("foodAllergy") || "無";
     const treatAllowed = getRadio("treatAllowed") || "可以";
@@ -1048,9 +1119,9 @@
       otherInjuryNote,
 
       vetMode,
-      vetName: (vetMode === "甲方指定") ? requireValue(vetName, "動物醫院名稱") : "",
-      vetPhone: (vetMode === "甲方指定") ? requireValue(vetPhone, "動物醫院電話") : "",
-      vetAddress: (vetMode === "甲方指定") ? requireValue(vetAddress, "動物醫院地址") : ""
+      vetName: (vetMode === "甲方指定") ? requireValue(vetName, "動物醫院名稱") : STORE_VET.name,
+      vetPhone: (vetMode === "甲方指定") ? requireValue(vetPhone, "動物醫院電話") : STORE_VET.phone,
+      vetAddress: (vetMode === "甲方指定") ? requireValue(vetAddress, "動物醫院地址") : STORE_VET.address
     };
 
     if(Object.values(data).some(v => v === null)){
@@ -1101,7 +1172,7 @@
         : "無";
 
       const vetText = (data.vetMode === "乙方指定")
-        ? "乙方指定"
+        ? `乙方指定：${data.vetName} / ${data.vetPhone} / ${data.vetAddress}`
         : `甲方指定：${data.vetName} / ${data.vetPhone}`;
 
       const mhText = (data.medicalHistory && data.medicalHistory.length)
