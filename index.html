@@ -298,7 +298,19 @@
   }
 
   .hidden{ display:none !important; }
+    
+    .birthdayAgeRow{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) 110px;
+  gap:10px;
+  align-items:end;
+}
+
+.birthdayAgeRow > div{
+  min-width:0;
+}
   </style>
+  
 
   <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
