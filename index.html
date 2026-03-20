@@ -489,6 +489,7 @@
 本契約自簽約日起生效，雙方各執一份契約正本。本契約廣告及相關附件視為本契約之一部分。
   
 第 二十二 條（附件之效力）
+
 本契約之附件「寵物基本資料及健康狀況填寫表」（包含但不限於寵物基本資料、健康狀況、個性傾向、病史、服務項目及相關告知事項），
 為本契約之一部分，與本契約具有同一之效力。甲方確認已於簽訂本契約前，依乙方之說明完整填寫前述附件，並同意其內容作為乙方評估是否提供犬、貓美容服務及服務方式之依據。前述附件得以書面、電子文件、拍照、掃描或其他可供日後查證之方式留存，均視為有效。
         </pre>
@@ -554,26 +555,32 @@
       </div>
 
       <div class="grid2" style="margin-top:10px;">
-  <div>
-    <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
-    <input id="petBirthday"
-           class="input"
-           type="text"
-           name="petBirthday"
-           placeholder="YYYY/MM/DD"
-           inputmode="numeric"
-           pattern="\d{4}/\d{1,2}/\d{1,2}"
-           required>
-  </div>
+        <div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">寵物生日</div>
+          <input id="petBirthday"
+                 class="input"
+                 type="text"
+                 name="petBirthday"
+                 placeholder="YYYY/MM/DD"
+                 inputmode="numeric"
+                 pattern="\d{4}/\d{1,2}/\d{1,2}"
+                 required>
+        </div>
 
-  <div>
-    <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
-    <input id="petAge"
-           class="input"
-           placeholder="自動計算"
-           readonly>
-  </div>
-</div>
+        <div>
+          <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
+          <input id="petAge"
+                 class="input"
+                 placeholder="自動計算"
+                 readonly>
+        </div>
+      </div>
+
+      <div class="label">絕育</div>
+      <div class="choiceRow" id="neuteredRow">
+        <label class="choice"><input type="radio" name="neutered" value="有" checked> 有</label>
+        <label class="choice"><input type="radio" name="neutered" value="無"> 無</label>
+      </div>
 
       <div class="label">晶片</div>
       <div class="choiceRow" id="chipRow">
@@ -1077,6 +1084,7 @@
 
     const isOwnerSelf = getRadio("isOwnerSelf") || "是";
     const chipHas = getRadio("chipHas") || "有";
+    const neutered = getRadio("neutered") || "有";
     const vetMode = getRadio("vetMode") || "甲方指定";
     const foodAllergy = getRadio("foodAllergy") || "無";
     const treatAllowed = getRadio("treatAllowed") || "可以";
@@ -1104,6 +1112,7 @@
       petSex,
       petAge: requireValue(petAge, "寵物年齡"),
       petBirthday: requireValue(petBirthday, "寵物生日"),
+      neutered,
       petWeight: requireValue(petWeight, "體重"),
       petTemperament: getPetTemperament(),
       petTemperamentNote: (petTemperamentNote?.value || "").trim(),
@@ -1214,6 +1223,7 @@ Email：${data.ownerEmail}
 性別：${data.petSex}
 年齡：${data.petAge}
 生日：${data.petBirthday}
+絕育：${data.neutered}
 體重(公斤)：${data.petWeight}
 寵物個性：${ptText}
 個性其他應注意：${ptNoteText}
