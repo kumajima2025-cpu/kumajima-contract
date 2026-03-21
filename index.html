@@ -769,6 +769,8 @@
 
   const chipNoWrap = document.getElementById("chipNoWrap");
   const chipNo = document.getElementById("chipNo");
+  const chipIdentifyWrap = document.getElementById("chipIdentifyWrap");
+  const chipIdentifyInfo = document.getElementById("chipIdentifyInfo");
 
   const allergyDetailWrap = document.getElementById("allergyDetailWrap");
   const allergyDetail = document.getElementById("allergyDetail");
@@ -935,14 +937,19 @@
   document.querySelectorAll('input[name="isOwnerSelf"]').forEach(r => r.addEventListener("change", refreshOwnerRelation));
   refreshOwnerRelation();
 
-  function refreshChip(){
-    const has = getRadio("chipHas");
-    const show = (has === "有");
-    setHidden(chipNoWrap, !show);
-    if(!show && chipNo) chipNo.value = "";
-  }
-  document.querySelectorAll('input[name="chipHas"]').forEach(r => r.addEventListener("change", refreshChip));
-  refreshChip();
+function refreshChip(){
+  const has = getRadio("chipHas");
+  const showChipNo = (has === "有");
+  const showIdentify = (has === "無");
+
+  setHidden(chipNoWrap, !showChipNo);
+  setHidden(chipIdentifyWrap, !showIdentify);
+
+  if(!showChipNo && chipNo) chipNo.value = "";
+  if(!showIdentify && chipIdentifyInfo) chipIdentifyInfo.value = "";
+}
+document.querySelectorAll('input[name="chipHas"]').forEach(r => r.addEventListener("change", refreshChip));
+refreshChip();
 
   function refreshAllergy(){
     const v = getRadio("foodAllergy");
@@ -1129,6 +1136,7 @@
 
       chipHas,
       chipNo: (chipHas === "有") ? (chipNo.value || "").trim() : "",
+      chipIdentifyInfo: (chipHas === "無") ? (chipIdentifyInfo.value || "").trim() : "",
 
       foodAllergy,
       allergyDetail: allergyDetailText,
@@ -1185,8 +1193,8 @@
       }
 
       const chipText = (data.chipHas === "有")
-        ? `有${data.chipNo ? "（" + data.chipNo + "）" : "（未填號碼）"}`
-        : "無";
+      ? `有${data.chipNo ? "（" + data.chipNo + "）" : "（未填號碼）"}`
+      : `無${data.chipIdentifyInfo ? "（辨識資訊：" + data.chipIdentifyInfo + "）" : ""}`;
 
       const allergyText = (data.foodAllergy === "有")
         ? `有（${data.allergyDetail}）`
