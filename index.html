@@ -123,6 +123,13 @@
     color:#5F5148;
   }
 
+    .input-lock{
+  background:#E9E1DB;
+  color:#6B5B52;
+  border:1.4px solid #D1C3B8;
+  cursor:not-allowed;
+}
+
   .grid2{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -569,10 +576,7 @@
 
         <div>
           <div class="label" style="margin:0 0 8px; font-size:16px;">寵物年齡</div>
-          <input id="petAge"
-                 class="input"
-                 placeholder="自動計算"
-                 readonly>
+          <input id="petAge" class="input input-lock" placeholder="" readonly>
         </div>
       </div>
 
@@ -582,17 +586,22 @@
         <label class="choice"><input type="radio" name="neutered" value="無"> 無</label>
       </div>
 
-      <div class="label">晶片</div>
-      <div class="choiceRow" id="chipRow">
-        <label class="choice"><input type="radio" name="chipHas" value="有" checked> 有</label>
-        <label class="choice"><input type="radio" name="chipHas" value="無"> 無</label>
-      </div>
+<div class="label">晶片</div>
+<div class="choiceRow" id="chipRow">
+  <label class="choice"><input type="radio" name="chipHas" value="有" checked> 有</label>
+  <label class="choice"><input type="radio" name="chipHas" value="無"> 無</label>
+</div>
 
-      <div id="chipNoWrap">
+      <div id="chipNoWrap" class="hidden">
         <div class="label">晶片號碼 <span style="color:var(--muted); font-weight:700; font-size:14px;">（選填）</span></div>
         <input id="chipNo" class="input" inputmode="numeric" pattern="[0-9]*" placeholder="晶片號碼">
       </div>
 
+      <div id="chipIdentifyWrap">
+        <div class="label">辨識資訊 <span style="color:var(--muted); font-weight:700; font-size:14px;">（選填）</span></div>
+        <input id="chipIdentifyInfo" class="input" placeholder="例如：小名、花色、特徵">
+      </div>
+      
       <div class="label">體重（公斤）</div>
       <input id="petWeight" class="input" inputmode="decimal" placeholder="例：6.5">
 
