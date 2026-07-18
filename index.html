@@ -515,9 +515,6 @@
       <div class="label">甲方姓名（飼主）</div>
       <input id="ownerName" class="input" placeholder="請輸入飼主姓名">
 
-      <div class="label">身分證字號</div>
-      <input id="ownerIdNo" class="input" placeholder="請輸入身分證字號">
-
       <div class="label">聯絡電話</div>
       <input id="ownerPhone" class="input" inputmode="tel" placeholder="請輸入聯絡電話">
 
@@ -722,6 +719,10 @@
 
       <div class="dangerNote">簽名完成後將自動回傳至聊天室</div>
 
+      <div style="margin:10px 2px 2px; color:var(--muted); font-size:12px; line-height:1.6; text-align:center;">
+        本表單所蒐集之個人資料僅供寵物美容服務定型化契約之簽訂、履行及聯繫使用，不會提供予無關第三方。
+      </div>
+
       <button id="clear" class="btn btnClear" type="button">清除簽名</button>
       <div id="msg" class="msg"></div>
 
@@ -749,7 +750,6 @@
   const agree = document.getElementById("agree");
 
   const ownerName = document.getElementById("ownerName");
-  const ownerIdNo = document.getElementById("ownerIdNo");
   const ownerPhone = document.getElementById("ownerPhone");
   const ownerEmail = document.getElementById("ownerEmail");
   const ownerAddress = document.getElementById("ownerAddress");
@@ -1117,7 +1117,6 @@ refreshChip();
       emergencyName: requireValue(emergencyName, "緊急聯絡人"),
       emergencyPhone: requireValue(emergencyPhone, "緊急聯絡人電話"),
       ownerEmail: requireValue(ownerEmail, "Email（寄送附本用）"),
-      ownerIdNo: requireValue(ownerIdNo, "身分證字號"),
       ownerAddress: requireValue(ownerAddress, "通訊地址"),
 
       isOwnerSelf,
@@ -1231,7 +1230,6 @@ refreshChip();
 緊急聯絡人：${data.emergencyName}
 緊急聯絡人電話：${data.emergencyPhone}
 Email：${data.ownerEmail}
-身分證字號：${data.ownerIdNo}
 通訊地址：${data.ownerAddress}
 是否飼主本人：${data.isOwnerSelf}${data.ownerRelation ? "（關係：" + data.ownerRelation + "）" : ""}
 
